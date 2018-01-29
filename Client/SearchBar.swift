@@ -31,7 +31,7 @@ class SearchBar {
     
     var isHighlighted: Bool = false
     
-    var button: Label = Label(name: "Search", isButton: true)
+    var button: Label = Label("Search", true)
     
     init() {
         
@@ -59,9 +59,9 @@ class SearchBar {
         self.plane = SCNPlane(width: self.width, height: self.height)
         self.labelToImage()
         
-        button.node.name = "searchBarButtonNode"
-        button.node.position = SCNVector3Make(0, -0.2, 0)
-        self.rootNode.addChildNode(button.node)
+        button.rootNode.name = "searchBarButtonNode"
+        button.rootNode.position = SCNVector3Make(0, -0.2, 0)
+        self.rootNode.addChildNode(button.rootNode)
     }
     
     func labelToImage() {

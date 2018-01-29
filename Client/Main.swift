@@ -34,12 +34,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
-//        portal()
-        
-//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.addModel(withGestureRecognizer:)))
-//        sceneView.addGestureRecognizer(tapGestureRecognizer)
-        
-        
 //        playground()
         
 //        client.request(withURL: "https://afore.vc/")
@@ -127,16 +121,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
 
     // MARK: - ARSCNViewDelegate
-    
-/*
-    // Override to create and configure nodes for anchors added to the view's session.
-    func renderer(_ renderer: SCNSceneRenderer, nodeFor anchor: ARAnchor) -> SCNNode? {
-        let node = SCNNode()
-     
-        return node
-    }
-*/
-    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
         
@@ -149,138 +133,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
-        
     }
     
-//    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-//        // 1
-//        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
-//
-//        // 2
-//        let width = CGFloat(planeAnchor.extent.x)
-//        let height = CGFloat(planeAnchor.extent.z)
-//        let planeGeo = SCNPlane(width: width, height: height)
-//
-//        // 3
-//        planeGeo.materials.first?.diffuse.contents = UIColor.magenta
-//        planeGeo.materials.first?.transparency = CGFloat(0.1)
-//
-//        // 4
-//        let planeNode = SCNNode(geometry: planeGeo)
-//
-//        // 5
-//        let x = CGFloat(planeAnchor.center.x)
-//        let y = CGFloat(planeAnchor.center.y)
-//        let z = CGFloat(planeAnchor.center.z)
-//        planeNode.position = SCNVector3(x,y,z)
-//        planeNode.eulerAngles.x = -.pi / 2
-//
-//        // 6
-//        node.addChildNode(planeNode)
-//
-//    }
-    
-//    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-//        guard let planeAnchor = anchor as?  ARPlaneAnchor,
-//            let planeNode = node.childNodes.first,
-//            let planeGeo = planeNode.geometry as? SCNPlane
-//            else { return }
-//
-//        // 2
-//        let width = CGFloat(planeAnchor.extent.x)
-//        let height = CGFloat(planeAnchor.extent.z)
-//        planeGeo.width = width
-//        planeGeo.height = height
-//
-//        // 3
-//        let x = CGFloat(planeAnchor.center.x)
-//        let y = CGFloat(planeAnchor.center.y)
-//        let z = CGFloat(planeAnchor.center.z)
-//        planeNode.position = SCNVector3(x, y, z)
-//
-////        guard let currentDomain = client.currentDomain else {return}
-////        currentDomain.onPlane(node)
-//
-//    }
-//
-//    @objc func addModel(withGestureRecognizer recognizer: UIGestureRecognizer) {
-//        let tapLocation = recognizer.location(in: sceneView)
-//
-//        let hitTestResults = sceneView.hitTest(tapLocation, types: .existingPlaneUsingExtent)
-//
-//        guard let hitTestResult = hitTestResults.first else { return }
-//        let translation = hitTestResult.worldTransform.columns.3
-//        let x = translation.x
-//        let y = translation.y
-//        let z = translation.z
-//
-////        client.rootNode.position = SCNVector3(x,y,z)
-//
-//        sceneView.debugOptions = []
-//    }
-    
-    func portal() {
-        
-        let a = UIImage(named: "1")
-        let b = UIImage(named: "2")
-        let c = UIImage(named: "3")
-        let d = UIImage(named: "4")
-        let e = UIImage(named: "5")
-        
-        let w: CGFloat = CGFloat(0.6)
-        let h: CGFloat = CGFloat(0.6)
-        
-        let p1 = SCNPlane(width: w, height: h)
-        let p2 = SCNPlane(width: w, height: h)
-        let p3 = SCNPlane(width: w, height: h)
-        let p4 = SCNPlane(width: w, height: h)
-        let p5 = SCNPlane(width: w, height: h)
-        
-        p1.firstMaterial?.diffuse.contents = a
-        p2.firstMaterial?.diffuse.contents = b
-        p3.firstMaterial?.diffuse.contents = c
-        p4.firstMaterial?.diffuse.contents = d
-        p5.firstMaterial?.diffuse.contents = e
-        
-        let n1 = SCNNode(geometry: p1)
-        let n2 = SCNNode(geometry: p2)
-        let n3 = SCNNode(geometry: p3)
-        let n4 = SCNNode(geometry: p4)
-        let n5 = SCNNode(geometry: p5)
-        
-        n1.position = SCNVector3Make(0, Float(h)/2.0, Float(h)/2.0)
-        n1.eulerAngles = SCNVector3Make(.pi/2.0, .pi/2.0, 0.0)
-        
-        n2.position = SCNVector3Make(0, 0, 0)
-        
-        n3.position = SCNVector3Make(0, Float(-h)/2.0, Float(h)/2.0)
-        n3.eulerAngles = SCNVector3Make(-.pi/2.0, 0.0, 0.0)
-        
-        n4.position = SCNVector3Make(Float(-w)/2.0, 0, Float(w)/2.0)
-        n4.eulerAngles = SCNVector3Make(0.0, .pi/2.0, 0.0)
-        
-        n5.position = SCNVector3Make(Float(w)/2.0,  0, Float(w)/2.0)
-        n5.eulerAngles = SCNVector3Make(0.0, -.pi/2.0, 0.0)
-        
-        let rootNode = SCNNode()
-        rootNode.position = SCNVector3Make(0, 0, -1)
-        
-        rootNode.addChildNode(n1)
-        rootNode.addChildNode(n2)
-        rootNode.addChildNode(n3)
-        rootNode.addChildNode(n4)
-        rootNode.addChildNode(n5)
-        
-        self.sceneView.scene.rootNode.addChildNode(rootNode)
-        
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        let file = URL(fileURLWithPath: documents + "/atlas-client.scn")
-        
-        sceneView.scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-        print(documents)
-        
-    }
-
     func playground() {
         
         let rootNode = SCNNode()

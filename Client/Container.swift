@@ -10,6 +10,14 @@ import Foundation
 import ARKit
 import SwiftyJSON
 
+class Label: Container {
+    
+    init(_ text: String, _ isButton: Bool) {
+        super.init()
+    }
+    
+}
+
 class Container {
     
     var width: Float = 0.0
@@ -37,6 +45,8 @@ class Container {
     let bottom  = 1
     let left    = 2
     let right   = 3
+    
+    init(){}
 
     init?(withlabel     labelText: String,
           withKey       key: String,
@@ -167,18 +177,6 @@ class Container {
 
 
 
-
-
-
-
-
-
-
-
-//= CGRect(x: CGFloat(),
-//y: CGFloat(),
-//width: CGFloat(),
-//height: CGFloat())
 
 
 

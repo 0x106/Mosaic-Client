@@ -14,7 +14,7 @@ import Async
 class Domain {
     
     var data: JSON!
-    var nodes: [Element] = [Element]()
+    var nodes: [Container] = [Container]()
     var rootNode: SCNNode = SCNNode()
     
     func setData(_ data: JSON) {
@@ -54,40 +54,9 @@ class Domain {
                                     self.rootNode.addChildNode(element.rootNode)
 //                                    self.nodes.append(element)
                                 } else {}
-                            } else if name == "LI" {
-                                
-                                let pkey = object["pkey"].stringValue
-                                let key = object["key"].stringValue
-                                guard let parent = self.getObject(withKey: pkey) else {return}
-                                
-                                if let element = Generic(withKey:      key,
-                                                         withlayout:   layout,
-                                                         withStyle:    style,
-                                                         withParent:   parent)
-                                {
-                                    self.rootNode.addChildNode(element.rootNode)
-                                    self.nodes.append(element)
-                                } else {}
-                                
-                            } else if name == "DIV" {
-                                
-                                // probably need to check that break skips to the next element in the for-loop
-                                if let bgImage = self.getAttribute(style, "background-image"), bgImage != "none" {
-
-                                    let pkey = object["pkey"].stringValue
-                                    let key = object["key"].stringValue
-                                    guard let parent = self.getObject(withKey: pkey) else {return}
-
-                                    if let element = Image(withValue:   bgImage.stringValue,
-                                                          withKey:      key,
-                                                          withlayout:   layout,
-                                                          withStyle:    style,
-                                                          withParent:   parent)
-                                    {
-//                                        self.rootNode.addChildNode(element.rootNode)
-//                                        self.nodes.append(element)
-                                    } else {}
-                                }
+                            }
+                        } else if name == "DIV" {
+                            
                                 // probably need to check that break skips to the next element in the for-loop
                                 if let bgImage = self.getAttribute(style, "background-image"), bgImage != "none" {
                                     
@@ -105,7 +74,8 @@ class Domain {
                                         //                                        self.nodes.append(element)
                                     } else {}
                                 }
-                            }
+//                            }
+//                    }
                         }
                     }
                 }
@@ -123,7 +93,7 @@ class Domain {
         return nil
     }
     
-    func getNode(withKey ref: String) -> Element? {
+    func getNode(withKey ref: String) -> Container? {
         for node in self.nodes {
             if node.nodeKey == ref {
                 return node

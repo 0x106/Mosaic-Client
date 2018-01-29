@@ -16,9 +16,8 @@ import AlamofireImage
 // <img> tags
 // div background-image
 // element background-image
-class Image: Element {
+class Image: Container {
     
-    var plane: SCNPlane       = SCNPlane()
     var label: UILabel        = UILabel()
     var image: UIImage!
     
@@ -33,9 +32,6 @@ class Image: Element {
     var textColor: UIColor = UIColor()
     
     var textFontSize: Float = 12.0
-    
-    var width: Float = 0.0
-    var height: Float = 0.0
     
     init?(withValue     value: String,
           withKey       key: String,
