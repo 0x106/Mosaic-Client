@@ -78,16 +78,13 @@ class Container {
             totalHeight += (computedStyle["padding-bottom"] as! Float)
             totalHeight += Float(layout["height"].doubleValue)
         
-        print("totalWidth: \(totalWidth), \(totalWidth * self.scale)")
-        print("totalheight: \(totalHeight), \(totalHeight * self.scale)")
-        
         self.cell = CGRect(x: CGFloat(0.0),
                           y: CGFloat(0.0),
                           width: CGFloat(totalWidth),
                           height: CGFloat(totalHeight))
         
         self.nucleus = CGRect(x: CGFloat((computedStyle["border-left-width"] as! Float) + (computedStyle["padding-left"] as! Float)),
-                              y: CGFloat((computedStyle["border-bottom-width"] as! Float) + (computedStyle["padding-bottom"] as! Float)),
+                              y: CGFloat((computedStyle["border-bottom-width"] as! Float) + (computedStyle["padding-top"] as! Float)),
                               width: CGFloat(Float(layout["width"].doubleValue)),
                               height: CGFloat(Float(layout["height"].doubleValue)))
         
@@ -97,7 +94,7 @@ class Container {
                                       height: CGFloat(computedStyle["border-bottom-width"] as! Float))
         
         self.borders[top] = CGRect(x: CGFloat(computedStyle["border-left-width"] as! Float),
-                                      y: self.nucleus.maxY + CGFloat(computedStyle["padding-top"] as! Float),
+                                      y: self.nucleus.maxY + CGFloat(computedStyle["padding-bottom"] as! Float),
                                       width: CGFloat(Float(layout["width"].doubleValue) + (computedStyle["padding-left"] as! Float) + (computedStyle["padding-right"] as! Float)),
                                       height: CGFloat(computedStyle["border-top-width"] as! Float))
         
@@ -112,32 +109,23 @@ class Container {
                                      width: CGFloat(computedStyle["border-right-width"] as! Float),
                                      height: CGFloat(Float(layout["height"].doubleValue) + (computedStyle["padding-top"] as! Float) + (computedStyle["padding-bottom"] as! Float)))
         
-        print("Nucleus: \(self.nucleus)")
-        print("Border left: \(self.self.borders[left])")
-        print("Border right: \(self.self.borders[right])")
-        print("Border top: \(self.self.borders[top])")
-        print("Border bottom: \(self.self.borders[bottom])")
-        
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(totalWidth), height: CGFloat(totalHeight)))
         let img = renderer.image { context in
             
             UIColor.red.setFill()
             context.fill(self.borders[top])
-            
+
             UIColor.green.setFill()
             context.fill(self.borders[bottom])
-//
+
             UIColor.blue.setFill()
             context.fill(self.borders[left])
 
             UIColor.magenta.setFill()
             context.fill(self.borders[right])
             
-            UIColor.orange.setFill()
+            UIColor.magenta.withAlphaComponent(0.4).setFill()
             context.fill(self.nucleus)
-            
-//            UIColor.cyan.setFill()
-//            context.fill(self.cell)
             
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .left
@@ -150,11 +138,24 @@ class Container {
         self.plane.firstMaterial?.diffuse.contents = img
         self.rootNode.geometry = self.plane
         
+        self.rootNode.position = SCNVector3Make((Float(layout["x"].doubleValue) + (totalWidth/2.0))*self.scale,
+                                                (-Float(layout["y"].doubleValue) - (totalHeight/2.0))*self.scale,
+                                                -1)
+        
 //        self.rootNode.position = SCNVector3Make((Float(layout["x"].doubleValue) + (totalWidth/2.0))*self.scale,
-//                                                (-Float(layout["y"].doubleValue) - (totalHeight/2.0))*self.scale,
+//                                                ((-Float(layout["y"].doubleValue) - Float(layout["height"].doubleValue)/2.0)*self.scale),
 //                                                -1)
         
-        self.rootNode.position = SCNVector3Make(0, 0, -1)
+        print("Key: \(self.nodeKey)")
+        print("totalWidth: \(totalWidth), \(totalWidth * self.scale)")
+        print("totalheight: \(totalHeight), \(totalHeight * self.scale)")
+        print("Nucleus: \(self.nucleus)")
+        print("Border left: \(self.self.borders[left])")
+        print("Border right: \(self.self.borders[right])")
+        print("Border top: \(self.self.borders[top])")
+        print("Border bottom: \(self.self.borders[bottom])")
+        print("Position: \(self.rootNode.position)")
+        print("===========================================")
         
     }
 
