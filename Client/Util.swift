@@ -266,3 +266,4 @@ func resizeImage(image: UIImage, newSize: CGSize) -> UIImage {
     UIGraphicsEndImageContext()
     return newImage!
 }
+

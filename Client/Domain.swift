@@ -44,7 +44,7 @@ class Domain {
                                 let key = object["key"].stringValue
                                 guard let parent = self.getObject(withKey: pkey) else {return}
                                 
-                                if let element = Text(withlabel:    value,
+                                if let element = Container(withlabel:    value,
                                                       withKey:      key,
                                                       withlayout:   layout,
                                                       withStyle:    style,
@@ -52,7 +52,7 @@ class Domain {
                                 {
 //                                    self.rootNode.addChildNode(element.bgNode)
                                     self.rootNode.addChildNode(element.rootNode)
-                                    self.nodes.append(element)
+//                                    self.nodes.append(element)
                                 } else {}
                             } else if name == "LI" {
                                 
