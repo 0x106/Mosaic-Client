@@ -56,7 +56,7 @@ class Client {
         
         let parameters: Parameters = ["atlasurl": requestURL]
         let serverEndpoint = "\(self.server)/client"
-//
+
 //        if DEBUG {
 //            do {
 //

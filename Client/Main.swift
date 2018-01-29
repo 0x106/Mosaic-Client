@@ -40,7 +40,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //        sceneView.addGestureRecognizer(tapGestureRecognizer)
         
         
-        playground()
+//        playground()
         
 //        client.request(withURL: "https://afore.vc/")
 //        client.request(withURL: "http://www.dell.com/nz/p")
@@ -49,8 +49,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //        client.request(withURL: "http://hookbang.com/")
 //        client.request(withURL: "unsplash.com")
 //        client.request(withURL: "https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-blocking-css")
-        client.request(withURL: "http://fb44561f.ngrok.io")
-//        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
+//        client.request(withURL: "http://fb44561f.ngrok.io")
+        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
     }
 
     func setup() {
@@ -295,7 +295,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let padding_bottom: Float = 20
         
         let border_left_width: Float = 10
-        let padding_left: Float = 1
+        let padding_left: Float = 20
         
         let border_right_width: Float = 12
         let padding_right: Float = 1
@@ -308,40 +308,37 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                              width: CGFloat(total_width),
                              height: CGFloat(total_height))
         
-        let nucleus = CGRect(x: CGFloat(0.0),
+        let nucleus = CGRect(x: CGFloat(border_left_width + padding_left),
                              y: CGFloat(border_top_width + padding_top),
-                             width: CGFloat(total_width),
+                             width: CGFloat(nucleus_width),
                              height: CGFloat(nucleus_height))
         
-        let bottom = CGRect(x: CGFloat(border_left_width),
+        let bottom = CGRect(x: CGFloat(0.0),
                             y: CGFloat(border_top_width + padding_top + nucleus_height + padding_bottom),
-                            width: CGFloat(nucleus_width),
+                            width: CGFloat(total_width),
                             height: CGFloat(border_bottom_width))
         
-        let top = CGRect(x: CGFloat(border_left_width),
+        let top = CGRect(x: CGFloat(0.0),
                             y: CGFloat(0.0),
-                            width: CGFloat(nucleus_width),
+                            width: CGFloat(total_width),
                             height: CGFloat(border_top_width))
         
         let left = CGRect(x: CGFloat(0.0),
-                         y: CGFloat(border_top_width + padding_top),
+                         y: CGFloat(0.0),
                          width: CGFloat(border_left_width),
-                         height: CGFloat(nucleus_height))
+                         height: CGFloat(total_height))
         
         let right = CGRect(x: CGFloat(border_left_width + nucleus_width + padding_left + padding_right),
-                         y: CGFloat(border_top_width + padding_top),
+                         y: CGFloat(0.0),
                          width: CGFloat(border_right_width),
-                         height: CGFloat(nucleus_height))
+                         height: CGFloat(total_height))
 
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(total_width), height: CGFloat(total_height)))
         let img = renderer.image { context in
             
             UIColor.red.setFill()
             context.fill(cell)
-            
-            UIColor.magenta.setFill()
-            context.fill(nucleus)
-            
+        
             UIColor.green.setFill()
             context.fill(bottom)
             
@@ -354,9 +351,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             UIColor.yellow.setFill()
             context.fill(right)
             
+            UIColor.magenta.setFill()
+            context.fill(nucleus)
+            
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .left
-            let attrs = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Thin", size: 36)!, NSAttributedStringKey.paragraphStyle: paragraphStyle]
+            let attrs = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Thin", size: 50)!, NSAttributedStringKey.paragraphStyle: paragraphStyle]
             let string = "“The life of a poet lies not merely in the finite language-dance of expression but in the nearly infinite combinations of perception and memory combined with the sensitivity to what is perceived and remembered.”"
             string.draw(with: nucleus, options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
         }
