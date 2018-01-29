@@ -9,12 +9,12 @@
 import Foundation
 import ARKit
 import SwiftyJSON
-
+import Async
 
 class Domain {
     
     var data: JSON!
-    var nodes: [Text] = [Text]()
+    var nodes: [Element] = [Element]()
     var rootNode: SCNNode = SCNNode()
     
     func setData(_ data: JSON) {
@@ -24,37 +24,93 @@ class Domain {
         let ignoreNameTags = ["#document", "HTML", "BODY", "IFRAME"];
         let ignoreValueTags = ["Cached", "Similar"];
         
-        for (_, object) in self.data {
-            
-            let name = object["nodeName"].stringValue
-            if !ignoreNameTags.contains(name) {
-                let layout = object["nodeLayout"]
-                let style = object["nodeStyle"]
-                let value = object["nodeValue"].stringValue
+        print(self.data)
+        
+//        Async.userInitiated {
+            for (_, object) in self.data {
                 
-                if !ignoreValueTags.contains(value) {
+                let name = object["nodeName"].stringValue
+                if !ignoreNameTags.contains(name) {
+                    let layout = object["nodeLayout"]
+                    let style = object["nodeStyle"]
+                    let value = object["nodeValue"].stringValue
                     
-                    if layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0 {
-                        if name == "#text" {
+                    if !ignoreValueTags.contains(value) {
+                        
+                        if layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0 {
+                            if name == "#text" {
                             
-                            let pkey = object["pkey"].stringValue
-                            let key = object["key"].stringValue
-                            guard let parent = self.getObject(withKey: pkey) else {return}
-                            
-                            if let element = Text(withlabel:    value,
-                                                  withKey:      key,
-                                                  withlayout:   layout,
-                                                  withStyle:    style,
-                                                  withParent:   parent)
-                            {
-                                self.rootNode.addChildNode(element.rootNode)
-                                self.nodes.append(element)
-                            } else {}
+                                let pkey = object["pkey"].stringValue
+                                let key = object["key"].stringValue
+                                guard let parent = self.getObject(withKey: pkey) else {return}
+                                
+                                if let element = Text(withlabel:    value,
+                                                      withKey:      key,
+                                                      withlayout:   layout,
+                                                      withStyle:    style,
+                                                      withParent:   parent)
+                                {
+//                                    self.rootNode.addChildNode(element.bgNode)
+                                    self.rootNode.addChildNode(element.rootNode)
+                                    self.nodes.append(element)
+                                } else {}
+                            } else if name == "LI" {
+                                
+                                let pkey = object["pkey"].stringValue
+                                let key = object["key"].stringValue
+                                guard let parent = self.getObject(withKey: pkey) else {return}
+                                
+                                if let element = Generic(withKey:      key,
+                                                         withlayout:   layout,
+                                                         withStyle:    style,
+                                                         withParent:   parent)
+                                {
+                                    self.rootNode.addChildNode(element.rootNode)
+                                    self.nodes.append(element)
+                                } else {}
+                                
+                            } else if name == "DIV" {
+                                
+                                // probably need to check that break skips to the next element in the for-loop
+                                if let bgImage = self.getAttribute(style, "background-image"), bgImage != "none" {
+
+                                    let pkey = object["pkey"].stringValue
+                                    let key = object["key"].stringValue
+                                    guard let parent = self.getObject(withKey: pkey) else {return}
+
+                                    if let element = Image(withValue:   bgImage.stringValue,
+                                                          withKey:      key,
+                                                          withlayout:   layout,
+                                                          withStyle:    style,
+                                                          withParent:   parent)
+                                    {
+//                                        self.rootNode.addChildNode(element.rootNode)
+//                                        self.nodes.append(element)
+                                    } else {}
+                                }
+                                // probably need to check that break skips to the next element in the for-loop
+                                if let bgImage = self.getAttribute(style, "background-image"), bgImage != "none" {
+                                    
+                                    let pkey = object["pkey"].stringValue
+                                    let key = object["key"].stringValue
+                                    guard let parent = self.getObject(withKey: pkey) else {return}
+                                    
+                                    if let element = Image(withValue:   bgImage.stringValue,
+                                                           withKey:      key,
+                                                           withlayout:   layout,
+                                                           withStyle:    style,
+                                                           withParent:   parent)
+                                    {
+                                        //                                        self.rootNode.addChildNode(element.rootNode)
+                                        //                                        self.nodes.append(element)
+                                    } else {}
+                                }
+                            }
                         }
                     }
                 }
             }
-        }
+//        }
     }
     
     func getObject(withKey ref: String) -> JSON? {
@@ -67,7 +123,7 @@ class Domain {
         return nil
     }
     
-    func getNode(withKey ref: String) -> Text? {
+    func getNode(withKey ref: String) -> Element? {
         for node in self.nodes {
             if node.nodeKey == ref {
                 return node
@@ -78,5 +134,16 @@ class Domain {
     
     func onPlane(_ planeNode: SCNNode) {
         self.rootNode.position = planeNode.position
+    }
+    
+    func getAttribute(_ object: JSON, _ query: String) -> JSON? {
+        
+        for (key, value) in object {
+            if query == value["name"].stringValue {
+                return value["value"]
+            }
+        }
+        
+        return nil
     }
 }

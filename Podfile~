@@ -7,4 +7,6 @@ target 'Client' do
 
   # Pods for Client
   pod 'Alamofire'
+  pod 'Alamofire-SwiftyJSON'
+  pod "AsyncSwift"
 end

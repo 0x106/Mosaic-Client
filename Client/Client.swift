@@ -23,6 +23,8 @@ class Client {
     
     let orb: Dodecahedron = Dodecahedron()
     
+    let server: String = "http://fb44561f.ngrok.io"
+    
     init() {
         
         field.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
@@ -53,17 +55,39 @@ class Client {
         print(requestURL)
         
         let parameters: Parameters = ["atlasurl": requestURL]
-        let apiRequestURL = "http://90c3bbfb.ngrok.io/client"
+        let serverEndpoint = "\(self.server)/client"
         
-        Alamofire.request("\(apiRequestURL)", method: .get, parameters: parameters)
-            .responseSwiftyJSON { dataResponse in
-                
-                guard let response = dataResponse.value else {return}
+        if DEBUG {
+            do {
+
+                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                let file = URL(fileURLWithPath: documents + "/atlas-client.json")
+
+                let data = try Data(contentsOf: file)
+                let response = try JSON(data: data)
+
                 self.addNewDomain(response)
+
+            } catch {}
+        } else {
+            Alamofire.request("\(serverEndpoint)", method: .get, parameters: parameters)
+                .responseSwiftyJSON { dataResponse in
+                    
+                    guard let response = dataResponse.value else {return}
+                    self.addNewDomain(response)
+            }
         }
     }
     
     func addNewDomain(_ response: JSON) {
+        
+        do {
+            let data = try response.rawData()
+            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let file = URL(fileURLWithPath: documents + "/atlas-client.json")
+            try data.write(to: file)
+        } catch {}
+        
        
         // remove any pages currently in the scene
         if let domain = self.currentDomain {
@@ -79,17 +103,17 @@ class Client {
         self.rootNode.addChildNode(self.currentDomain.rootNode)
         
         self.orb.rootNode.isHidden = true
-        
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        let file = URL(fileURLWithPath: documents + "/atlas-client.scn")
 
         if DEBUG {
+            
+            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let file = URL(fileURLWithPath: documents + "/atlas-client.scn")
+            
             let scene = SCNScene()
             scene.rootNode.addChildNode(self.rootNode)
             scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
             print(documents)
-            
-            exit(EXIT_SUCCESS)
+//            exit(EXIT_SUCCESS)
         }
         
     }
@@ -102,7 +126,7 @@ class Client {
                 
         var output = url
         
-        if url.hasPrefix("http://www.") {
+        if url.hasPrefix("http://www.") || url.hasPrefix("https://www.") {
             return output
         }
         
@@ -113,12 +137,12 @@ class Client {
         }
         
         // e.g: http://atlasreality.xyz
-        if url.hasPrefix("http://") {
+        if url.hasPrefix("http://") || url.hasPrefix("https://") {
             return output
         }
         
         // e.g: atlasreality.xyz
-        if !url.hasPrefix("http://www.") {
+        if !url.hasPrefix("http://www.") && !url.hasPrefix("https://www.") {
             output = "http://www." + url
             return output
         }

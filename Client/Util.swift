@@ -10,7 +10,7 @@ import Foundation
 import ARKit
 import SwiftyJSON
 
-let DEBUG = false
+let DEBUG = true
 
 // default to [0.0, 1.0]
 func randomFloat() -> Float {
@@ -50,6 +50,14 @@ extension UIImage {
     class func imageWithLabel(label: UILabel) -> UIImage {
         UIGraphicsBeginImageContextWithOptions(label.bounds.size, false, 0.0)
         label.layer.render(in: UIGraphicsGetCurrentContext()!)
+        let img = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return img
+    }
+    
+    class func imageWithTextView(textView: UITextView) -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(textView.bounds.size, false, 0.0)
+        textView.layer.render(in: UIGraphicsGetCurrentContext()!)
         let img = UIGraphicsGetImageFromCurrentImageContext()!
         UIGraphicsEndImageContext()
         return img
@@ -114,21 +122,47 @@ func computeStylesFromDict(_ style: JSON) -> Dictionary<String, Any> {
 
         if propertyName.hasSuffix("color") {
             computedStyle[propertyName] = parseColorString(propertyValue)
-        }
-
-        if propertyName == "border-width" {
+        } else if propertyName.hasSuffix("width") || propertyName.hasSuffix("size") || propertyName.hasPrefix("padding") {
             computedStyle[propertyName] = parseSizeString(propertyValue)
-        }
-
-        if propertyName == "font-size" {
-            computedStyle[propertyName] = parseSizeString(propertyValue)
+        } else {    // presumably anything that makes it in here has a string propertyvalue (or at least a known type)
+            computedStyle[propertyName] = propertyValue
         }
     }
     
     return computedStyle
 }
 
+//func stripNewLine(_ input: String) -> String {
+//
+//}
+//
+//func stripSpace(_ input: String) -> String {
+//
+//}
 
+func parseText(_ input: String) -> String {
+    let text = input.replacingOccurrences(of: "\n", with: "")
+
+//    let text = input
+//
+//    if text.hasPrefix("\n") {
+//        text = .replacingOccurrences(of: "\n", with: "")
+//    }
+    
+    return text
+}
+
+func parseHREFFromURL(_ url: String) -> String {
+    var startIndex = url.index(of: "(") ?? url.endIndex
+    startIndex = url.index(after: startIndex)
+    startIndex = url.index(after: startIndex)
+    
+    var endIndex = url.index(of: ")") ?? url.endIndex
+    endIndex = url.index(before: endIndex)
+    
+    let output = url[startIndex..<endIndex]
+    return String(output)
+}
 
 func distance(_ p1: SCNVector3, _ p2: SCNVector3) -> Double {
     return Double(sqrt( pow((p1.x - p2.x), 2.0) + pow((p1.y - p2.y), 2.0) + pow((p1.z - p2.z), 2.0) ))
@@ -224,3 +258,11 @@ extension SCNNode {
     }
 }
 
+
+func resizeImage(image: UIImage, newSize: CGSize) -> UIImage {
+    UIGraphicsBeginImageContext(newSize)
+    image.draw(in: CGRect(x: 0, y: 0, width: newSize.width, height: newSize.width) )
+    let newImage = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+    return newImage!
+}

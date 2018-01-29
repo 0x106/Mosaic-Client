@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		18514E5554372B2BABC68120 /* Pods_Client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2406CCAAF2A0E1CC81242BFA /* Pods_Client.framework */; };
+		DA1415B5201E6F5F002C773F /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415B4201E6F5F002C773F /* Config.swift */; };
+		DA1415B7201EDB2D002C773F /* Generic.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415B6201EDB2D002C773F /* Generic.swift */; };
+		DA1415B9201EFBCB002C773F /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415B8201EFBCB002C773F /* Container.swift */; };
 		DA3E64682019A8F700F15119 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64672019A8F700F15119 /* Client.swift */; };
 		DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64692019A90C00F15119 /* SearchBar.swift */; };
 		DA3E646C2019A96D00F15119 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E646B2019A96D00F15119 /* Util.swift */; };
@@ -20,12 +23,16 @@
 		DA86E6D32019A29C00DDE8C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */; };
 		DA87E778201A879300BDADAE /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E777201A879300BDADAE /* Domain.swift */; };
 		DA87E77A201A8FAC00BDADAE /* Dodecahedron.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */; };
+		DAD1401C201D2EBA00B49EB1 /* ImageElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAD1401B201D2EB900B49EB1 /* ImageElement.swift */; };
 		DAF134742019C1DC0002C092 /* TextElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAF134732019C1DC0002C092 /* TextElement.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		21858D6BD823FCD542A1826D /* Pods-Client.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Client.release.xcconfig"; path = "Pods/Target Support Files/Pods-Client/Pods-Client.release.xcconfig"; sourceTree = "<group>"; };
 		2406CCAAF2A0E1CC81242BFA /* Pods_Client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA1415B4201E6F5F002C773F /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
+		DA1415B6201EDB2D002C773F /* Generic.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Generic.swift; sourceTree = "<group>"; };
+		DA1415B8201EFBCB002C773F /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
 		DA3E64672019A8F700F15119 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		DA3E64692019A90C00F15119 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		DA3E646B2019A96D00F15119 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -40,6 +47,7 @@
 		DA86E6D42019A29C00DDE8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA87E777201A879300BDADAE /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dodecahedron.swift; sourceTree = "<group>"; };
+		DAD1401B201D2EB900B49EB1 /* ImageElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageElement.swift; sourceTree = "<group>"; };
 		DAF134732019C1DC0002C092 /* TextElement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextElement.swift; sourceTree = "<group>"; };
 		FB987B3FDFB5580A558A7BED /* Pods-Client.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Client.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Client/Pods-Client.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -93,9 +101,13 @@
 				DA3E64672019A8F700F15119 /* Client.swift */,
 				DA3E646D2019AC0C00F15119 /* Label.swift */,
 				DAF134732019C1DC0002C092 /* TextElement.swift */,
+				DA1415B6201EDB2D002C773F /* Generic.swift */,
+				DA1415B8201EFBCB002C773F /* Container.swift */,
+				DAD1401B201D2EB900B49EB1 /* ImageElement.swift */,
 				DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */,
 				DA3E64692019A90C00F15119 /* SearchBar.swift */,
 				DA3E646B2019A96D00F15119 /* Util.swift */,
+				DA1415B4201E6F5F002C773F /* Config.swift */,
 				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
 				DA86E6CF2019A29C00DDE8C9 /* Assets.xcassets */,
 				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
@@ -193,12 +205,16 @@
 				"${SRCROOT}/Pods/Target Support Files/Pods-Client/Pods-Client-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Alamofire/Alamofire.framework",
 				"${BUILT_PRODUCTS_DIR}/Alamofire-SwiftyJSON/Alamofire_SwiftyJSON.framework",
+				"${BUILT_PRODUCTS_DIR}/AlamofireImage/AlamofireImage.framework",
+				"${BUILT_PRODUCTS_DIR}/AsyncSwift/Async.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alamofire_SwiftyJSON.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AlamofireImage.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Async.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -250,10 +266,14 @@
 				DA86E6CB2019A29C00DDE8C9 /* Main.swift in Sources */,
 				DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */,
 				DA3E646E2019AC0C00F15119 /* Label.swift in Sources */,
+				DA1415B5201E6F5F002C773F /* Config.swift in Sources */,
+				DA1415B7201EDB2D002C773F /* Generic.swift in Sources */,
 				DA3E646C2019A96D00F15119 /* Util.swift in Sources */,
 				DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */,
 				DA3E64682019A8F700F15119 /* Client.swift in Sources */,
 				DAF134742019C1DC0002C092 /* TextElement.swift in Sources */,
+				DA1415B9201EFBCB002C773F /* Container.swift in Sources */,
+				DAD1401C201D2EBA00B49EB1 /* ImageElement.swift in Sources */,
 				DA87E778201A879300BDADAE /* Domain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
