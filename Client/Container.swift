@@ -141,7 +141,7 @@ class Container {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .left
             
-            let font = UIFont(name: "HelveticaNeue-thin", size: CGFloat(self.font_size))
+            let font = UIFont(name: "LucidaGrande", size: CGFloat(self.font_size))
             
             let attrs = [NSAttributedStringKey.font: font!,
                          NSAttributedStringKey.paragraphStyle: paragraphStyle]
@@ -158,7 +158,6 @@ class Container {
         self.rootNode.position = SCNVector3Make((  self.x + (self.total_width/2.0))*self.scale,
                                                 ( -self.y - (self.total_height/2.0))*self.scale,
                                                 -1)
-        
         print("x: \(self.x)")
         print("y: \(self.y)")
         print(self.rootNode.position)

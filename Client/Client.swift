@@ -57,26 +57,26 @@ class Client {
         let parameters: Parameters = ["atlasurl": requestURL]
         let serverEndpoint = "\(self.server)/client"
 
-        if DEBUG {
-            do {
-
-                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                let file = URL(fileURLWithPath: documents + "/atlas-client.json")
-
-                let data = try Data(contentsOf: file)
-                let response = try JSON(data: data)
-
-                self.addNewDomain(response)
-
-            } catch {}
-        } else {
+//        if DEBUG {
+//            do {
+//
+//                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+//                let file = URL(fileURLWithPath: documents + "/atlas-client.json")
+//
+//                let data = try Data(contentsOf: file)
+//                let response = try JSON(data: data)
+//
+//                self.addNewDomain(response)
+//
+//            } catch {}
+//        } else {
             Alamofire.request("\(serverEndpoint)", method: .get, parameters: parameters)
                 .responseSwiftyJSON { dataResponse in
                     
                     guard let response = dataResponse.value else {return}
                     self.addNewDomain(response)
             }
-        }
+//        }
     }
     
     func addNewDomain(_ response: JSON) {

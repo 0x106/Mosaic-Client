@@ -35,15 +35,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.scene = scene
         
         let font = Fonts()
-        font.getFont("")
-        exit(EXIT_SUCCESS)
+        font.load()
+//        font.getFont("")
+//        font.unzip()
+//
         
 //        playground()
         
 //        client.request(withURL: "https://news.ycombinator.com/newest")
 //        client.request(withURL: "https://afore.vc/")
 //        client.request(withURL: "http://www.dell.com/nz/p")
-        client.request(withURL: "atlasreality.xyz")
+//        client.request(withURL: "atlasreality.xyz")
 //        client.request(withURL: "https://ueno.co/")b
 //        client.request(withURL: "http://hookbang.com/")
 //        client.request(withURL: "unsplash.com")
