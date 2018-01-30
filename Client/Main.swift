@@ -34,17 +34,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
+        let font = Fonts()
+        font.getFont("")
+        exit(EXIT_SUCCESS)
+        
 //        playground()
         
 //        client.request(withURL: "https://news.ycombinator.com/newest")
 //        client.request(withURL: "https://afore.vc/")
 //        client.request(withURL: "http://www.dell.com/nz/p")
-//        client.request(withURL: "atlasreality.xyz")
+        client.request(withURL: "atlasreality.xyz")
 //        client.request(withURL: "https://ueno.co/")b
 //        client.request(withURL: "http://hookbang.com/")
 //        client.request(withURL: "unsplash.com")
 //        client.request(withURL: "https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-blocking-css")
-        client.request(withURL: "http://fb44561f.ngrok.io")
+//        client.request(withURL: "http://fb44561f.ngrok.io")
 //        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
     }
 

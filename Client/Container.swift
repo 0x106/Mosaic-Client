@@ -49,6 +49,7 @@ class Container {
     var total_width:            Float = 0.0
     
     var font_size:              Float = 0.0
+    var font_weight:              Float = 0.0
     
     var border_color:           UIColor = UIColor()
     var background_color:       UIColor = UIColor()

@@ -11,6 +11,7 @@
 		DA1415B5201E6F5F002C773F /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415B4201E6F5F002C773F /* Config.swift */; };
 		DA1415B9201EFBCB002C773F /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415B8201EFBCB002C773F /* Container.swift */; };
 		DA1415BB201FEA88002C773F /* ImageElement.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415BA201FEA88002C773F /* ImageElement.swift */; };
+		DA1415BD202022D9002C773F /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415BC202022D9002C773F /* Fonts.swift */; };
 		DA3E64682019A8F700F15119 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64672019A8F700F15119 /* Client.swift */; };
 		DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64692019A90C00F15119 /* SearchBar.swift */; };
 		DA3E646C2019A96D00F15119 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E646B2019A96D00F15119 /* Util.swift */; };
@@ -30,6 +31,7 @@
 		DA1415B4201E6F5F002C773F /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		DA1415B8201EFBCB002C773F /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
 		DA1415BA201FEA88002C773F /* ImageElement.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageElement.swift; sourceTree = "<group>"; };
+		DA1415BC202022D9002C773F /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		DA3E64672019A8F700F15119 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		DA3E64692019A90C00F15119 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		DA3E646B2019A96D00F15119 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -94,6 +96,7 @@
 				DA87E777201A879300BDADAE /* Domain.swift */,
 				DA3E64672019A8F700F15119 /* Client.swift */,
 				DA1415B8201EFBCB002C773F /* Container.swift */,
+				DA1415BC202022D9002C773F /* Fonts.swift */,
 				DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */,
 				DA3E64692019A90C00F15119 /* SearchBar.swift */,
 				DA1415BA201FEA88002C773F /* ImageElement.swift */,
@@ -261,6 +264,7 @@
 				DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */,
 				DA3E64682019A8F700F15119 /* Client.swift in Sources */,
 				DA1415B9201EFBCB002C773F /* Container.swift in Sources */,
+				DA1415BD202022D9002C773F /* Fonts.swift in Sources */,
 				DA1415BB201FEA88002C773F /* ImageElement.swift in Sources */,
 				DA87E778201A879300BDADAE /* Domain.swift in Sources */,
 			);
