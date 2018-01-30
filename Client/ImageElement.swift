@@ -19,7 +19,6 @@ import AlamofireImage
 class Image: Container {
     
     var label: UILabel        = UILabel()
-    var image: UIImage!
     
     var bgLabel: UILabel      = UILabel()
     var bgImage: UIImage      = UIImage()

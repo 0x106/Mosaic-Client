@@ -36,6 +36,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
 //        playground()
         
+//        client.request(withURL: "https://news.ycombinator.com/newest")
 //        client.request(withURL: "https://afore.vc/")
 //        client.request(withURL: "http://www.dell.com/nz/p")
 //        client.request(withURL: "atlasreality.xyz")
@@ -43,8 +44,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //        client.request(withURL: "http://hookbang.com/")
 //        client.request(withURL: "unsplash.com")
 //        client.request(withURL: "https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-blocking-css")
-//        client.request(withURL: "http://fb44561f.ngrok.io")
-        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
+        client.request(withURL: "http://fb44561f.ngrok.io")
+//        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
     }
 
     func setup() {

@@ -22,14 +22,37 @@ class Container {
     
     var width: Float = 0.0
     var height: Float = 0.0
-    var centre_x: Float = 0.0
-    var centre_y: Float = 0.0
     
     var nucleus: CGRect   = CGRect()
     var padding: [Float] = [0.0, 0.0, 0.0, 0.0]
     var borders: [CGRect] = [CGRect(), CGRect(), CGRect(), CGRect()]
-    var corners: [CGRect] = [CGRect(), CGRect(), CGRect(), CGRect()]
     var cell: CGRect = CGRect()
+    
+    var nucleus_height:         Float = 0.0
+    var nucleus_width:          Float = 0.0
+    var x:                      Float = 0.0
+    var y:                      Float = 0.0
+    
+    var border_top_width:       Float = 0.0
+    var padding_top:            Float = 0.0
+    
+    var border_bottom_width:    Float = 0.0
+    var padding_bottom:         Float = 0.0
+    
+    var border_left_width:      Float = 0.0
+    var padding_left:           Float = 0.0
+    
+    var border_right_width:     Float = 0.0
+    var padding_right:          Float = 0.0
+    
+    var total_height:           Float = 0.0
+    var total_width:            Float = 0.0
+    
+    var font_size:              Float = 0.0
+    
+    var border_color:           UIColor = UIColor()
+    var background_color:       UIColor = UIColor()
+    var font_color:             UIColor = UIColor()
     
     var text: String = ""
     
@@ -38,6 +61,7 @@ class Container {
     
     var rootNode: SCNNode = SCNNode()
     var nodeKey: String = ""
+    var image: UIImage = UIImage()
     var plane: SCNPlane = SCNPlane()
     let scale: Float = 0.001
     
@@ -76,100 +100,105 @@ class Container {
             }
         }
         
-        let nucleus_height:         Float = Float(layout["height"].doubleValue)
-        let nucleus_width:          Float = Float(layout["width"].doubleValue)
+        self.nucleus_height          = Float(layout["height"].doubleValue)
+        self.nucleus_width           = Float(layout["width"].doubleValue)
+        self.x                       = Float(layout["x"].doubleValue)
+        self.y                       = Float(layout["y"].doubleValue)
+        self.border_top_width        = computedStyle["border-top-width"] as! Float
+        self.padding_top             = computedStyle["padding-top"] as! Float
+        self.border_bottom_width     = computedStyle["border-bottom-width"] as! Float
+        self.padding_bottom          = computedStyle["padding-bottom"] as! Float
+        self.border_left_width       = computedStyle["border-left-width"] as! Float
+        self.padding_left            = computedStyle["padding-left"] as! Float
+        self.border_right_width      = computedStyle["border-right-width"] as! Float
+        self.padding_right           = computedStyle["padding-right"] as! Float
+        self.total_height            = nucleus_height + padding_top + padding_bottom + border_bottom_width + border_top_width
+        self.total_width             = nucleus_width + border_left_width + padding_left + border_right_width + padding_right
+        self.font_size               = computedStyle["font-size"] as! Float - 2.0
         
-        let border_top_width:       Float = computedStyle["border-top-width"] as! Float
-        let padding_top:            Float = computedStyle["padding-top"] as! Float
+        self.border_color            = (computedStyle["border-color"] as! UIColor)
+        self.background_color        = (computedStyle["background-color"] as! UIColor)
+        self.font_color              = (computedStyle["color"] as! UIColor)
         
-        let border_bottom_width:    Float = computedStyle["border-bottom-width"] as! Float
-        let padding_bottom:         Float = computedStyle["padding-bottom"] as! Float
+        self.determineLayout()
+    }
+    
+    func draw() {
         
-        let border_left_width:      Float = computedStyle["border-left-width"] as! Float
-        let padding_left:           Float = computedStyle["padding-left"] as! Float
-        
-        let border_right_width:     Float = computedStyle["border-right-width"] as! Float
-        let padding_right:          Float = computedStyle["padding-right"] as! Float
-        
-        let total_height:           Float = border_top_width + padding_top + nucleus_height + border_bottom_width + padding_bottom
-        let total_width:            Float = nucleus_width + border_left_width + padding_left + border_right_width + padding_right
-        
-        let font_size: Float = computedStyle["font-size"] as! Float - 2.0
-        
-        self.cell = CGRect(x: CGFloat(0.0),
-                           y: CGFloat(0.0),
-                           width: CGFloat(total_width),
-                           height: CGFloat(total_height))
-        
-        self.nucleus = CGRect(x: CGFloat(border_left_width + padding_left),
-                             y: CGFloat(border_top_width + padding_top),
-                             width: CGFloat(nucleus_width),
-                             height: CGFloat(nucleus_height))
-        
-        self.borders[bottom] = CGRect(x: CGFloat(0.0),
-                            y: CGFloat(border_top_width + padding_top + nucleus_height + padding_bottom),
-                            width: CGFloat(total_width),
-                            height: CGFloat(border_bottom_width))
-        
-        self.borders[top] = CGRect(x: CGFloat(0.0),
-                         y: CGFloat(0.0),
-                         width: CGFloat(total_width),
-                         height: CGFloat(border_top_width))
-        
-        self.borders[left] = CGRect(x: CGFloat(0.0),
-                          y: CGFloat(0.0),
-                          width: CGFloat(border_left_width),
-                          height: CGFloat(total_height))
-        
-        self.borders[right] = CGRect(x: CGFloat(border_left_width + nucleus_width + padding_left + padding_right),
-                           y: CGFloat(0.0),
-                           width: CGFloat(border_right_width),
-                           height: CGFloat(total_height))
-        
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(total_width), height: CGFloat(total_height)))
-        let img = renderer.image { context in
+        let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.total_width), height: CGFloat(self.total_height)))
+        self.image = renderer.image { context in
             
-            UIColor.red.setFill()
+            self.background_color.setFill()
+            context.fill(self.cell)
+            
+            self.border_color.setFill()
             context.fill(self.borders[top])
-//
-            UIColor.green.setFill()
             context.fill(self.borders[bottom])
-
-            UIColor.blue.setFill()
             context.fill(self.borders[left])
-
-            UIColor.magenta.setFill()
             context.fill(self.borders[right])
             
-//            UIColor.magenta.withAlphaComponent(0.4).setFill()
-//            context.fill(self.nucleus)
-//
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .left
-            let attrs = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-thin", size: CGFloat(font_size))!, NSAttributedStringKey.paragraphStyle: paragraphStyle]
+            
+            let font = UIFont(name: "HelveticaNeue-thin", size: CGFloat(self.font_size))
+            
+            let attrs = [NSAttributedStringKey.font: font!,
+                         NSAttributedStringKey.paragraphStyle: paragraphStyle]
+//                         NSAttributedStringKey.strokeColor: self.font_color]
+            
             let message = self.text
             message.draw(with: self.nucleus, options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
         }
         
-        self.plane = SCNPlane(width: CGFloat(total_width * self.scale), height: CGFloat(total_height * self.scale))
-        self.plane.firstMaterial?.diffuse.contents = img
+        self.plane = SCNPlane(width: CGFloat(self.total_width * self.scale), height: CGFloat(self.total_height * self.scale))
+        self.plane.firstMaterial?.diffuse.contents = self.image
         self.rootNode.geometry = self.plane
         
-        self.rootNode.position = SCNVector3Make((Float(layout["x"].doubleValue) + (total_width/2.0))*self.scale,
-                                                (-Float(layout["y"].doubleValue) - (total_height/2.0))*self.scale,
+        self.rootNode.position = SCNVector3Make((  self.x + (self.total_width/2.0))*self.scale,
+                                                ( -self.y - (self.total_height/2.0))*self.scale,
                                                 -1)
         
-        print("Key: \(self.nodeKey)")
-        print("Text: \(self.text)")
-        print("totalWidth: \(total_width), \(total_width * self.scale)")
-        print("totalheight: \(total_height), \(total_height * self.scale)")
-        print("Nucleus: \(self.nucleus)")
-        print("Border left: \(self.self.borders[left])")
-        print("Border right: \(self.self.borders[right])")
-        print("Border top: \(self.self.borders[top])")
-        print("Border bottom: \(self.self.borders[bottom])")
-        print("Position: \(self.rootNode.position)")
-        print("===========================================")
+        print("x: \(self.x)")
+        print("y: \(self.y)")
+        print(self.rootNode.position)
+        print("===========================")
+    }
+    
+    func determineLayout() {
+        self.cell = CGRect(x: CGFloat(0.0),
+                           y: CGFloat(0.0),
+                           width: CGFloat(self.total_width),
+                           height: CGFloat(self.total_height))
+        
+        self.nucleus = CGRect(x: CGFloat(self.border_left_width + self.padding_left),
+                              y: CGFloat(self.border_top_width + self.padding_top),
+                              width: CGFloat(self.nucleus_width),
+                              height: CGFloat(self.nucleus_height))
+        
+        self.borders[bottom] = CGRect(x: CGFloat(0.0),
+                                      y: CGFloat(self.border_top_width + self.padding_top + self.nucleus_height + self.padding_bottom),
+                                      width: CGFloat(self.total_width),
+                                      height: CGFloat(self.border_bottom_width))
+        
+        self.borders[top] = CGRect(x: CGFloat(0.0),
+                                   y: CGFloat(0.0),
+                                   width: CGFloat(self.total_width),
+                                   height: CGFloat(self.border_top_width))
+        
+        self.borders[left] = CGRect(x: CGFloat(0.0),
+                                    y: CGFloat(0.0),
+                                    width: CGFloat(self.border_left_width),
+                                    height: CGFloat(self.total_height))
+        
+        self.borders[right] = CGRect(x: CGFloat(self.border_left_width + self.nucleus_width + self.padding_left + self.padding_right),
+                                     y: CGFloat(0.0),
+                                     width: CGFloat(self.border_right_width),
+                                     height: CGFloat(self.total_height))
+        
+        print(self.nodeKey, self.cell)
+        for b in self.borders {
+            print(b)
+        }
         
     }
 

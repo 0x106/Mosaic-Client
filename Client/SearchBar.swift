@@ -9,35 +9,28 @@
 import Foundation
 import ARKit
 
-class SearchBar {
+class SearchBar: Container {
     
-    var text: String        = ""
     var value: String       = ""
-    var rootNode: SCNNode       = SCNNode()
-    var plane: SCNPlane     = SCNPlane()
     var label: UILabel      = UILabel()
-    var image: UIImage      = UIImage()
     let size: Float         = 0.1
-    var width: CGFloat      = CGFloat(0.2)
-    var height: CGFloat     = CGFloat(0.2)
     
     var alpha: CGFloat = CGFloat(0.8)
     
     var labelBGColour: UIColor = UIColor(red: 240, green: 240, blue: 240).withAlphaComponent(0.5)
     var textColour: UIColor = UIColor(red: 0, green: 0, blue: 0).withAlphaComponent(1.0)
     
-    var isButton: Bool = true
     var isFieldSet: Bool = false
-    
     var isHighlighted: Bool = false
-    
     var button: Label = Label("Search", true)
     
-    init() {
+    override init() {
+        
+        super.init()
         
         self.text = ""
+        self.nucleus = CGRect(x: 0.0, y: 0.0, width: CGFloat(500), height: CGFloat(50))
         
-        self.label = UILabel(frame: CGRect(x: CGFloat(self.size), y: CGFloat(self.size), width: CGFloat(500), height: CGFloat(50)))
         self.label.textAlignment = .left
         self.label.font = UIFont(name: "Arial", size: CGFloat(22.0))
         self.label.textColor = self.textColour
@@ -50,14 +43,14 @@ class SearchBar {
         self.label.layer.cornerRadius = CGFloat(2)
         self.label.clipsToBounds = true
         
-        self.width = CGFloat(0.67)
-        self.height = CGFloat(0.1)
+        self.width = 0.67
+        self.height = 0.1
         
         self.rootNode.name = "searchBarNode"
         self.rootNode.geometry?.firstMaterial?.isDoubleSided = true
         
-        self.plane = SCNPlane(width: self.width, height: self.height)
-        self.labelToImage()
+        self.plane = SCNPlane(width: CGFloat(self.width), height: CGFloat(self.height))
+//        self.labelToImage()
         
         button.rootNode.name = "searchBarButtonNode"
         button.rootNode.position = SCNVector3Make(0, -0.2, 0)
@@ -73,7 +66,7 @@ class SearchBar {
     func setTransparency(_ transparency: Double) {
         self.alpha = CGFloat(transparency)
         self.label.backgroundColor = UIColor(red: 240, green: 240, blue: 240).withAlphaComponent(self.alpha)
-        labelToImage()
+//        labelToImage()
     }
     
     func setText(_ text: String) {
@@ -82,14 +75,14 @@ class SearchBar {
         self.label.textColor = self.textColour
         self.text = text
         self.label.text = self.text
-        labelToImage()
+//        labelToImage()
     }
     
     func setBGColour(colour: UIColor) {
         let c = colour.withAlphaComponent(alpha)
         self.label.backgroundColor = c
         self.labelBGColour = c
-        labelToImage()
+//        labelToImage()
     }
     
     func setFaded() {
