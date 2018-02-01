@@ -99,14 +99,14 @@ class Container {
         
         // check if this is a link - if so then make this a button and add the href that it points to.
         let parentType = parent["nodeName"]
-        if parentType == "A" {
-            for (_, attrValue) in parent["attr"] {
-                if attrValue["name"] == "href" {
-                    self.isButton = true
-                    self.href = attrValue["value"].stringValue
-                }
-            }
-        }
+//        if parentType == "A" {
+//            for (_, attrValue) in parent["attr"] {
+//                if attrValue["name"] == "href" {
+//                    self.isButton = true
+//                    self.href = attrValue["value"].stringValue
+//                }
+//            }
+//        }
         
         self.nucleus_height          = Float(layout["height"].doubleValue)
         self.nucleus_width           = Float(layout["width"].doubleValue)
@@ -123,6 +123,11 @@ class Container {
         self.total_height            = nucleus_height + padding_top + padding_bottom + border_bottom_width + border_top_width
         self.total_width             = nucleus_width + border_left_width + padding_left + border_right_width + padding_right
         self.font_size               = computedStyle["font-size"] as! Float - 2.0
+        
+//        print("\(self.nucleus_height) | \(self.border_top_width) | \(self.border_bottom_width) | \(self.padding_top) | \(self.padding_bottom)")
+//        print("\(self.nucleus_width) | \(self.border_left_width) | \(self.border_right_width) | \(self.padding_left) | \(self.padding_right)")
+//        print("\(self.x) | \(self.y) | \(self.total_width) | \(self.total_height)")
+//        print("-----------------------------------")
         
         self.border_color            = (computedStyle["border-color"] as! UIColor)
         self.background_color        = (computedStyle["background-color"] as! UIColor)
@@ -148,23 +153,23 @@ class Container {
 //                }
 //            }
             
-            self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
+//            self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
+//
+//            self.plane.firstMaterial?.diffuse.contents = UIColor.magenta
+//            self.plane.firstMaterial?.transparency = CGFloat(0.25)
+//            self.rootNode.geometry = self.plane
+//            self.z = -1.03
+//            self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
+//                                                    (  -self.y - (self.nucleus_height/2.0))*self.scale,
+//                                                    self.z)
             
-            self.plane.firstMaterial?.diffuse.contents = UIColor.magenta
-            self.plane.firstMaterial?.transparency = CGFloat(0.25)
-            self.rootNode.geometry = self.plane
-            self.z = -1.001
-            self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
-                                                    (  -self.y - (self.nucleus_height/2.0))*self.scale,
-                                                    self.z)
-            
-            print("created image container")
+//            print("created image container")
         } else {
         
             if self.text == "" {
-                self.z = -1.001
+                self.z = -1.002
                 if containerType == "BODY" {
-                    self.z = -1.002
+                    self.z = -1.004
                 }
             } else {
                 self.z = -1
@@ -224,6 +229,7 @@ class Container {
         
         self.plane = SCNPlane(width: CGFloat(self.total_width * self.scale), height: CGFloat(self.total_height * self.scale))
         self.plane.firstMaterial?.diffuse.contents = self.image
+        self.plane.firstMaterial?.isDoubleSided = true
         self.rootNode.geometry = self.plane
         
         self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,

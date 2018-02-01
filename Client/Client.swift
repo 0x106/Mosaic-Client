@@ -23,7 +23,7 @@ class Client {
     
     let orb: Dodecahedron = Dodecahedron()
     
-    let server: String = "http://b6433882.ngrok.io"
+    let server: String = "http://75a8b653.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
@@ -113,14 +113,13 @@ class Client {
         
             if self.writeData {
                 let dataWriterWorker = DispatchQueue(label: "dataWriterWorker", qos: .userInitiated)
-                
                 dataWriterWorker.async {
                     do {
                         let data = try response.rawData()
                         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
                         let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
                         try data.write(to: file)
-                        print("Writing to local file")
+                        print("Wrote to local file")
                     } catch {
                         print("Error writing domain data to local file.")
                     }

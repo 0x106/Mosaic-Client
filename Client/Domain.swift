@@ -24,7 +24,7 @@ class Domain {
         let ignoreNameTags = ["#document", "HTML", "IFRAME"];
         let ignoreValueTags = ["Cached", "Similar"];
         
-        print(self.data)
+//        print(self.data)
         
         let containerGroup = DispatchGroup()
         
@@ -62,11 +62,20 @@ class Domain {
             }
         }
         
+        
+//        exit()
+        
         containerGroup.notify(queue: .main) {
-            for element in self.nodes {
-                element.draw()
+//            DispatchQueue.main.async {
+            let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
+            containerDrawWorker.async {
+                for element in self.nodes {
+                    element.draw()
+                }
             }
         }
+        
+        self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
         
     }
     
