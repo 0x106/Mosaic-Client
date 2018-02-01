@@ -10,7 +10,7 @@ import Foundation
 import ARKit
 import SwiftyJSON
 
-let DEBUG = true
+let DEBUG = false
 
 // default to [0.0, 1.0]
 func randomFloat() -> Float {
@@ -84,11 +84,14 @@ func parseColorString(_ input: String) -> UIColor {
     let values = desc.split(separator: " ")
     
     if input.hasPrefix("rgba") {
+//        print("-----> \(values)")
         output = UIColor(red: Int(values[0])!, green: Int(values[1])!, blue: Int(values[2])!).withAlphaComponent(CGFloat(Float(values[3])!))
     } else if input.hasPrefix("rgb") {
         output = UIColor(red: Int(values[0])!, green: Int(values[1])!, blue: Int(values[2])!).withAlphaComponent(CGFloat(1.0))
     } else {
     }
+    
+//    print("Computed color: \(output)")
     return output
 }
 
@@ -132,27 +135,8 @@ func computeStylesFromDict(_ style: JSON) -> Dictionary<String, Any> {
     return computedStyle
 }
 
-//func stripNewLine(_ input: String) -> String {
-//
-//}
-//
-//func stripSpace(_ input: String) -> String {
-//
-//}
-
-func parseText(_ input: String) -> String {
-    let text = input.replacingOccurrences(of: "\n", with: "")
-
-//    let text = input
-//
-//    if text.hasPrefix("\n") {
-//        text = .replacingOccurrences(of: "\n", with: "")
-//    }
-    
-    return text
-}
-
 func parseHREFFromURL(_ url: String) -> String {
+
     var startIndex = url.index(of: "(") ?? url.endIndex
     startIndex = url.index(after: startIndex)
     startIndex = url.index(after: startIndex)
@@ -266,4 +250,132 @@ func resizeImage(image: UIImage, newSize: CGSize) -> UIImage {
     UIGraphicsEndImageContext()
     return newImage!
 }
+
+func exit() {
+    exit(EXIT_SUCCESS)
+}
+
+
+func urlToID(_ input: String) -> String {
+    var output = String(input)
+    
+    var charsToReplace: [String] = ["http", "https", "www", ".", "/", "%", "&", ":"]
+    for value in charsToReplace {
+        output = output.replacingOccurrences(of: value, with: "")
+    }
+    
+    return output
+}
+
+
+
+
+extension String {
+    
+    func sliceWithin(from: String, to: String) -> String? {
+        return (range(of: from)?.upperBound).flatMap { substringFrom in
+            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
+                String(self[substringFrom..<substringTo])
+            }
+        }
+    }
+    
+    func sliceWithLower(from: String, to: String) -> String? {
+        return (range(of: from)?.lowerBound).flatMap { substringFrom in
+            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
+                String(self[substringFrom..<substringTo])
+            }
+        }
+    }
+    
+//    func sliceWithUpper(from: String, to: String) -> String? {
+//        return (range(of: from)?.upperBound).flatMap { substringFrom in
+//            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
+//                String(self[substringFrom..<substringTo])
+//            }
+//        }
+//    }
+//
+//    func slice(from: String, to: String) -> String? {
+//        return (range(of: from)?.upperBound).flatMap { substringFrom in
+//            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
+//                String(self[substringFrom..<substringTo])
+//            }
+//        }
+//    }
+}
+
+func getAttribute(_ object: JSON, _ query: String) -> JSON? {
+    
+    for (key, value) in object {
+        if query == value["name"].stringValue {
+            return value["value"]
+        }
+    }
+    
+    return nil
+}
+
+func hasAttribute(_ object: JSON, _ query: String) -> JSON? {
+    for (key, value) in object {
+        
+        if query == "background-image" {
+            print(key, value)
+        }
+        
+        if query == key {
+            return value
+        }
+    }
+    
+    return nil
+}
+
+
+
+
+
+
+
+
+extension String {
+    //: ### Base64 encoding a string
+    func base64Encoded() -> String? {
+        if let data = self.data(using: .utf8) {
+            return data.base64EncodedString()
+        }
+        return nil
+    }
+    
+    //: ### Base64 decoding a string
+    func base64Decoded() -> String? {
+        if let data = Data(base64Encoded: self) {
+            return String(data: data, encoding: .utf8)
+        }
+        return nil
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// end
+
+
+
+
+
+
+
+
 

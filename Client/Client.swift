@@ -23,9 +23,16 @@ class Client {
     
     let orb: Dodecahedron = Dodecahedron()
     
-    let server: String = "http://fb44561f.ngrok.io"
+    let server: String = "http://b6433882.ngrok.io"
+    var serverEndpoint: String = ""
+    var requestURL: String = ""
+    var requestID: String = ""
+    
+    var writeData: Bool = true
     
     init() {
+        
+        self.serverEndpoint = "\(self.server)/client"
         
         field.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         field.isHidden = true
@@ -43,7 +50,7 @@ class Client {
         self.searchBar.setText( textField.text! )
     }
     
-    func request(withURL url: String) {
+    func request(withURL url: String, _ refresh: Bool = false) {
         
         // show loading animation
         self.orb.rootNode.isHidden = false
@@ -51,44 +58,66 @@ class Client {
         self.searchBar.rootNode.isHidden = true
         
         // check url
-        let requestURL = checkURL(url)
-        print(requestURL)
+        if url == "" {
+            // primitive test of the server index.hbs
+            requestURL = server
+            self.requestID = urlToID(requestURL)
+        } else {
+            requestURL = checkURL(url)
+        }
+        
+        // check to see if a local cache of this url exists
+        if refresh {
+            self._request()
+        } else {
+            do {
+
+                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
+
+                print("Trying to retrieve from local file:  \(file.absoluteString)")
+                
+                let data = try Data(contentsOf: file)
+                let response = try JSON(data: data)
+
+                print("Reading from local file")
+                self.writeData = false
+
+                self.addNewDomain(response)
+
+            } catch {
+                self._request()
+            }
+        }
+    }
+    
+    private func _request() {
+        print("no local file available")
+        self.writeData = true
         
         let parameters: Parameters = ["atlasurl": requestURL]
-        let serverEndpoint = "\(self.server)/client"
-
-//        if DEBUG {
-//            do {
-//
-//                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-//                let file = URL(fileURLWithPath: documents + "/atlas-client.json")
-//
-//                let data = try Data(contentsOf: file)
-//                let response = try JSON(data: data)
-//
-//                self.addNewDomain(response)
-//
-//            } catch {}
-//        } else {
-            Alamofire.request("\(serverEndpoint)", method: .get, parameters: parameters)
-                .responseSwiftyJSON { dataResponse in
-                    
-                    guard let response = dataResponse.value else {return}
-                    self.addNewDomain(response)
-            }
-//        }
+        
+        Alamofire.request("\(self.serverEndpoint)", method: .get, parameters: parameters)
+            .responseSwiftyJSON { dataResponse in
+                
+                guard let response = dataResponse.value else {return}
+                print("Retrieved data from: \(dataResponse.result)")
+                self.addNewDomain(response)
+        }
     }
     
     func addNewDomain(_ response: JSON) {
         
-        do {
-            let data = try response.rawData()
-            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-            let file = URL(fileURLWithPath: documents + "/atlas-client.json")
-            try data.write(to: file)
-        } catch {}
+        if self.writeData {
+            do {
+                let data = try response.rawData()
+                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
+                try data.write(to: file)
+                print("Writing to local file")
+            } catch {}
+        }
         
-       
         // remove any pages currently in the scene
         if let domain = self.currentDomain {
             domain.rootNode.removeFromParentNode()
@@ -105,14 +134,13 @@ class Client {
         self.orb.rootNode.isHidden = true
 
         if DEBUG {
-            
             let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-            let file = URL(fileURLWithPath: documents + "/atlas-client.scn")
+            let file = URL(fileURLWithPath: documents + "/\(self.requestID).scn")
             
             let scene = SCNScene()
             scene.rootNode.addChildNode(self.rootNode)
             scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-            print(documents)
+            print("Scene written to: \(file)")
 //            exit(EXIT_SUCCESS)
         }
         
@@ -125,6 +153,7 @@ class Client {
     func checkURL(_ url: String) -> String {
                 
         var output = url
+        self.requestID = urlToID(url)
         
         if url.hasPrefix("http://www.") || url.hasPrefix("https://www.") {
             return output

@@ -21,64 +21,47 @@ class Domain {
         
         self.data = data
         
-        let ignoreNameTags = ["#document", "HTML", "BODY", "IFRAME"];
+        let ignoreNameTags = ["#document", "HTML", "IFRAME"];
         let ignoreValueTags = ["Cached", "Similar"];
         
         print(self.data)
         
-        for (_, object) in self.data {
+        for (key, object) in self.data {
             
             let name = object["nodeName"].stringValue
             if !ignoreNameTags.contains(name) {
+                
                 let layout = object["nodeLayout"]
                 let style = object["nodeStyle"]
                 let value = object["nodeValue"].stringValue
                 
                 if !ignoreValueTags.contains(value) {
-                    
                     if layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0 {
-                        if name == "#text" {
-                        
+                        if name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" {
+
                             let pkey = object["pkey"].stringValue
-                            let key = object["key"].stringValue
-                            guard let parent = self.getObject(withKey: pkey) else {return}
                             
-                            if let element = Container(withlabel:    value,
-                                                  withKey:      key,
-                                                  withlayout:   layout,
-                                                  withStyle:    style,
-                                                  withParent:   parent)
-                            {
-                                element.draw()
-                                self.rootNode.addChildNode(element.rootNode)
-//                                    self.nodes.append(element)
-                            } else {}
-                        }
-                    } else if name == "DIV" {
-                        
-                            // probably need to check that break skips to the next element in the for-loop
-                            if let bgImage = self.getAttribute(style, "background-image"), bgImage != "none" {
-                                
-                                let pkey = object["pkey"].stringValue
-                                let key = object["key"].stringValue
-                                guard let parent = self.getObject(withKey: pkey) else {return}
-                                
-                                if let element = Image(withValue:   bgImage.stringValue,
+                            let parent = self.data[pkey]
+                
+                            if let element = Container(withName:     name,
+                                                       withlabel:    value,
                                                        withKey:      key,
                                                        withlayout:   layout,
                                                        withStyle:    style,
                                                        withParent:   parent)
-                                {
-                                    //                                        self.rootNode.addChildNode(element.rootNode)
-                                    //                                        self.nodes.append(element)
-                                } else {}
-                            }
+                            {
+                                element.draw()
+                                self.rootNode.addChildNode(element.rootNode)
+                                self.nodes.append(element)
+                            } else {}
+                        }
                     }
                 }
             }
         }
     }
     
+    // spending a lot of time in this function.
     func getObject(withKey ref: String) -> JSON? {
         for (_, object) in self.data {
             let query = object["key"].stringValue
@@ -100,16 +83,5 @@ class Domain {
     
     func onPlane(_ planeNode: SCNNode) {
         self.rootNode.position = planeNode.position
-    }
-    
-    func getAttribute(_ object: JSON, _ query: String) -> JSON? {
-        
-        for (key, value) in object {
-            if query == value["name"].stringValue {
-                return value["value"]
-            }
-        }
-        
-        return nil
     }
 }

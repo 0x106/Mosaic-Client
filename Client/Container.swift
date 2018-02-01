@@ -9,6 +9,8 @@
 import Foundation
 import ARKit
 import SwiftyJSON
+import Alamofire
+import AlamofireImage
 
 class Label: Container {
     
@@ -20,9 +22,6 @@ class Label: Container {
 
 class Container {
     
-    var width: Float = 0.0
-    var height: Float = 0.0
-    
     var nucleus: CGRect   = CGRect()
     var padding: [Float] = [0.0, 0.0, 0.0, 0.0]
     var borders: [CGRect] = [CGRect(), CGRect(), CGRect(), CGRect()]
@@ -32,6 +31,7 @@ class Container {
     var nucleus_width:          Float = 0.0
     var x:                      Float = 0.0
     var y:                      Float = 0.0
+    var z:                      Float = 0.0
     
     var border_top_width:       Float = 0.0
     var padding_top:            Float = 0.0
@@ -49,16 +49,22 @@ class Container {
     var total_width:            Float = 0.0
     
     var font_size:              Float = 0.0
-    var font_weight:              Float = 0.0
+    var font_weight:            Float = 0.0
     
     var border_color:           UIColor = UIColor()
     var background_color:       UIColor = UIColor()
-    var font_color:             UIColor = UIColor()
+    var color:             UIColor = UIColor()
     
+    var fonts:                  [AtlasFont] = [AtlasFont]()
+    var font:                   UIFont = UIFont()
     var text: String = ""
     
     var isButton: Bool = false
     var href: String = ""
+    
+    var imageURL: String = ""
+    var canDraw: Bool = true
+    var isBase64: Bool = false
     
     var rootNode: SCNNode = SCNNode()
     var nodeKey: String = ""
@@ -73,7 +79,8 @@ class Container {
     
     init(){}
 
-    init?(withlabel     labelText: String,
+    init?(withName      containerType: String,
+          withlabel     labelText: String,
           withKey       key: String,
           withlayout    layout: JSON,
           withStyle     style: JSON,
@@ -83,11 +90,11 @@ class Container {
         self.rootNode.name = self.nodeKey
         let computedStyle = computeStylesFromDict(style)
         
-        if ( (computedStyle["background-image"] as! String != "none") && (computedStyle["background-color"]! as! UIColor).cgColor.alpha == CGFloat(0.0) && (computedStyle["color"]! as! UIColor).cgColor.alpha == CGFloat(0.0))
-            || ((computedStyle["font-size"]! as! Float) < 10.0) || (layout["x"].doubleValue < 0) || (layout["y"].doubleValue < 0) {
-            return nil
-        }
-        
+//        if ( (computedStyle["background-color"]! as! UIColor).cgColor.alpha == CGFloat(0.0) && (computedStyle["color"]! as! UIColor).cgColor.alpha == CGFloat(0.0))
+//            || ((computedStyle["font-size"]! as! Float) < 10.0) || (layout["x"].doubleValue < 100) || (layout["y"].doubleValue < 100) {
+//            return nil
+//        }
+//
         self.text = labelText
         
         // check if this is a link - if so then make this a button and add the href that it points to.
@@ -119,12 +126,66 @@ class Container {
         
         self.border_color            = (computedStyle["border-color"] as! UIColor)
         self.background_color        = (computedStyle["background-color"] as! UIColor)
-        self.font_color              = (computedStyle["color"] as! UIColor)
+        self.color                   = (computedStyle["color"] as! UIColor)
+        
+        if let bgImage = getAttribute(style, "background-image"), bgImage.stringValue != "none" {
+            self.canDraw = false // don't try and draw over top of images
+//            if bgImage.stringValue.hasPrefix("url") {
+//                if bgImage.stringValue.contains("base64") {
+//                    print(bgImage.stringValue)
+//                    let result = bgImage.stringValue.sliceWithin(from: ",", to: "\"")
+//                    if let decodedData = Data(base64Encoded: result!, options: .ignoreUnknownCharacters) {
+//                        if let image = UIImage(data: decodedData) {
+//                            self.image = image
+//                            self.plane.firstMaterial?.diffuse.contents = self.image
+//                            print("image added")
+//                            print("success")
+//                        }
+//                    }
+//                } else {
+//                    self.imageURL = parseHREFFromURL(bgImage.stringValue)
+//                    //            self.loadImage()
+//                }
+//            }
+            
+            self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
+            
+            self.plane.firstMaterial?.diffuse.contents = UIColor.magenta
+            self.plane.firstMaterial?.transparency = CGFloat(0.25)
+            self.rootNode.geometry = self.plane
+            self.z = -1.001
+            self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
+                                                    (  -self.y - (self.nucleus_height/2.0))*self.scale,
+                                                    self.z)
+            
+            print("created image container")
+        } else {
+        
+            if self.text == "" {
+                self.z = -1.001
+                if containerType == "BODY" {
+                    self.z = -1.002
+                }
+            } else {
+                self.z = -1
+            }
+            
+            self.computeFonts(style)
+        }
         
         self.determineLayout()
     }
     
     func draw() {
+        
+        // don't draw on image containers
+        if !self.canDraw {
+            return
+        }
+        // if it's a TEXT container then we use __color__ for the font
+        // if it's _not_ a text container then we use __color__ for the background.
+        // if it's a TEXT container then we use __background_color__ for the background
+        // if it's _not_ a text container then we ignore __background_color__
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.total_width), height: CGFloat(self.total_height)))
         self.image = renderer.image { context in
@@ -141,11 +202,21 @@ class Container {
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .left
             
-            let font = UIFont(name: "LucidaGrande", size: CGFloat(self.font_size))
+            var fontIsSet: Bool = false
+            for possibleFont in self.fonts {
+                if possibleFont.isAvailable {
+                    self.font = possibleFont.font
+                    fontIsSet = true
+                    break
+                }
+            }
             
-            let attrs = [NSAttributedStringKey.font: font!,
-                         NSAttributedStringKey.paragraphStyle: paragraphStyle]
-//                         NSAttributedStringKey.strokeColor: self.font_color]
+            // if it doesn't use the Google Fonts API and if the specified fonts don't exist on iOS.
+            if !fontIsSet { self.font = UIFont(name: "HelveticaNeue", size: CGFloat(self.font_size))! }
+            
+            let attrs = [NSAttributedStringKey.font: self.font as UIFont,
+                         NSAttributedStringKey.paragraphStyle: paragraphStyle,
+                         NSAttributedStringKey.foregroundColor: self.color]
             
             let message = self.text
             message.draw(with: self.nucleus, options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
@@ -155,13 +226,9 @@ class Container {
         self.plane.firstMaterial?.diffuse.contents = self.image
         self.rootNode.geometry = self.plane
         
-        self.rootNode.position = SCNVector3Make((  self.x + (self.total_width/2.0))*self.scale,
-                                                ( -self.y - (self.total_height/2.0))*self.scale,
-                                                -1)
-        print("x: \(self.x)")
-        print("y: \(self.y)")
-        print(self.rootNode.position)
-        print("===========================")
+        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
+                                                (  -self.y - (self.total_height/2.0))*self.scale,
+                                                    self.z)
     }
     
     func determineLayout() {
@@ -194,20 +261,33 @@ class Container {
                                      y: CGFloat(0.0),
                                      width: CGFloat(self.border_right_width),
                                      height: CGFloat(self.total_height))
-        
-        print(self.nodeKey, self.cell)
-        for b in self.borders {
-            print(b)
+    
+    }
+    
+    func loadImage() {
+        Alamofire.request(self.imageURL).responseImage { response in
+            if let image = response.result.value {
+                self.image = image
+                self.plane.firstMaterial?.diffuse.contents = self.image
+                print("image added")
+            }
         }
+    }
+    
+    func computeFonts(_ style: JSON) {
+        let font_list = getAttribute(style, "font-family")?.stringValue.replacingOccurrences(of: ",", with: "").split(separator: " ")
+        let googleFonts = getAttribute(style, "googleFonts")
         
+        for ft in font_list! {
+            if var gf = hasAttribute(googleFonts!, String(ft)) {
+                self.fonts.append( AtlasFont(String(ft), gf["url"].stringValue, gf["weight"].stringValue, self.font_size) )
+            } else {
+                self.fonts.append( AtlasFont(String(ft), "", "", self.font_size) )
+            }
+        }
     }
 
 }
-
-
-
-
-
 
 
 

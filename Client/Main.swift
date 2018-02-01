@@ -17,6 +17,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     let client = Client()
     let trackingStatus = false
+    let button = UIButton()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,31 +35,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
-        let font = Fonts()
-        font.load()
-//        font.getFont("")
-//        font.unzip()
-//
-        
+        addButton()
+
 //        playground()
-        
-//        client.request(withURL: "https://news.ycombinator.com/newest")
-//        client.request(withURL: "https://afore.vc/")
-//        client.request(withURL: "http://www.dell.com/nz/p")
-//        client.request(withURL: "atlasreality.xyz")
-//        client.request(withURL: "https://ueno.co/")b
-//        client.request(withURL: "http://hookbang.com/")
-//        client.request(withURL: "unsplash.com")
-//        client.request(withURL: "https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-blocking-css")
-//        client.request(withURL: "http://fb44561f.ngrok.io")
-//        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
     }
 
     func setup() {
+        
+        // don't run the AR session in debug mode
         if !DEBUG {
             self.sceneView.scene.rootNode.addChildNode(client.rootNode)
             self.sceneView.addSubview(client.field)
         }
+    }
+    
+    @objc public func buttonPress() {
+        //        client.request(withURL: "")
+        client.request(withURL: "")
+        //        client.request(withURL: "atlasreality.xyz")
+        
+        //        client.request(withURL: "https://news.ycombinator.com/newest", false)
+        //        client.request(withURL: "https://afore.vc/")
+        //        client.request(withURL: "http://www.dell.com/nz/p")
+        //        client.request(withURL: "https://ueno.co/")b
+        //        client.request(withURL: "http://hookbang.com/")
+        //        client.request(withURL: "unsplash.com")
+        //        client.request(withURL: "https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-blocking-css")
+        //        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -110,7 +113,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         configuration.planeDetection = .horizontal
 
         // Run the view's session
-        if !DEBUG {
+        if !DEBUG { // don't run the AR session in debug mode
             sceneView.session.run(configuration)
         }
     }
@@ -248,8 +251,21 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 }
 
 
-
-
+extension ViewController {
+    func addButton() {
+        let bx = CGFloat((self.sceneView.bounds.maxX/2) - 24)
+        let by = CGFloat(self.sceneView.bounds.maxY - 80)
+        button.frame = CGRect(x: bx, y: by, width: CGFloat(48), height: CGFloat(48))
+        button.backgroundColor = .clear
+        let buttonIcon = UIImage(named: "add")
+        button.setImage(buttonIcon, for: .normal)
+        button.backgroundColor = UIColor(displayP3Red: 255, green: 255, blue: 255, alpha: 0.5)
+        button.addTarget(self, action: #selector(buttonPress), for: .touchUpInside)
+        button.layer.cornerRadius = 0.5 * button.bounds.size.width
+        button.clipsToBounds = true
+        self.sceneView.addSubview(button)
+    }
+}
 
 
 

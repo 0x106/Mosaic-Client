@@ -10,95 +10,84 @@ import Foundation
 import Alamofire
 import SSZipArchive
 
-class Fonts {
-
-    func load() {
-        let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
-        let fileUrl = documentsUrl.appendingPathComponent("font.ttf")
-        let destination: DownloadRequest.DownloadFileDestination = {
-            _, _ in
-            return (fileUrl, [.createIntermediateDirectories, .removePreviousFile])
+class AtlasFont {
+    var name: String = ""
+    var url: String = ""
+    var file: String = ""
+    var weight: String = ""
+    var fileURL: URL = URL(fileURLWithPath: "")
+    var fontDescriptor: String = ""
+    var font: UIFont = UIFont()
+    var isAvailable: Bool = false
+    var size: Float = 0.0
+    
+    init(_ key: String, _ value: String, _ weight: String, _ size: Float) {
+        self.name = key
+        self.url = value
+        self.weight = weight
+        self.size = size
+        if !(self.url == "") {
+            self.load(self.url)
+        } else {
+            self.fontDescriptor = self.name
         }
         
-        Alamofire.download("http://fonts.gstatic.com/s/roboto/v18/W5F8_SL0XFawnjxHGsZjJA.ttf", to: destination)
-            .response {
-                response in
-                if response.destinationURL != nil {
-                    let fontData = NSData(contentsOf: fileUrl)
-                    let dataProvider = CGDataProvider(data: fontData!)
-                    let cgFont = CGFont(dataProvider!)
-                    var errorFont: Unmanaged<CFError>?
-                    if CTFontManagerRegisterGraphicsFont(cgFont!, &errorFont) {
-                        print("font loaded")
+        self.set()
+    }
+    
+    func load(_ fontURL: String) {
+        
+        print("Loading Google Font with: name = \(self.name), url = \(self.url) and weight = \(self.weight)")
+        
+        let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+        self.fileURL = documentsUrl.appendingPathComponent("\(self.name)-\(self.weight).ttf")
+        
+        if let fontData = NSData(contentsOf: self.fileURL) {
+            self.create(fontData)
+        } else {
+            
+            print("Retrieving font from url")
+            
+            let destination: DownloadRequest.DownloadFileDestination = {
+                _, _ in
+                return (self.fileURL, [.createIntermediateDirectories, .removePreviousFile])
+            }
+            
+            Alamofire.download(fontURL, to: destination)
+                .response {
+                    response in
+                    if response.destinationURL != nil {
+                        if let fontData = NSData(contentsOf: self.fileURL) {
+                            self.create(fontData)
+                        }
                     }
-                }
+            }
         }
     }
     
-    
-//    func getFont(_ name: String) {
-//
-//        var documentsURL = URL(fileURLWithPath: "")
-//        var zippedFile = URL(fileURLWithPath: "")
-//        var unzippedURL = URL(fileURLWithPath: "")
-//
-//        let destination: DownloadRequest.DownloadFileDestination = { _, _ in
-//            documentsURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask)[0]
-//            zippedFile = documentsURL.appendingPathComponent("font.ttf")
-//            unzippedURL = documentsURL.appendingPathComponent("font/")
-//
-////            do {
-////                try FileManager.default.createDirectory(at: unzippedURL, withIntermediateDirectories: true, attributes: nil)
-////            } catch {}
-//
-//            return (zippedFile, [.removePreviousFile, .createIntermediateDirectories])
-//        }
-//
-//        Alamofire.download("http://themes.googleusercontent.com/static/fonts/anonymouspro/v3/Zhfjj_gat3waL4JSju74E-V_5zh5b-_HiooIRUBwn1A.ttf", to: destination).response { response in
-//            print(response)
-//
-////            print("Input: \(zippedFile)")
-////            print("Output: \(unzippedURL)")
-////
-////            let success: Bool = SSZipArchive.unzipFile(atPath: String(describing: zippedFile),
-////                                                       toDestination: String(describing: unzippedURL))
-////            print("Success: \(success)")
-//            exit(EXIT_SUCCESS)
-//        }
-//
-//    }
-//
-//    static func loadFontFromFile(fontName: String, baseFolderPath: String) -> Bool {
-//
-////        NSData *inData =
-////        CFErrorRef error;
-////        CGDataProviderRef provider = CGDataProviderCreateWithCFData((CFDataRef)inData);
-////        CGFontRef font = CGFontCreateWithDataProvider(provider);
-////        if (! CTFontManagerRegisterGraphicsFont(font, &error)) {
-////            CFStringRef errorDescription = CFErrorCopyDescription(error)
-////            NSLog(@"Failed to load font: %@", errorDescription);
-////            CFRelease(errorDescription);
-////        }
-////        CFRelease(font);
-////        CFRelease(provider);
-//
-////        let basePath = baseFolderPath as NSString
-////        let fontFilePath = basePath.appendingPathComponent(fontName)
-////        let fontUrl = NSURL(fileURLWithPath: fontFilePath)
-////        if let inData = NSData(contentsOf: fontUrl as URL) {
-////            var error: Unmanaged<CFError>?
-////            let cfdata = CFDataCreate(nil, UnsafePointer<UInt8>(inData.bytes), inData.length)
-////            if let provider = CGDataProviderCreateWithCFData(cfdata) {
-////                if let font = CGFontCreateWithDataProvider(provider) {
-////                    if (!CTFontManagerRegisterGraphicsFont(font, &error)) {
-////                        Logger.info("Failed to load font: \(error)")
-////                    }
-////                    return true
-////                }
-////            }
-////        }
-////        return false
-//    }
+    private func create(_ fontData: NSData) {
+        let dataProvider = CGDataProvider(data: fontData)
+        let cgFont = CGFont(dataProvider!)
+        var errorFont: Unmanaged<CFError>?
+        if CTFontManagerRegisterGraphicsFont(cgFont!, &errorFont) {} else {}
 
+        var fontNameArray = ((cgFont?.fullName)! as String).split(separator: " ")
+        if fontNameArray.count == 2 {
+            self.fontDescriptor = fontNameArray[0] + "-" + (fontNameArray[1].lowercased())
+        } else if fontNameArray.count == 1 {
+            self.fontDescriptor = String(fontNameArray[0])
+        } else {
+            
+        }
+    }
     
+    private func set() {
+        self.isAvailable = true
+        guard let tmpFont = UIFont(name: self.fontDescriptor, size: CGFloat(self.size)) else {
+            self.isAvailable = false
+            return
+        }
+        
+        self.font = tmpFont
+    }
 }
