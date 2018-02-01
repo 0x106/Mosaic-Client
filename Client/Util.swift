@@ -10,7 +10,7 @@ import Foundation
 import ARKit
 import SwiftyJSON
 
-let DEBUG = false
+var DEBUG = false
 
 // default to [0.0, 1.0]
 func randomFloat() -> Float {

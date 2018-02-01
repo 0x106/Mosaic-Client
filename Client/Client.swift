@@ -70,29 +70,29 @@ class Client {
         if refresh {
             self._request()
         } else {
-            do {
-
-                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
-
-                print("Trying to retrieve from local file:  \(file.absoluteString)")
-                
-                let data = try Data(contentsOf: file)
-                let response = try JSON(data: data)
-
-                print("Reading from local file")
-                self.writeData = false
-
-                self.addNewDomain(response)
-
-            } catch {
-                self._request()
+            
+            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
+            print("Trying to retrieve from local file:  \(file.absoluteString)")
+            
+            let dataLoaderWorker = DispatchQueue(label: "dataLoaderWorker", qos: .userInitiated)
+            
+            dataLoaderWorker.async {
+                do {
+                    let data = try Data(contentsOf: file)
+                    let response = try JSON(data: data)
+                    print("Reading from local file")
+                    self.writeData = false
+                    self.addNewDomain(response)
+                } catch {
+                    self._request()
+                }
             }
         }
     }
     
     private func _request() {
-        print("no local file available")
+        print("No local file available - making network request.")
         self.writeData = true
         
         let parameters: Parameters = ["atlasurl": requestURL]
@@ -108,40 +108,50 @@ class Client {
     
     func addNewDomain(_ response: JSON) {
         
-        if self.writeData {
-            do {
-                let data = try response.rawData()
-                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
-                try data.write(to: file)
-                print("Writing to local file")
-            } catch {}
-        }
+        // UI work always done on main thread
+        DispatchQueue.main.async { [unowned self] in
         
-        // remove any pages currently in the scene
-        if let domain = self.currentDomain {
-            domain.rootNode.removeFromParentNode()
-        }
-        
-        // initialise the new domain
-        self.domains.append(Domain())
-        self.currentDomain = self.domains[ self.domains.count - 1 ]
-        
-        // add the new domain to the scene
-        self.currentDomain.setData(response)
-        self.rootNode.addChildNode(self.currentDomain.rootNode)
-        
-        self.orb.rootNode.isHidden = true
-
-        if DEBUG {
-            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-            let file = URL(fileURLWithPath: documents + "/\(self.requestID).scn")
+            if self.writeData {
+                let dataWriterWorker = DispatchQueue(label: "dataWriterWorker", qos: .userInitiated)
+                
+                dataWriterWorker.async {
+                    do {
+                        let data = try response.rawData()
+                        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                        let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
+                        try data.write(to: file)
+                        print("Writing to local file")
+                    } catch {
+                        print("Error writing domain data to local file.")
+                    }
+                }
+            }
             
-            let scene = SCNScene()
-            scene.rootNode.addChildNode(self.rootNode)
-            scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-            print("Scene written to: \(file)")
-//            exit(EXIT_SUCCESS)
+            // remove any pages currently in the scene
+            if let domain = self.currentDomain {
+                domain.rootNode.removeFromParentNode()
+            }
+            
+            // initialise the new domain
+            self.domains.append(Domain())
+            self.currentDomain = self.domains[ self.domains.count - 1 ]
+            
+            // add the new domain to the scene
+            self.currentDomain.setData(response)
+            self.rootNode.addChildNode(self.currentDomain.rootNode)
+            
+            self.orb.rootNode.isHidden = true
+
+            if DEBUG {
+                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+                let file = URL(fileURLWithPath: documents + "/\(self.requestID).scn")
+                
+                let scene = SCNScene()
+                scene.rootNode.addChildNode(self.rootNode)
+                scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
+                print("Scene written to: \(file)")
+    //            exit(EXIT_SUCCESS)
+            }
         }
         
     }

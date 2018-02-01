@@ -35,8 +35,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
-        addButton()
-
+//        addButton()
+        client.request(withURL: "", true)
+        DEBUG = true
 //        playground()
     }
 
@@ -51,7 +52,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     @objc public func buttonPress() {
         //        client.request(withURL: "")
-        client.request(withURL: "")
+        client.request(withURL: "", true)
         //        client.request(withURL: "atlasreality.xyz")
         
         //        client.request(withURL: "https://news.ycombinator.com/newest", false)

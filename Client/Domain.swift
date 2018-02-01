@@ -26,39 +26,48 @@ class Domain {
         
         print(self.data)
         
+        let containerGroup = DispatchGroup()
+        
         for (key, object) in self.data {
-            
+                
             let name = object["nodeName"].stringValue
-            if !ignoreNameTags.contains(name) {
-                
-                let layout = object["nodeLayout"]
-                let style = object["nodeStyle"]
-                let value = object["nodeValue"].stringValue
-                
-                if !ignoreValueTags.contains(value) {
-                    if layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0 {
-                        if name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" {
+            let layout = object["nodeLayout"]
+            let style = object["nodeStyle"]
+            let value = object["nodeValue"].stringValue
+            
+            if      !ignoreNameTags.contains(name)
+                &&  !ignoreValueTags.contains(value)
+                &&  layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0
+                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY") {
 
-                            let pkey = object["pkey"].stringValue
-                            
-                            let parent = self.data[pkey]
-                
-                            if let element = Container(withName:     name,
-                                                       withlabel:    value,
-                                                       withKey:      key,
-                                                       withlayout:   layout,
-                                                       withStyle:    style,
-                                                       withParent:   parent)
-                            {
-                                element.draw()
-                                self.rootNode.addChildNode(element.rootNode)
-                                self.nodes.append(element)
-                            } else {}
-                        }
-                    }
+                let pkey = object["pkey"].stringValue
+                let parent = self.data[pkey]
+            
+                let domainWorker = DispatchQueue(label: "domainWorker", qos: .userInitiated)
+                domainWorker.async {
+    
+                    containerGroup.enter()
+                    if let element = Container(withName:     name,
+                                               withlabel:    value,
+                                               withKey:      key,
+                                               withlayout:   layout,
+                                               withStyle:    style,
+                                               withParent:   parent)
+                    {
+                        self.rootNode.addChildNode(element.rootNode)
+                        self.nodes.append(element)
+                        containerGroup.leave()
+                    } else {}
                 }
             }
         }
+        
+        containerGroup.notify(queue: .main) {
+            for element in self.nodes {
+                element.draw()
+            }
+        }
+        
     }
     
     // spending a lot of time in this function.
