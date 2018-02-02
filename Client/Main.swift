@@ -40,18 +40,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         DEBUG = false
         if DEBUG {
-//            client.request(withURL: "", false)
-//            client.request(withURL: "https://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j0j69i59.5831j0j1&sourceid=chrome&ie=UTF-8")
-//            client.request(withURL: "https://news.ycombinator.com/newest", true)
-//            client.request(withURL: "https://betaworks.com/", false)
-            client.request(withURL: "https://academy.realm.io/posts/3d-graphics-metal-swift/", false)
+            client.request(withURL: "http://atlasreality.xyz", false)
         } else {
             addButton()
         }
+        
+        self.sceneView.scene.rootNode.addChildNode(client.rootNode)
+        self.client.rootNode.isHidden = false
+        self.client.searchBar.rootNode.isHidden = false
     }
 
     func setup() {
-        
         // don't run the AR session in debug mode
         if !DEBUG {
             self.sceneView.scene.rootNode.addChildNode(client.rootNode)

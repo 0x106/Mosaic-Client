@@ -20,17 +20,23 @@ class SearchBar {
 
     init() {
 
-        label.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(500), height: CGFloat(50))
-        label.nucleus = CGRect(x: 0.0, y: 0.0, width: CGFloat(500), height: CGFloat(50))
+        self.label.text = "Neuromancer Wintermute Hyperion"
+        label.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(500), height: CGFloat(100))
+        label.nucleus = CGRect(x: 20.0, y: -125.0, width: CGFloat(250), height: CGFloat(50))
+        label.total_width = Float(label.cell.width)
+        label.total_height = Float(label.cell.height)
         label.background_color = UIColor.white.withAlphaComponent(0.4)
-        label.color = tealBlue
+        label.setFont("Arial", 20.0)
         label.draw()
 
         self.button.text = "Search"
-        button.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(500), height: CGFloat(50))
-        button.nucleus = CGRect(x: 0.0, y: 0.0, width: CGFloat(500), height: CGFloat(50))
-        button.background_color = UIColor.white.withAlphaComponent(0.4)
-        button.color = tealBlue
+        button.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(100), height: CGFloat(50))
+        button.nucleus = CGRect(x: 0.0, y: 0.0, width: CGFloat(100), height: CGFloat(50))
+        button.total_width = Float(button.cell.width)
+        button.total_height = Float(button.cell.height)
+        button.background_color = tealBlue
+        button.color = UIColor.white.withAlphaComponent(0.4)
+        button.setFont("Arial", 12.0)
         button.draw()
         
         button.rootNode.name = "searchBarButtonNode"
@@ -38,6 +44,8 @@ class SearchBar {
         
         self.rootNode.addChildNode(label.rootNode)
         self.rootNode.addChildNode(button.rootNode)
+        
+        print("Search bar initialised")
     }
 
     func updateText(_ text: String) {

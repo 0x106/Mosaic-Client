@@ -48,6 +48,7 @@ class Container {
     
     var fonts:                  [AtlasFont] = [AtlasFont]()
     var font:                   UIFont = UIFont()
+    var defaultFont:                   UIFont = UIFont()
     var text: String = ""
     
     var isButton: Bool = false
@@ -72,7 +73,7 @@ class Container {
     init(){
         self.border_color = UIColor.white.withAlphaComponent(0.0)
         self.background_color = UIColor.white.withAlphaComponent(0.0)
-        self.color = UIColor.white.withAlphaComponent(0.0)
+        self.color = UIColor.black.withAlphaComponent(1.0)
     }
     
     init(_ text: String, _ isButton: Bool) {
@@ -241,6 +242,14 @@ class Container {
                 self.fonts.append( AtlasFont(String(ft), "", "", self.font_size) )
             }
         }
+        self.setFont("HelveticaNeue", 10.0)
+    }
+    
+    func setFont(_ selectedFont: String, _ size: Float) {
+
+        if selectedFont != "" {
+            self.defaultFont = UIFont(name: selectedFont, size: CGFloat(size))!
+        }
         
         var fontIsSet: Bool = false
         for possibleFont in self.fonts {
@@ -252,7 +261,7 @@ class Container {
         }
         
         // if it doesn't use the Google Fonts API and if the specified fonts don't exist on iOS.
-        if !fontIsSet { self.font = UIFont(name: "HelveticaNeue", size: CGFloat(self.font_size))! }
+        if !fontIsSet { self.font = self.defaultFont }
     }
     
     private func makeSphere(_ textSize: Float) -> SCNSphere {
