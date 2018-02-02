@@ -48,8 +48,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         } else {
             addButton()
         }
-        
-//        playground()
     }
 
     func setup() {
@@ -62,20 +60,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @objc public func buttonPress() {
-        //        client.request(withURL: "")
-//        client.request(withURL: "")
-                client.request(withURL: "atlasreality.xyz")
-//        client.request(withURL: "https://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j0j69i59.5831j0j1&sourceid=chrome&ie=UTF-8")
-//                client.request(withURL: "https://news.ycombinator.com/newest", true)
-//        client.request(withURL: "https://betaworks.com/", false)
-//        client.request(withURL: "https://academy.realm.io/posts/3d-graphics-metal-swift/", false)
-        //        client.request(withURL: "https://afore.vc/")
-        //        client.request(withURL: "http://www.dell.com/nz/p")
-        //        client.request(withURL: "https://ueno.co/")b
-        //        client.request(withURL: "http://hookbang.com/")
-        //        client.request(withURL: "unsplash.com")
-        //        client.request(withURL: "https://developers.google.com/web/fundamentals/performance/critical-rendering-path/render-blocking-css")
-        //        client.request(withURL: "http://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.3040j0j1&sourceid=chrome&ie=UTF-8")
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -173,109 +157,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
-    }
-    
-    func playground() {
-        
-        let rootNode = SCNNode()
-        
-        let nucleus_height: Float = 400
-        let nucleus_width: Float = 512
-        
-        let border_top_width: Float = 12
-        let padding_top: Float = 100
-  
-        let border_bottom_width: Float = 6
-        let padding_bottom: Float = 20
-        
-        let border_left_width: Float = 10
-        let padding_left: Float = 20
-        
-        let border_right_width: Float = 12
-        let padding_right: Float = 1
-        
-        let total_height: Float = border_top_width + padding_top + nucleus_height + border_bottom_width + padding_bottom
-        let total_width: Float = nucleus_width + border_left_width + padding_left + border_right_width + padding_right
-        
-        let cell = CGRect(x: CGFloat(0.0),
-                             y: CGFloat(0.0),
-                             width: CGFloat(total_width),
-                             height: CGFloat(total_height))
-        
-        let nucleus = CGRect(x: CGFloat(border_left_width + padding_left),
-                             y: CGFloat(border_top_width + padding_top),
-                             width: CGFloat(nucleus_width),
-                             height: CGFloat(nucleus_height))
-        
-        let bottom = CGRect(x: CGFloat(0.0),
-                            y: CGFloat(border_top_width + padding_top + nucleus_height + padding_bottom),
-                            width: CGFloat(total_width),
-                            height: CGFloat(border_bottom_width))
-        
-        let top = CGRect(x: CGFloat(0.0),
-                            y: CGFloat(0.0),
-                            width: CGFloat(total_width),
-                            height: CGFloat(border_top_width))
-        
-        let left = CGRect(x: CGFloat(0.0),
-                         y: CGFloat(0.0),
-                         width: CGFloat(border_left_width),
-                         height: CGFloat(total_height))
-        
-        let right = CGRect(x: CGFloat(border_left_width + nucleus_width + padding_left + padding_right),
-                         y: CGFloat(0.0),
-                         width: CGFloat(border_right_width),
-                         height: CGFloat(total_height))
-
-        let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(total_width), height: CGFloat(total_height)))
-        let img = renderer.image { context in
-            
-            UIColor.red.setFill()
-            context.fill(cell)
-        
-            UIColor.green.setFill()
-            context.fill(bottom)
-            
-            UIColor.blue.setFill()
-            context.fill(top)
-            
-            UIColor.black.setFill()
-            context.fill(left)
-            
-            UIColor.yellow.setFill()
-            context.fill(right)
-            
-            UIColor.magenta.setFill()
-            context.fill(nucleus)
-            
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = .left
-            let attrs = [NSAttributedStringKey.font: UIFont(name: "HelveticaNeue-Thin", size: 50)!, NSAttributedStringKey.paragraphStyle: paragraphStyle]
-            let string = "“The life of a poet lies not merely in the finite language-dance of expression but in the nearly infinite combinations of perception and memory combined with the sensitivity to what is perceived and remembered.”"
-            string.draw(with: nucleus, options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
-        }
-        
-        let plane = SCNPlane(width: CGFloat(0.1), height: CGFloat(0.1))
-        plane.firstMaterial?.diffuse.contents = img
-        rootNode.geometry = plane
-        
-        rootNode.position = SCNVector3Make(0,0,-1)
-        
-        self.sceneView.scene.rootNode.addChildNode(rootNode)
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-        let file = URL(fileURLWithPath: documents + "/atlas-client.scn")
-        
-        sceneView.scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-        
-        print(documents)
-        exit(EXIT_SUCCESS)
-    }
-    
-    func toImage(_ input: UITextView) -> SCNPlane {
-        let image = UIImage.imageWithTextView(textView: input)
-        let plane = SCNPlane(width: CGFloat(0.1), height: CGFloat(0.1))
-        plane.firstMaterial?.diffuse.contents = image
-        return plane
     }
     
 }

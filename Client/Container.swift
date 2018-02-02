@@ -12,14 +12,6 @@ import SwiftyJSON
 import Alamofire
 import AlamofireImage
 
-class Label: Container {
-    
-    init(_ text: String, _ isButton: Bool) {
-        super.init()
-    }
-    
-}
-
 class Container {
     
     var cell: CGRect = CGRect()
@@ -77,7 +69,14 @@ class Container {
     let left    = 2
     let right   = 3
     
-    init(){}
+    init(){
+        self.border_color = UIColor.white.withAlphaComponent(0.0)
+        self.background_color = UIColor.white.withAlphaComponent(0.0)
+        self.color = UIColor.white.withAlphaComponent(0.0)
+    }
+    
+    init(_ text: String, _ isButton: Bool) {
+    }
 
     init?(withName      containerType: String,
           withlabel     labelText: String,

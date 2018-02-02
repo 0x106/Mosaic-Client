@@ -46,7 +46,7 @@ class Client {
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
-        self.searchBar.setText( textField.text! )
+        self.searchBar.updateText( textField.text! )
     }
     
     func request(withURL url: String, _ refresh: Bool = false) {
