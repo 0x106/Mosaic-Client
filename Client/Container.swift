@@ -99,14 +99,14 @@ class Container {
         
         // check if this is a link - if so then make this a button and add the href that it points to.
         let parentType = parent["nodeName"]
-//        if parentType == "A" {
-//            for (_, attrValue) in parent["attr"] {
-//                if attrValue["name"] == "href" {
-//                    self.isButton = true
-//                    self.href = attrValue["value"].stringValue
-//                }
-//            }
-//        }
+        if parentType == "A" {
+            for (_, attrValue) in parent["attr"] {
+                if attrValue["name"] == "href" {
+                    self.isButton = true
+                    self.href = attrValue["value"].stringValue
+                }
+            }
+        }
         
         self.nucleus_height          = Float(layout["height"].doubleValue)
         self.nucleus_width           = Float(layout["width"].doubleValue)
@@ -124,11 +124,6 @@ class Container {
         self.total_width             = nucleus_width + border_left_width + padding_left + border_right_width + padding_right
         self.font_size               = computedStyle["font-size"] as! Float - 2.0
         
-//        print("\(self.nucleus_height) | \(self.border_top_width) | \(self.border_bottom_width) | \(self.padding_top) | \(self.padding_bottom)")
-//        print("\(self.nucleus_width) | \(self.border_left_width) | \(self.border_right_width) | \(self.padding_left) | \(self.padding_right)")
-//        print("\(self.x) | \(self.y) | \(self.total_width) | \(self.total_height)")
-//        print("-----------------------------------")
-        
         self.border_color            = (computedStyle["border-color"] as! UIColor)
         self.background_color        = (computedStyle["background-color"] as! UIColor)
         self.color                   = (computedStyle["color"] as! UIColor)
@@ -136,7 +131,7 @@ class Container {
         if let bgImage = getAttribute(style, "background-image"), bgImage.stringValue != "none" {
             self.canDraw = false // don't try and draw over top of images
             if bgImage.stringValue.hasPrefix("url") {
-//                if bgImage.stringValue.contains("base64") {
+                if bgImage.stringValue.contains("base64") || bgImage.stringValue.contains("data:") {
 //                    print(bgImage.stringValue)
 //                    let result = bgImage.stringValue.sliceWithin(from: ",", to: "\"")
 //                    if let decodedData = Data(base64Encoded: result!, options: .ignoreUnknownCharacters) {
@@ -147,36 +142,31 @@ class Container {
 //                            print("success")
 //                        }
 //                    }
-//                } else {
+                } else {
                     self.imageURL = parseHREFFromURL(bgImage.stringValue)
-//                    self.loadImage()
-//                }
+                    self.loadImage()
+                    
+                    self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
+                    //            self.plane.firstMaterial?.diffuse.contents = UIColor.magenta
+                    //            self.plane.firstMaterial?.transparency = CGFloat(0.25)
+                    
+                    self.rootNode.geometry = self.plane
+                    self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
+                    print(containerType, key, self.z)
+                    print(self.text)
+                    print(self.imageURL)
+                    print("-------------------")
+                    self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
+                                                            (  -self.y - (self.nucleus_height/2.0))*self.scale,
+                                                            self.z)
+                    print("created image container")
+                }
+                
             }
-            
-            self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
-
-//            self.plane.firstMaterial?.diffuse.contents = UIColor.magenta
-//            self.plane.firstMaterial?.transparency = CGFloat(0.25)
-            self.rootNode.geometry = self.plane
-//            self.z = -1.03
-//            self.z = randomFloat(min: -1.01,max: -1.001)
-            self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1)
-            print(containerType, key, self.z)
-            print(self.text)
-            print(self.imageURL)
-            print("-------------------")
-            self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
-                                                    (  -self.y - (self.nucleus_height/2.0))*self.scale,
-                                                    self.z)
-//            https://developer.apple.com/videos/play/wwdc2017/414/
-            print("created image container")
         } else {
         
             if self.text == "" {
-//                self.z = -1.002
-//                self.z = randomFloat(min: -1.02,max: -0.98)
-//                self.z = randomFloat(min: -1.01,max: -1.001)
-                self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1)
+                self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
 //                if containerType == "BODY" {
 //                    self.z = -1.004
 //                }
@@ -196,10 +186,6 @@ class Container {
         if !self.canDraw {
             return
         }
-        // if it's a TEXT container then we use __color__ for the font
-        // if it's _not_ a text container then we use __color__ for the background.
-        // if it's a TEXT container then we use __background_color__ for the background
-        // if it's _not_ a text container then we ignore __background_color__
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.total_width), height: CGFloat(self.total_height)))
         self.image = renderer.image { context in
