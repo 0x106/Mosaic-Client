@@ -23,7 +23,7 @@ class Client {
     
     let orb: Dodecahedron = Dodecahedron()
     
-    let server: String = "http://75a8b653.ngrok.io"
+    let server: String = "http://7a0fdf13.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
@@ -43,7 +43,6 @@ class Client {
         rootNode.addChildNode(searchBar.rootNode)
        
         rootNode.position = SCNVector3Make(0, 0, -1)
-        
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -136,21 +135,10 @@ class Client {
             self.currentDomain = self.domains[ self.domains.count - 1 ]
             
             // add the new domain to the scene
-            self.currentDomain.setData(response)
+            self.currentDomain.setData(response, self.requestID)
             self.rootNode.addChildNode(self.currentDomain.rootNode)
             
             self.orb.rootNode.isHidden = true
-
-            if DEBUG {
-                let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-                let file = URL(fileURLWithPath: documents + "/\(self.requestID).scn")
-                
-                let scene = SCNScene()
-                scene.rootNode.addChildNode(self.rootNode)
-                scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-                print("Scene written to: \(file)")
-    //            exit(EXIT_SUCCESS)
-            }
         }
         
     }

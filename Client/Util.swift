@@ -356,7 +356,14 @@ extension String {
     }
 }
 
-
+func indexFromKey(_ key: String) -> Int {
+    
+    let startIndex = key.startIndex
+    let endIndex = key.index(of: "-") ?? key.endIndex
+    
+    let index = String( key[startIndex..<endIndex] )
+    return Int(index)!
+}
 
 
 

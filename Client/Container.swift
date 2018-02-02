@@ -135,7 +135,7 @@ class Container {
         
         if let bgImage = getAttribute(style, "background-image"), bgImage.stringValue != "none" {
             self.canDraw = false // don't try and draw over top of images
-//            if bgImage.stringValue.hasPrefix("url") {
+            if bgImage.stringValue.hasPrefix("url") {
 //                if bgImage.stringValue.contains("base64") {
 //                    print(bgImage.stringValue)
 //                    let result = bgImage.stringValue.sliceWithin(from: ",", to: "\"")
@@ -148,29 +148,38 @@ class Container {
 //                        }
 //                    }
 //                } else {
-//                    self.imageURL = parseHREFFromURL(bgImage.stringValue)
-//                    //            self.loadImage()
+                    self.imageURL = parseHREFFromURL(bgImage.stringValue)
+//                    self.loadImage()
 //                }
-//            }
+            }
             
-//            self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
-//
+            self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
+
 //            self.plane.firstMaterial?.diffuse.contents = UIColor.magenta
 //            self.plane.firstMaterial?.transparency = CGFloat(0.25)
-//            self.rootNode.geometry = self.plane
+            self.rootNode.geometry = self.plane
 //            self.z = -1.03
-//            self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
-//                                                    (  -self.y - (self.nucleus_height/2.0))*self.scale,
-//                                                    self.z)
-            
-//            print("created image container")
+//            self.z = randomFloat(min: -1.01,max: -1.001)
+            self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1)
+            print(containerType, key, self.z)
+            print(self.text)
+            print(self.imageURL)
+            print("-------------------")
+            self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
+                                                    (  -self.y - (self.nucleus_height/2.0))*self.scale,
+                                                    self.z)
+//            https://developer.apple.com/videos/play/wwdc2017/414/
+            print("created image container")
         } else {
         
             if self.text == "" {
-                self.z = -1.002
-                if containerType == "BODY" {
-                    self.z = -1.004
-                }
+//                self.z = -1.002
+//                self.z = randomFloat(min: -1.02,max: -0.98)
+//                self.z = randomFloat(min: -1.01,max: -1.001)
+                self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1)
+//                if containerType == "BODY" {
+//                    self.z = -1.004
+//                }
             } else {
                 self.z = -1
             }
@@ -194,19 +203,19 @@ class Container {
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.total_width), height: CGFloat(self.total_height)))
         self.image = renderer.image { context in
-            
+
             self.background_color.setFill()
             context.fill(self.cell)
-            
+
             self.border_color.setFill()
             context.fill(self.borders[top])
             context.fill(self.borders[bottom])
             context.fill(self.borders[left])
             context.fill(self.borders[right])
-            
+
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .left
-            
+
             var fontIsSet: Bool = false
             for possibleFont in self.fonts {
                 if possibleFont.isAvailable {
@@ -215,22 +224,25 @@ class Container {
                     break
                 }
             }
-            
+
             // if it doesn't use the Google Fonts API and if the specified fonts don't exist on iOS.
             if !fontIsSet { self.font = UIFont(name: "HelveticaNeue", size: CGFloat(self.font_size))! }
-            
+
             let attrs = [NSAttributedStringKey.font: self.font as UIFont,
                          NSAttributedStringKey.paragraphStyle: paragraphStyle,
                          NSAttributedStringKey.foregroundColor: self.color]
-            
+
             let message = self.text
             message.draw(with: self.nucleus, options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
         }
-        
+
         self.plane = SCNPlane(width: CGFloat(self.total_width * self.scale), height: CGFloat(self.total_height * self.scale))
         self.plane.firstMaterial?.diffuse.contents = self.image
         self.plane.firstMaterial?.isDoubleSided = true
         self.rootNode.geometry = self.plane
+        
+//        let sphere = makeSphere(self.font_size)
+//        self.rootNode.geometry = sphere
         
         self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
                                                 (  -self.y - (self.total_height/2.0))*self.scale,
@@ -291,6 +303,13 @@ class Container {
                 self.fonts.append( AtlasFont(String(ft), "", "", self.font_size) )
             }
         }
+    }
+    
+    private func makeSphere(_ textSize: Float) -> SCNSphere {
+        let sphere = SCNSphere(radius: CGFloat(textSize * self.scale))
+        sphere.firstMaterial?.diffuse.contents = UIColor.magenta
+        sphere.firstMaterial?.transparency = CGFloat(0.4)
+        return sphere
     }
 
 }

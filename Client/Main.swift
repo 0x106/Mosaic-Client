@@ -35,10 +35,16 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set the scene to the view
         sceneView.scene = scene
         
-        addButton()
-//        client.request(withURL: "", true)
-//        client.request(withURL: "https://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j0j69i59.5831j0j1&sourceid=chrome&ie=UTF-8")
-        DEBUG = false
+        DEBUG = true
+        if DEBUG {
+//            client.request(withURL: "", false)
+//            client.request(withURL: "https://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j0j69i59.5831j0j1&sourceid=chrome&ie=UTF-8")
+//            client.request(withURL: "https://news.ycombinator.com/newest", true)
+            client.request(withURL: "https://betaworks.com/", false)
+        } else {
+            addButton()
+        }
+        
 //        playground()
     }
 
@@ -56,7 +62,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //        client.request(withURL: "")
         //        client.request(withURL: "atlasreality.xyz")
 //        client.request(withURL: "https://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j0j69i59.5831j0j1&sourceid=chrome&ie=UTF-8")
-                client.request(withURL: "https://news.ycombinator.com/newest", false)
+//                client.request(withURL: "https://news.ycombinator.com/newest", true)
+        client.request(withURL: "https://betaworks.com/", false)
         //        client.request(withURL: "https://afore.vc/")
         //        client.request(withURL: "http://www.dell.com/nz/p")
         //        client.request(withURL: "https://ueno.co/")b

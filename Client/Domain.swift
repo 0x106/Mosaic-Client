@@ -16,10 +16,12 @@ class Domain {
     var data: JSON!
     var nodes: [Container] = [Container]()
     var rootNode: SCNNode = SCNNode()
+    var requestID: String = ""
     
-    func setData(_ data: JSON) {
+    func setData(_ data: JSON, _ requestID: String) {
         
         self.data = data
+        self.requestID = requestID
         
         let ignoreNameTags = ["#document", "HTML", "IFRAME"];
         let ignoreValueTags = ["Cached", "Similar"];
@@ -54,7 +56,6 @@ class Domain {
                                                withStyle:    style,
                                                withParent:   parent)
                     {
-                        self.rootNode.addChildNode(element.rootNode)
                         self.nodes.append(element)
                         containerGroup.leave()
                     } else {}
@@ -62,20 +63,34 @@ class Domain {
             }
         }
         
-        
-//        exit()
-        
-        containerGroup.notify(queue: .main) {
-//            DispatchQueue.main.async {
-            let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
-            containerDrawWorker.async {
+        if DEBUG {
+            containerGroup.notify(queue: .main) {
                 for element in self.nodes {
                     element.draw()
+                    self.rootNode.addChildNode(element.rootNode)
                 }
+                self.writeSceneToFile()
+            }
+        } else {
+            let drawingGroup = DispatchGroup()
+            containerGroup.notify(queue: .main) {
+                let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
+                containerDrawWorker.async {
+                    for element in self.nodes {
+                        drawingGroup.enter()
+                        element.draw()
+                        self.rootNode.addChildNode(element.rootNode)
+                        drawingGroup.leave()
+                    }
+                }
+            }
+            
+            drawingGroup.notify(queue: .main) {
+                self.writeSceneToFile()
             }
         }
         
-        self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
+//        self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
         
     }
     
@@ -101,5 +116,17 @@ class Domain {
     
     func onPlane(_ planeNode: SCNNode) {
         self.rootNode.position = planeNode.position
+    }
+    
+    private func writeSceneToFile() {
+        if DEBUG {
+            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let file = URL(fileURLWithPath: documents + "/\(self.requestID).scn")
+            
+            let scene = SCNScene()
+            scene.rootNode.addChildNode(self.rootNode)
+            scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
+            print("Scene written to: \(file)")
+        }
     }
 }
