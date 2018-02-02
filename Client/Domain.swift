@@ -17,6 +17,8 @@ class Domain {
     var nodes: [Container] = [Container]()
     var rootNode: SCNNode = SCNNode()
     var requestID: String = ""
+    let viewport: Viewport = Viewport()
+    let scale: Float = 0.001
     
     func setData(_ data: JSON, _ requestID: String) {
         
@@ -62,21 +64,27 @@ class Domain {
                 }
             }
         }
+    
+        containerGroup.notify(queue: .main) {
+            self.drawNodes()
+        }
         
+        // self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
+    }
+    
+    func drawNodes() {
         if DEBUG {
-            containerGroup.notify(queue: .main) {
-                for element in self.nodes {
-                    element.draw()
-                    self.rootNode.addChildNode(element.rootNode)
-                }
-                self.writeSceneToFile()
+            for element in self.nodes {
+                element.draw()
+                self.rootNode.addChildNode(element.rootNode)
             }
+            self.writeSceneToFile()
         } else {
             let drawingGroup = DispatchGroup()
-            containerGroup.notify(queue: .main) {
-                let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
-                containerDrawWorker.async {
-                    for element in self.nodes {
+            let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
+            containerDrawWorker.async {
+                for element in self.nodes {
+                    if self.viewport.contains(element) { // if element is in viewport
                         drawingGroup.enter()
                         element.draw()
                         self.rootNode.addChildNode(element.rootNode)
@@ -89,9 +97,6 @@ class Domain {
                 self.writeSceneToFile()
             }
         }
-        
-//        self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
-        
     }
     
     // spending a lot of time in this function.
@@ -129,4 +134,96 @@ class Domain {
             print("Scene written to: \(file)")
         }
     }
+    
+    func scroll(_ velocity: CGPoint) {
+        self.rootNode.position.y += Float(velocity.y) * self.scale
+        update()
+    }
+    
+    func update() {
+        let updateWorker = DispatchQueue(label: "updateWorker", qos: .userInitiated)
+        updateWorker.async {
+            
+            // for each node
+            for element in self.nodes {
+                
+                let position = SCNVector3Make(element.rootNode.position.x + self.rootNode.position.x,
+                                              element.rootNode.position.y + self.rootNode.position.y,
+                                              element.rootNode.position.z + self.rootNode.position.z)
+                
+                // if the node is in view
+                if self.viewport.contains(position) {
+                 
+                    // ensure that it has been drawn
+                    if !element.isRendered {
+                        element.draw()
+                    }
+                
+                    // ensure that any node in the viewport is visible
+//                    element.rootNode.isHidden = false
+                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
+                } else {
+                    // if a node is not in the viewport but has previously been rendered then hide it
+//                    element.rootNode.isHidden = true
+                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
+                }
+            }
+            
+        }
+    }
 }
+
+
+class Viewport {
+    
+    var x: [Float]
+    var y: [Float]
+    var z: [Float]
+
+    
+    init() {
+        
+        // set the initial view parameters
+        x = [-0.65, 0.65]
+        y = [-0.65, 0.65]
+        z = [-2.0, 2.0]
+        
+        print("Viewport created with dimensions: \(x[0]), \(x[1]), \(y[0]), \(y[1]), \(z[0]), \(z[1])")
+        
+    }
+    
+    func contains(_ element: Container) -> Bool {
+        if     (element.rootNode.position.x >= self.x[0] && element.rootNode.position.x <= self.x[1])
+            && (element.rootNode.position.y >= self.y[0] && element.rootNode.position.y <= self.y[1])
+            && (element.rootNode.position.z >= self.z[0] && element.rootNode.position.z <= self.z[1]) {
+            
+            return true
+        }
+        
+        return false
+    }
+    
+    func contains(_ position: SCNVector3) -> Bool {
+        if     (position.x >= self.x[0] && position.x <= self.x[1])
+            && (position.y >= self.y[0] && position.y <= self.y[1])
+            && (position.z >= self.z[0] && position.z <= self.z[1]) {
+            
+            return true
+        }
+        
+        return false
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+// end

@@ -22,10 +22,9 @@ class Label: Container {
 
 class Container {
     
-    var nucleus: CGRect   = CGRect()
-    var padding: [Float] = [0.0, 0.0, 0.0, 0.0]
-    var borders: [CGRect] = [CGRect(), CGRect(), CGRect(), CGRect()]
     var cell: CGRect = CGRect()
+    var nucleus: CGRect   = CGRect()
+    var borders: [CGRect] = [CGRect(), CGRect(), CGRect(), CGRect()]
     
     var nucleus_height:         Float = 0.0
     var nucleus_width:          Float = 0.0
@@ -64,6 +63,7 @@ class Container {
     
     var imageURL: String = ""
     var canDraw: Bool = true
+    var isRendered: Bool = false
     var isBase64: Bool = false
     
     var rootNode: SCNNode = SCNNode()
@@ -90,23 +90,10 @@ class Container {
         self.rootNode.name = self.nodeKey
         let computedStyle = computeStylesFromDict(style)
         
-//        if ( (computedStyle["background-color"]! as! UIColor).cgColor.alpha == CGFloat(0.0) && (computedStyle["color"]! as! UIColor).cgColor.alpha == CGFloat(0.0))
-//            || ((computedStyle["font-size"]! as! Float) < 10.0) || (layout["x"].doubleValue < 100) || (layout["y"].doubleValue < 100) {
-//            return nil
-//        }
-//
         self.text = labelText
         
         // check if this is a link - if so then make this a button and add the href that it points to.
-        let parentType = parent["nodeName"]
-        if parentType == "A" {
-            for (_, attrValue) in parent["attr"] {
-                if attrValue["name"] == "href" {
-                    self.isButton = true
-                    self.href = attrValue["value"].stringValue
-                }
-            }
-        }
+        self.extractLink(parent)
         
         self.nucleus_height          = Float(layout["height"].doubleValue)
         self.nucleus_width           = Float(layout["width"].doubleValue)
@@ -131,45 +118,18 @@ class Container {
         if let bgImage = getAttribute(style, "background-image"), bgImage.stringValue != "none" {
             self.canDraw = false // don't try and draw over top of images
             if bgImage.stringValue.hasPrefix("url") {
-                if bgImage.stringValue.contains("base64") || bgImage.stringValue.contains("data:") {
-//                    print(bgImage.stringValue)
-//                    let result = bgImage.stringValue.sliceWithin(from: ",", to: "\"")
-//                    if let decodedData = Data(base64Encoded: result!, options: .ignoreUnknownCharacters) {
-//                        if let image = UIImage(data: decodedData) {
-//                            self.image = image
-//                            self.plane.firstMaterial?.diffuse.contents = self.image
-//                            print("image added")
-//                            print("success")
-//                        }
-//                    }
-                } else {
-                    self.imageURL = parseHREFFromURL(bgImage.stringValue)
-                    self.loadImage()
-                    
-                    self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
-                    //            self.plane.firstMaterial?.diffuse.contents = UIColor.magenta
-                    //            self.plane.firstMaterial?.transparency = CGFloat(0.25)
-                    
-                    self.rootNode.geometry = self.plane
-                    self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
-                    print(containerType, key, self.z)
-                    print(self.text)
-                    print(self.imageURL)
-                    print("-------------------")
-                    self.rootNode.position = SCNVector3Make((   self.x + (self.nucleus_width/2.0))*self.scale,
-                                                            (  -self.y - (self.nucleus_height/2.0))*self.scale,
-                                                            self.z)
-                    print("created image container")
-                }
+                self.imageURL = parseHREFFromURL(bgImage.stringValue)
+                self.loadImage()
                 
+                self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
+                self.plane.firstMaterial?.isDoubleSided = true
+                self.rootNode.geometry = self.plane
+                self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
             }
+            
         } else {
-        
             if self.text == "" {
                 self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
-//                if containerType == "BODY" {
-//                    self.z = -1.004
-//                }
             } else {
                 self.z = -1
             }
@@ -178,6 +138,13 @@ class Container {
         }
         
         self.determineLayout()
+        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
+                                                (  -self.y - (self.total_height/2.0))*self.scale,
+                                                self.z)
+        
+        // we 'hide' any nodes until they have been drawn etc
+//        self.rootNode.isHidden = true
+        self.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
     }
     
     func draw() {
@@ -187,6 +154,15 @@ class Container {
             return
         }
         
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .left
+        
+        let attrs = [NSAttributedStringKey.font: self.font as UIFont,
+                     NSAttributedStringKey.paragraphStyle: paragraphStyle,
+                     NSAttributedStringKey.foregroundColor: self.color]
+        
+        let message = self.text
+        
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.total_width), height: CGFloat(self.total_height)))
         self.image = renderer.image { context in
 
@@ -194,31 +170,10 @@ class Container {
             context.fill(self.cell)
 
             self.border_color.setFill()
-            context.fill(self.borders[top])
-            context.fill(self.borders[bottom])
-            context.fill(self.borders[left])
-            context.fill(self.borders[right])
-
-            let paragraphStyle = NSMutableParagraphStyle()
-            paragraphStyle.alignment = .left
-
-            var fontIsSet: Bool = false
-            for possibleFont in self.fonts {
-                if possibleFont.isAvailable {
-                    self.font = possibleFont.font
-                    fontIsSet = true
-                    break
-                }
+            for border in self.borders {
+                context.fill(border)
             }
 
-            // if it doesn't use the Google Fonts API and if the specified fonts don't exist on iOS.
-            if !fontIsSet { self.font = UIFont(name: "HelveticaNeue", size: CGFloat(self.font_size))! }
-
-            let attrs = [NSAttributedStringKey.font: self.font as UIFont,
-                         NSAttributedStringKey.paragraphStyle: paragraphStyle,
-                         NSAttributedStringKey.foregroundColor: self.color]
-
-            let message = self.text
             message.draw(with: self.nucleus, options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
         }
 
@@ -226,13 +181,9 @@ class Container {
         self.plane.firstMaterial?.diffuse.contents = self.image
         self.plane.firstMaterial?.isDoubleSided = true
         self.rootNode.geometry = self.plane
-        
-//        let sphere = makeSphere(self.font_size)
-//        self.rootNode.geometry = sphere
-        
-        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
-                                                (  -self.y - (self.total_height/2.0))*self.scale,
-                                                    self.z)
+        self.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
+//        self.rootNode.isHidden = false
+        self.isRendered = true
     }
     
     func determineLayout() {
@@ -269,11 +220,13 @@ class Container {
     }
     
     func loadImage() {
-        Alamofire.request(self.imageURL).responseImage { response in
-            if let image = response.result.value {
-                self.image = image
-                self.plane.firstMaterial?.diffuse.contents = self.image
-                print("image added")
+        if self.imageURL != "" {
+            Alamofire.request(self.imageURL).responseImage { response in
+                if let image = response.result.value {
+                    self.image = image
+                    self.plane.firstMaterial?.diffuse.contents = self.image
+                    print("image added")
+                }
             }
         }
     }
@@ -289,6 +242,18 @@ class Container {
                 self.fonts.append( AtlasFont(String(ft), "", "", self.font_size) )
             }
         }
+        
+        var fontIsSet: Bool = false
+        for possibleFont in self.fonts {
+            if possibleFont.isAvailable {
+                self.font = possibleFont.font
+                fontIsSet = true
+                break
+            }
+        }
+        
+        // if it doesn't use the Google Fonts API and if the specified fonts don't exist on iOS.
+        if !fontIsSet { self.font = UIFont(name: "HelveticaNeue", size: CGFloat(self.font_size))! }
     }
     
     private func makeSphere(_ textSize: Float) -> SCNSphere {
@@ -297,9 +262,36 @@ class Container {
         sphere.firstMaterial?.transparency = CGFloat(0.4)
         return sphere
     }
+    
+    func extractLink(_ parent: JSON) {
+        let parentType = parent["nodeName"]
+        if parentType == "A" {
+            for (_, attrValue) in parent["attr"] {
+                if attrValue["name"] == "href" {
+                    self.isButton = true
+                    self.href = attrValue["value"].stringValue
+                }
+            }
+        }
+    }
 
 }
 
 
 
 // end
+
+//if bgImage.stringValue.contains("base64") || bgImage.stringValue.contains("data:") {
+//    //                    print(bgImage.stringValue)
+//    //                    let result = bgImage.stringValue.sliceWithin(from: ",", to: "\"")
+//    //                    if let decodedData = Data(base64Encoded: result!, options: .ignoreUnknownCharacters) {
+//    //                        if let image = UIImage(data: decodedData) {
+//    //                            self.image = image
+//    //                            self.plane.firstMaterial?.diffuse.contents = self.image
+//    //                            print("image added")
+//    //                            print("success")
+//    //                        }
+//    //                    }
+//} else {
+//}
+
