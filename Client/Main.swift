@@ -19,6 +19,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     let trackingStatus = false
     let button = UIButton()
     
+    let animate_tests = AnimateTest()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -38,27 +40,36 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
         
+        
+        
+        // --------------------- //
+        //  A N I M A T I O N S  //
+        // --------------------- //
+        self.sceneView.scene.rootNode.addChildNode(self.animate_tests.rootNode)
+//        animate_tests.saveScene()
+//        exit()
+        // --------------------- //
+        
+        
         DEBUG = false
         if DEBUG {
             client.request(withURL: "http://atlasreality.xyz", false)
         } else {
             addButton()
         }
-        
-        self.sceneView.scene.rootNode.addChildNode(client.rootNode)
-        self.client.rootNode.isHidden = false
-        self.client.searchBar.rootNode.isHidden = false
     }
 
     func setup() {
         // don't run the AR session in debug mode
         if !DEBUG {
-            self.sceneView.scene.rootNode.addChildNode(client.rootNode)
-            self.sceneView.addSubview(client.field)
+//            self.sceneView.scene.rootNode.addChildNode(client.rootNode)
+//            self.sceneView.addSubview(client.field)
         }
     }
     
     @objc public func buttonPress() {
+        animate_tests.explosion()
+//        client.request(withURL: "atlasreality.xyz", true)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -124,6 +135,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
+        
+        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
 
         // Run the view's session
         if !DEBUG { // don't run the AR session in debug mode

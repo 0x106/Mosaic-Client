@@ -38,6 +38,7 @@ class Client {
         field.isHidden = true
         
         orb.rootNode.isHidden = true
+        searchBar.rootNode.isHidden = false
         
         rootNode.addChildNode(orb.rootNode)
         rootNode.addChildNode(searchBar.rootNode)
@@ -67,7 +68,7 @@ class Client {
         
         // check to see if a local cache of this url exists
         if refresh {
-            self._request()
+            self.networkRequest()
         } else {
             
             let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -84,13 +85,13 @@ class Client {
                     self.writeData = false
                     self.addNewDomain(response)
                 } catch {
-                    self._request()
+                    self.networkRequest()
                 }
             }
         }
     }
     
-    private func _request() {
+    private func networkRequest() {
         print("No local file available - making network request.")
         self.writeData = true
         

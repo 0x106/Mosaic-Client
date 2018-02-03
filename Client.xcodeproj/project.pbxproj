@@ -21,6 +21,7 @@
 		DA86E6D32019A29C00DDE8C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */; };
 		DA87E778201A879300BDADAE /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E777201A879300BDADAE /* Domain.swift */; };
 		DA87E77A201A8FAC00BDADAE /* Dodecahedron.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */; };
+		DAFD57CD20265477003C0372 /* Animate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFD57CC20265477003C0372 /* Animate.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +42,7 @@
 		DA86E6D42019A29C00DDE8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA87E777201A879300BDADAE /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dodecahedron.swift; sourceTree = "<group>"; };
+		DAFD57CC20265477003C0372 /* Animate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animate.swift; sourceTree = "<group>"; };
 		FB987B3FDFB5580A558A7BED /* Pods-Client.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Client.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Client/Pods-Client.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -95,6 +97,7 @@
 				DA1415BC202022D9002C773F /* Fonts.swift */,
 				DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */,
 				DA3E64692019A90C00F15119 /* SearchBar.swift */,
+				DAFD57CC20265477003C0372 /* Animate.swift */,
 				DA3E646B2019A96D00F15119 /* Util.swift */,
 				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
 				DA86E6CF2019A29C00DDE8C9 /* Assets.xcassets */,
@@ -258,6 +261,7 @@
 				DA3E646C2019A96D00F15119 /* Util.swift in Sources */,
 				DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */,
 				DA3E64682019A8F700F15119 /* Client.swift in Sources */,
+				DAFD57CD20265477003C0372 /* Animate.swift in Sources */,
 				DA1415B9201EFBCB002C773F /* Container.swift in Sources */,
 				DA1415BD202022D9002C773F /* Fonts.swift in Sources */,
 				DA87E778201A879300BDADAE /* Domain.swift in Sources */,
