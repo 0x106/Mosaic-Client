@@ -367,11 +367,45 @@ func indexFromKey(_ key: String) -> Int {
 
 
 
+func pointOnCircle(_ radius: Float, _ Bx: Float, _ Ax: Float, _ By: Float, _ Ay: Float) -> CGPoint {
+    
+    let denom: Float = sqrtf((Bx - Ax) * (Bx - Ax)) + ((By - Ay) * (By - Ay))
+    
+    let x = Ax - (radius * ((Bx - Ax) / denom ))
+    let y = Ay - (radius * ((By - Ay) / denom ))
+    
+    return CGPoint(x: CGFloat(x), y: CGFloat(y))
+}
 
 
-
-
-
+func createNode(withGeometry type: String) -> SCNNode {
+    
+    var geometry: SCNGeometry
+    let nodeSize = 0.01
+    
+    switch type {
+    case "sphere":
+        geometry = SCNSphere(radius: CGFloat(nodeSize))
+    case "cube":
+        geometry = SCNBox(width: CGFloat(nodeSize),
+                          height: CGFloat(nodeSize),
+                          length: CGFloat(nodeSize),
+                          chamferRadius: CGFloat(nodeSize*0.1))
+    case "plane":
+        geometry = SCNPlane(width: CGFloat(nodeSize),
+                            height: CGFloat(nodeSize))
+    default:
+        geometry = SCNSphere(radius: CGFloat(nodeSize))
+    }
+    
+    geometry.firstMaterial?.diffuse.contents = UIColor.magenta
+    geometry.firstMaterial?.transparency = CGFloat(0.5)
+    
+    let node = SCNNode(geometry: geometry)
+    
+    return node
+    
+}
 
 
 

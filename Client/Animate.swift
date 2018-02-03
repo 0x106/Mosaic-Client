@@ -16,7 +16,9 @@ class AnimateTest {
     
     private let N = 10
     private let offsetScaleX: Float = 0.1
-    private let offsetScaleY: Float = 0.05
+    private let offsetScaleY: Float = 0.1
+    
+    private let radius: Float = 0.4
     
     init() {
         
@@ -76,8 +78,11 @@ class AnimateTest {
     func explosion() {
         for node in self.nodes {
             
-            let motion = SCNVector3Make(node.position.x, node.position.y, 0.0)
-            let action = SCNAction.move(by: motion, duration: 10.0)
+            let point = pointOnCircle(self.radius, node.position.x, 0.0, node.position.y, 0.0)
+            print(point)
+            
+            let motion = SCNVector3Make(Float(point.x), Float(point.y), -1.0)
+            let action = SCNAction.move(to: motion, duration: 4.0)
             
 //            node.runAction(SCNAction.repeatForever(action))
             node.runAction(action)

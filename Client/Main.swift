@@ -45,7 +45,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // --------------------- //
         //  A N I M A T I O N S  //
         // --------------------- //
-        self.sceneView.scene.rootNode.addChildNode(self.animate_tests.rootNode)
+//        self.sceneView.scene.rootNode.addChildNode(self.animate_tests.rootNode)
 //        animate_tests.saveScene()
 //        exit()
         // --------------------- //
@@ -53,8 +53,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         DEBUG = false
         if DEBUG {
-            client.request(withURL: "http://atlasreality.xyz", false)
+//            client.request(withURL: "http://atlasreality.xyz", false)
         } else {
+//            client.request(withURL: "http://atlasreality.xyz", false)
+            client.request(withURL: "http://1c61d4a0.ngrok.io")//, true)
             addButton()
         }
     }
@@ -62,13 +64,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func setup() {
         // don't run the AR session in debug mode
         if !DEBUG {
-//            self.sceneView.scene.rootNode.addChildNode(client.rootNode)
+            self.sceneView.scene.rootNode.addChildNode(client.rootNode)
 //            self.sceneView.addSubview(client.field)
         }
     }
     
     @objc public func buttonPress() {
-        animate_tests.explosion()
+        self.client.currentDomain.explosion()
+//        animate_tests.explosion()
 //        client.request(withURL: "atlasreality.xyz", true)
     }
     
@@ -109,7 +112,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         self.client.currentDomain?.scroll( velocity )
         
-        if let hit = self.sceneView.hitTest(touch, types: ARHitTestResult.ResultType.featurePoint).first {
+        if let _ = self.sceneView.hitTest(touch, types: ARHitTestResult.ResultType.featurePoint).first {
 
         }
     }
@@ -136,7 +139,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
         
-        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
+//        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
 
         // Run the view's session
         if !DEBUG { // don't run the AR session in debug mode

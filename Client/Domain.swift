@@ -20,6 +20,8 @@ class Domain {
     let viewport: Viewport = Viewport()
     let scale: Float = 0.001
     
+    var otherNodes: [SCNNode] = [SCNNode]()
+    
     func setData(_ data: JSON, _ requestID: String) {
         
         self.data = data
@@ -68,6 +70,13 @@ class Domain {
         containerGroup.notify(queue: .main) {
             self.drawNodes()
         }
+        
+//        for element in self.nodes {
+//            let node = createNode(withGeometry: "cube")
+//            node.position = element.rootNode.position
+//            self.otherNodes.append(node)
+//            self.rootNode.addChildNode(node)
+//        }
         
         // self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
     }
@@ -170,6 +179,46 @@ class Domain {
             }
             
         }
+    }
+    
+    
+    func explosion() {
+        
+        let domainCentre = centre()
+        let animationScale: Float = 0.01
+        
+        for element in self.nodes {
+            
+            let node = element.rootNode
+            
+            let point = pointOnCircle(0.4, node.position.x, Float(domainCentre.x), node.position.y, Float(domainCentre.y))
+            
+            let motion = SCNVector3Make(Float(point.x) * animationScale, Float(point.y) * animationScale, -1.0)
+            let action = SCNAction.move(to: motion, duration: 1.0)
+            
+            //            node.runAction(SCNAction.repeatForever(action))
+            node.runAction(action)
+            
+        }
+    }
+    
+    func centre() -> CGPoint {
+        var point = CGPoint(x: 0.0, y: 0.0)
+        for element in self.nodes {
+            let node = element.rootNode
+            point.x += CGFloat(node.position.x)
+            point.y += CGFloat(node.position.y)
+            
+            print(node.position)
+            
+        }
+        
+        point.x /= CGFloat(self.nodes.count)
+        point.y /= CGFloat(self.nodes.count)
+        
+        print(point)
+        
+        return point
     }
 }
 
