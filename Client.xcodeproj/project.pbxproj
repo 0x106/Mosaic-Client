@@ -89,8 +89,12 @@
 			isa = PBXGroup;
 			children = (
 				DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */,
-				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
 				DA86E6CA2019A29C00DDE8C9 /* Main.swift */,
+				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
+				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
+				DA86E6CF2019A29C00DDE8C9 /* Assets.xcassets */,
+				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
+				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
 				DA3E64672019A8F700F15119 /* Client.swift */,
 				DA87E777201A879300BDADAE /* Domain.swift */,
 				DA1415B8201EFBCB002C773F /* Container.swift */,
@@ -99,10 +103,6 @@
 				DA3E64692019A90C00F15119 /* SearchBar.swift */,
 				DAFD57CC20265477003C0372 /* Animate.swift */,
 				DA3E646B2019A96D00F15119 /* Util.swift */,
-				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
-				DA86E6CF2019A29C00DDE8C9 /* Assets.xcassets */,
-				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
-				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
 			);
 			path = Client;
 			sourceTree = "<group>";
