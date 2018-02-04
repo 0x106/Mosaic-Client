@@ -105,6 +105,8 @@ class Container {
         
         self.text = labelText
         
+        print("Adding element with text: \(self.text)")
+        
         // check if this is a link - if so then make this a button and add the href that it points to.
         self.extractLink(parent)
         
@@ -177,6 +179,9 @@ class Container {
                              NSAttributedStringKey.paragraphStyle: paragraphStyle,
                              NSAttributedStringKey.foregroundColor: self.color,
                              NSAttributedStringKey.kern: self.characterSpacing]
+        
+        print("Font: \(self.font)")
+        print("Color: \(self.color)")
         
         let message = self.text
         let stringSize = message.size(withAttributes: fontAttrs)

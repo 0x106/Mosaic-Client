@@ -17,7 +17,6 @@
 		DA86E6C92019A29C00DDE8C9 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6C82019A29C00DDE8C9 /* art.scnassets */; };
 		DA86E6CB2019A29C00DDE8C9 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E6CA2019A29C00DDE8C9 /* Main.swift */; };
 		DA86E6CE2019A29C00DDE8C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */; };
-		DA86E6D02019A29C00DDE8C9 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6CF2019A29C00DDE8C9 /* Assets.xcassets */; };
 		DA86E6D32019A29C00DDE8C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */; };
 		DA87E778201A879300BDADAE /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E777201A879300BDADAE /* Domain.swift */; };
 		DA87E77A201A8FAC00BDADAE /* Dodecahedron.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */; };
@@ -37,11 +36,11 @@
 		DA86E6C82019A29C00DDE8C9 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
 		DA86E6CA2019A29C00DDE8C9 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		DA86E6CD2019A29C00DDE8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		DA86E6CF2019A29C00DDE8C9 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DA86E6D22019A29C00DDE8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DA86E6D42019A29C00DDE8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA87E777201A879300BDADAE /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dodecahedron.swift; sourceTree = "<group>"; };
+		DA9F97E5202797700078B477 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DAFD57CC20265477003C0372 /* Animate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animate.swift; sourceTree = "<group>"; };
 		FB987B3FDFB5580A558A7BED /* Pods-Client.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Client.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Client/Pods-Client.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -88,21 +87,21 @@
 		DA86E6C52019A29C00DDE8C9 /* Client */ = {
 			isa = PBXGroup;
 			children = (
-				DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */,
 				DA86E6CA2019A29C00DDE8C9 /* Main.swift */,
-				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
-				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
-				DA86E6CF2019A29C00DDE8C9 /* Assets.xcassets */,
-				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
-				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
 				DA3E64672019A8F700F15119 /* Client.swift */,
 				DA87E777201A879300BDADAE /* Domain.swift */,
 				DA1415B8201EFBCB002C773F /* Container.swift */,
-				DA1415BC202022D9002C773F /* Fonts.swift */,
-				DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */,
+				DA3E646B2019A96D00F15119 /* Util.swift */,
 				DA3E64692019A90C00F15119 /* SearchBar.swift */,
 				DAFD57CC20265477003C0372 /* Animate.swift */,
-				DA3E646B2019A96D00F15119 /* Util.swift */,
+				DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */,
+				DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */,
+				DA1415BC202022D9002C773F /* Fonts.swift */,
+				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
+				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
+				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
+				DA9F97E5202797700078B477 /* Assets.xcassets */,
+				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
 			);
 			path = Client;
 			sourceTree = "<group>";
@@ -179,7 +178,6 @@
 			files = (
 				DA86E6C92019A29C00DDE8C9 /* art.scnassets in Resources */,
 				DA86E6D32019A29C00DDE8C9 /* LaunchScreen.storyboard in Resources */,
-				DA86E6D02019A29C00DDE8C9 /* Assets.xcassets in Resources */,
 				DA86E6CE2019A29C00DDE8C9 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

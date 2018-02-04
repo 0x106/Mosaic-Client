@@ -106,11 +106,11 @@ class Client {
     func addNewDomain(_ response: JSON) {
 
         print("Adding domain.")
-        
+
         // UI work always done on main thread
         DispatchQueue.main.async { [unowned self] in
 
-            if self.writeData { 
+            if self.writeData {
                 let dataWriterWorker = DispatchQueue(label: "dataWriterWorker", qos: .userInitiated)
                 dataWriterWorker.async {
                     do {
