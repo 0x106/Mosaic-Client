@@ -40,23 +40,15 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
         
+        print("~~~~ Scene: \(self.sceneView.scene.rootNode.worldPosition)")
+        print("~~~~ Client: \(self.client.rootNode.worldPosition)")
         
-        
-        // --------------------- //
-        //  A N I M A T I O N S  //
-        // --------------------- //
-//        self.sceneView.scene.rootNode.addChildNode(self.animate_tests.rootNode)
-//        animate_tests.saveScene()
-//        exit()
-        // --------------------- //
-        
-        
-        DEBUG = false
+        DEBUG = true
         if DEBUG {
-//            client.request(withURL: "http://atlasreality.xyz", false)
+            client.request(withURL: "http://atlasreality.xyz", false)
         } else {
 //            client.request(withURL: "http://atlasreality.xyz", false)
-            client.request(withURL: "http://1c61d4a0.ngrok.io")//, true)
+//            client.request(withURL: "http://1c61d4a0.ngrok.io")//, true)
             addButton()
         }
     }
@@ -65,7 +57,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // don't run the AR session in debug mode
         if !DEBUG {
             self.sceneView.scene.rootNode.addChildNode(client.rootNode)
-//            self.sceneView.addSubview(client.field)
+            self.sceneView.addSubview(client.field)
         }
     }
     

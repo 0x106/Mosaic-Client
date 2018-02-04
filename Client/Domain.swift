@@ -19,7 +19,7 @@ class Domain {
     var requestID: String = ""
     let viewport: Viewport = Viewport()
     let scale: Float = 0.001
-    
+    var isReady: Bool = false
     var otherNodes: [SCNNode] = [SCNNode]()
     
     func setData(_ data: JSON, _ requestID: String) {
@@ -86,7 +86,12 @@ class Domain {
             for element in self.nodes {
                 element.draw()
                 self.rootNode.addChildNode(element.rootNode)
+//                print("(1)~~~~ \(element.rootNode.name): \(element.rootNode.worldPosition)")
             }
+            
+            self.moveItemsToCentre()
+            
+            self.isReady = true
             self.writeSceneToFile()
         } else {
             let drawingGroup = DispatchGroup()
@@ -103,9 +108,25 @@ class Domain {
             }
             
             drawingGroup.notify(queue: .main) {
+                self.moveItemsToCentre()
+                self.isReady = true
                 self.writeSceneToFile()
             }
         }
+    }
+    
+    func moveItemsToCentre() {
+        var domainCentre = centre()
+//        print("~~~~ domainCentre: \(domainCentre)")
+        
+        for element in self.nodes {
+            element.rootNode.position.x -= Float(domainCentre.x)
+            element.rootNode.position.y -= Float(domainCentre.y)
+//            print("~~~~ \(element.rootNode.name): \(element.rootNode.worldPosition)")
+        }
+        
+        domainCentre = centre()
+//        print("~~~~ domainCentre: \(domainCentre)")
     }
     
     // spending a lot of time in this function.
@@ -140,7 +161,7 @@ class Domain {
             let scene = SCNScene()
             scene.rootNode.addChildNode(self.rootNode)
             scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-            print("Scene written to: \(file)")
+            print("Domain scene written to: \(file)")
         }
     }
     
@@ -204,20 +225,20 @@ class Domain {
     
     func centre() -> CGPoint {
         var point = CGPoint(x: 0.0, y: 0.0)
+        
+        var x_count = 0, y_count = 0
         for element in self.nodes {
-            let node = element.rootNode
-            point.x += CGFloat(node.position.x)
-            point.y += CGFloat(node.position.y)
+            point.x += CGFloat(element.rootNode.position.x)
+            x_count += 1
             
-            print(node.position)
-            
+            if element.rootNode.position.y > Float(-1.0) && element.rootNode.position.y < Float(1.0) {
+                point.y += CGFloat(element.rootNode.position.y)
+                y_count += 1
+            }
         }
         
-        point.x /= CGFloat(self.nodes.count)
-        point.y /= CGFloat(self.nodes.count)
-        
-        print(point)
-        
+        point.x /= CGFloat(x_count)
+        point.y /= CGFloat(y_count)
         return point
     }
 }

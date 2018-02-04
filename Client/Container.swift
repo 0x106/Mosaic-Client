@@ -124,14 +124,14 @@ class Container {
                 self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
                 self.plane.firstMaterial?.isDoubleSided = true
                 self.rootNode.geometry = self.plane
-                self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
+                self.z = -0.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
             }
             
         } else {
             if self.text == "" {
-                self.z = -1.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
+                self.z = -0.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
             } else {
-                self.z = -1
+                self.z = 0.0
             }
             
             self.computeFonts(style)

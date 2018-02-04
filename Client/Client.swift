@@ -42,6 +42,9 @@ class Client {
         
         rootNode.addChildNode(orb.rootNode)
         rootNode.addChildNode(searchBar.rootNode)
+        
+        print("~~~~ Orb: \(self.orb.rootNode.worldPosition)")
+        print("~~~~ Search Bar: \(self.searchBar.rootNode.worldPosition)")
        
         rootNode.position = SCNVector3Make(0, 0, -1)
     }
@@ -138,6 +141,8 @@ class Client {
             // add the new domain to the scene
             self.currentDomain.setData(response, self.requestID)
             self.rootNode.addChildNode(self.currentDomain.rootNode)
+            
+            print("~~~~ Domain: \(self.currentDomain.rootNode.worldPosition)")
             
             self.orb.rootNode.isHidden = true
         }
