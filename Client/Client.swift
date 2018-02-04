@@ -78,6 +78,7 @@ class Client {
             dataLoaderWorker.async {
                 do {
                     let data = try Data(contentsOf: file)
+                    print("Reading data from local file.")
                     let response = try JSON(data: data)
                     self.writeData = false
                     self.addNewDomain(response)
@@ -92,6 +93,7 @@ class Client {
         self.writeData = true
 
         let parameters: Parameters = ["atlasurl": requestURL]
+        print("Making network request.")
 
         Alamofire.request("\(self.serverEndpoint)", method: .get, parameters: parameters)
             .responseSwiftyJSON { dataResponse in
@@ -103,6 +105,8 @@ class Client {
 
     func addNewDomain(_ response: JSON) {
 
+        print("Adding domain.")
+        
         // UI work always done on main thread
         DispatchQueue.main.async { [unowned self] in
 

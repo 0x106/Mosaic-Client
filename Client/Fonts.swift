@@ -8,7 +8,6 @@
 
 import Foundation
 import Alamofire
-import SSZipArchive
 
 class AtlasFont {
     var name: String = ""

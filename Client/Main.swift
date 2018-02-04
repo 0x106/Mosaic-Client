@@ -43,10 +43,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.moveSceneToPlane(withGestureRecognizer:)))
 //        sceneView.addGestureRecognizer(tapGestureRecognizer)
         
-        DEBUG = false
+        DEBUG = true
         if DEBUG {
 //            client.request(withURL: "http://1c61d4a0.ngrok.io")
 //            client.request(withURL: "google.co.nz")
+            client.request(withURL: "techcrunch.com")
         } else {
             addButton()
         }

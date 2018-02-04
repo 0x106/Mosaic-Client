@@ -9,7 +9,6 @@
 import Foundation
 import ARKit
 import SwiftyJSON
-import Async
 
 class Domain {
     
@@ -52,7 +51,8 @@ class Domain {
             if      !ignoreNameTags.contains(name)
                 &&  !ignoreValueTags.contains(value)
                 &&  layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0
-                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
+                &&  (name == "#text" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
+//                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
 
                 let pkey = object["pkey"].stringValue
                 let parent = self.data[pkey]
@@ -73,7 +73,6 @@ class Domain {
                                                withRequestURL: self.requestURL,
                                                withMaxZ:     self.maxZOffset)
                     {
-                        print(element.rootNode.worldPosition)
                         self.nodes.append(element)
                         containerGroup.leave()
                     } else {}
@@ -161,7 +160,7 @@ class Domain {
     }
     
     func scroll(_ velocity: CGPoint) {
-        self.rootNode.position.y += Float(velocity.y) * self.velocityScale
+        self.rootNode.position.y -= Float(velocity.y) * self.velocityScale
         update()
     }
     
