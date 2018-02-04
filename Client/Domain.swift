@@ -71,13 +71,6 @@ class Domain {
             self.drawNodes()
         }
         
-//        for element in self.nodes {
-//            let node = createNode(withGeometry: "cube")
-//            node.position = element.rootNode.position
-//            self.otherNodes.append(node)
-//            self.rootNode.addChildNode(node)
-//        }
-        
         // self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
     }
     
@@ -86,7 +79,6 @@ class Domain {
             for element in self.nodes {
                 element.draw()
                 self.rootNode.addChildNode(element.rootNode)
-//                print("(1)~~~~ \(element.rootNode.name): \(element.rootNode.worldPosition)")
             }
             
             self.moveItemsToCentre()
@@ -98,7 +90,7 @@ class Domain {
             let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
             containerDrawWorker.async {
                 for element in self.nodes {
-                    if self.viewport.contains(element) { // if element is in viewport
+                    if self.viewport.contains(element.rootNode.worldPosition) { // if element is in viewport
                         drawingGroup.enter()
                         element.draw()
                         self.rootNode.addChildNode(element.rootNode)
@@ -117,16 +109,13 @@ class Domain {
     
     func moveItemsToCentre() {
         var domainCentre = centre()
-//        print("~~~~ domainCentre: \(domainCentre)")
         
         for element in self.nodes {
             element.rootNode.position.x -= Float(domainCentre.x)
             element.rootNode.position.y -= Float(domainCentre.y)
-//            print("~~~~ \(element.rootNode.name): \(element.rootNode.worldPosition)")
         }
         
         domainCentre = centre()
-//        print("~~~~ domainCentre: \(domainCentre)")
     }
     
     // spending a lot of time in this function.
@@ -149,10 +138,6 @@ class Domain {
         return nil
     }
     
-    func onPlane(_ planeNode: SCNNode) {
-        self.rootNode.position = planeNode.position
-    }
-    
     private func writeSceneToFile() {
         if DEBUG {
             let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -173,35 +158,20 @@ class Domain {
     func update() {
         let updateWorker = DispatchQueue(label: "updateWorker", qos: .userInitiated)
         updateWorker.async {
-            
-            // for each node
             for element in self.nodes {
-                
-                let position = SCNVector3Make(element.rootNode.position.x + self.rootNode.position.x,
-                                              element.rootNode.position.y + self.rootNode.position.y,
-                                              element.rootNode.position.z + self.rootNode.position.z)
-                
-                // if the node is in view
-                if self.viewport.contains(position) {
+                if self.viewport.contains(element.rootNode.worldPosition) {
                  
-                    // ensure that it has been drawn
                     if !element.isRendered {
                         element.draw()
                     }
-                
-                    // ensure that any node in the viewport is visible
-//                    element.rootNode.isHidden = false
                     element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
                 } else {
-                    // if a node is not in the viewport but has previously been rendered then hide it
-//                    element.rootNode.isHidden = true
                     element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
                 }
             }
             
         }
     }
-    
     
     func explosion() {
         
@@ -217,7 +187,7 @@ class Domain {
             let motion = SCNVector3Make(Float(point.x) * animationScale, Float(point.y) * animationScale, -1.0)
             let action = SCNAction.move(to: motion, duration: 1.0)
             
-            //            node.runAction(SCNAction.repeatForever(action))
+            // node.runAction(SCNAction.repeatForever(action))
             node.runAction(action)
             
         }
@@ -250,27 +220,11 @@ class Viewport {
     var y: [Float]
     var z: [Float]
 
-    
     init() {
-        
         // set the initial view parameters
         x = [-0.65, 0.65]
         y = [-0.65, 0.65]
         z = [-2.0, 2.0]
-        
-        print("Viewport created with dimensions: \(x[0]), \(x[1]), \(y[0]), \(y[1]), \(z[0]), \(z[1])")
-        
-    }
-    
-    func contains(_ element: Container) -> Bool {
-        if     (element.rootNode.position.x >= self.x[0] && element.rootNode.position.x <= self.x[1])
-            && (element.rootNode.position.y >= self.y[0] && element.rootNode.position.y <= self.y[1])
-            && (element.rootNode.position.z >= self.z[0] && element.rootNode.position.z <= self.z[1]) {
-            
-            return true
-        }
-        
-        return false
     }
     
     func contains(_ position: SCNVector3) -> Bool {

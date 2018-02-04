@@ -42,9 +42,6 @@ class Client {
         
         rootNode.addChildNode(orb.rootNode)
         rootNode.addChildNode(searchBar.rootNode)
-        
-        print("~~~~ Orb: \(self.orb.rootNode.worldPosition)")
-        print("~~~~ Search Bar: \(self.searchBar.rootNode.worldPosition)")
        
         rootNode.position = SCNVector3Make(0, 0, -1)
     }
@@ -76,15 +73,12 @@ class Client {
             
             let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
             let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
-            print("Trying to retrieve from local file:  \(file.absoluteString)")
-            
             let dataLoaderWorker = DispatchQueue(label: "dataLoaderWorker", qos: .userInitiated)
             
             dataLoaderWorker.async {
                 do {
                     let data = try Data(contentsOf: file)
                     let response = try JSON(data: data)
-                    print("Reading from local file")
                     self.writeData = false
                     self.addNewDomain(response)
                 } catch {
@@ -95,7 +89,6 @@ class Client {
     }
     
     private func networkRequest() {
-        print("No local file available - making network request.")
         self.writeData = true
         
         let parameters: Parameters = ["atlasurl": requestURL]
@@ -104,7 +97,6 @@ class Client {
             .responseSwiftyJSON { dataResponse in
                 
                 guard let response = dataResponse.value else {return}
-                print("Retrieved data from: \(dataResponse.result)")
                 self.addNewDomain(response)
         }
     }
@@ -122,9 +114,7 @@ class Client {
                         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
                         let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
                         try data.write(to: file)
-                        print("Wrote to local file")
                     } catch {
-                        print("Error writing domain data to local file.")
                     }
                 }
             }
@@ -141,9 +131,7 @@ class Client {
             // add the new domain to the scene
             self.currentDomain.setData(response, self.requestID)
             self.rootNode.addChildNode(self.currentDomain.rootNode)
-            
-            print("~~~~ Domain: \(self.currentDomain.rootNode.worldPosition)")
-            
+                    
             self.orb.rootNode.isHidden = true
         }
         

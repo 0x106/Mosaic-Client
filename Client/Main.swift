@@ -40,12 +40,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
         
-        print("~~~~ Scene: \(self.sceneView.scene.rootNode.worldPosition)")
-        print("~~~~ Client: \(self.client.rootNode.worldPosition)")
-        
-        DEBUG = true
+        DEBUG = false
         if DEBUG {
-            client.request(withURL: "http://atlasreality.xyz", false)
+            client.request(withURL: "http://1c61d4a0.ngrok.io")//, true)
         } else {
 //            client.request(withURL: "http://atlasreality.xyz", false)
 //            client.request(withURL: "http://1c61d4a0.ngrok.io")//, true)
@@ -63,7 +60,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     @objc public func buttonPress() {
         self.client.currentDomain.explosion()
-//        animate_tests.explosion()
 //        client.request(withURL: "atlasreality.xyz", true)
     }
     
@@ -94,19 +90,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @objc func handleGestures(_ gesture: UIPanGestureRecognizer) {
-        print("~~~~ Panning ~~~~")
-        
         let touch = gesture.location(in: self.sceneView)
         let velocity = gesture.velocity(in: self.sceneView)
-        
-        print("touch: \(touch)")
-        print("velocity: \(velocity)")
-        
         self.client.currentDomain?.scroll( velocity )
-        
-        if let _ = self.sceneView.hitTest(touch, types: ARHitTestResult.ResultType.featurePoint).first {
-
-        }
+        if let _ = self.sceneView.hitTest(touch, types: ARHitTestResult.ResultType.featurePoint).first {}
     }
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -127,14 +114,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        // Create a session configuration
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
         
-//        sceneView.debugOptions = [ARSCNDebugOptions.showWorldOrigin]
-
-        // Run the view's session
-        if !DEBUG { // don't run the AR session in debug mode
+        self.sceneView.debugOptions = [.showConstraints, .showLightExtents, ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+        self.sceneView.automaticallyUpdatesLighting = true
+        
+        if !DEBUG {
             sceneView.session.run(configuration)
         }
     }
@@ -146,24 +132,49 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         sceneView.session.pause()
     }
     
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Release any cached data, images, etc that aren't in use.
-    }
-
-    // MARK: - ARSCNViewDelegate
-    func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+        // 1
+        guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         
+        // 2
+        let width = CGFloat(planeAnchor.extent.x)
+        let height = CGFloat(planeAnchor.extent.z)
+        let plane = SCNPlane(width: width, height: height)
+        
+        // 3
+        plane.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(CGFloat(0.4))
+        
+        // 4
+        let planeNode = SCNNode(geometry: plane)
+        
+        // 5
+        let x = CGFloat(planeAnchor.center.x)
+        let y = CGFloat(planeAnchor.center.y)
+        let z = CGFloat(planeAnchor.center.z)
+        planeNode.position = SCNVector3(x,y,z)
+        planeNode.eulerAngles.x = -.pi / 2
+        
+        // 6
+        node.addChildNode(planeNode)
     }
     
-    func sessionWasInterrupted(_ session: ARSession) {
-        // Inform the user that the session has been interrupted, for example, by presenting an overlay
+    func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        guard let planeAnchor = anchor as?  ARPlaneAnchor,
+            let planeNode = node.childNodes.first,
+            let plane = planeNode.geometry as? SCNPlane
+            else { return }
         
-    }
-    
-    func sessionInterruptionEnded(_ session: ARSession) {
-        // Reset tracking and/or remove existing anchors if consistent tracking is required
+        // 2
+        let width = CGFloat(planeAnchor.extent.x)
+        let height = CGFloat(planeAnchor.extent.z)
+        plane.width = width
+        plane.height = height
+        
+        // 3
+        let x = CGFloat(planeAnchor.center.x)
+        let y = CGFloat(planeAnchor.center.y)
+        let z = CGFloat(planeAnchor.center.z)
+        planeNode.position = SCNVector3(x, y, z)
     }
     
 }
