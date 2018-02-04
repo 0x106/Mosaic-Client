@@ -141,8 +141,10 @@ class Client {
     // won't catch incorrect urls (atlas.xyz)
     // wont' catch incorrect suffixes (atlasreality.xy-a)
     // won't catch missing www (http://atlasreality.xyz)
-    func checkURL(_ url: String) -> String {
-                
+    func checkURL(_ _url: String) -> String {
+        
+        let url = _url.lowercased()
+        
         var output = url
         self.requestID = urlToID(url)
         

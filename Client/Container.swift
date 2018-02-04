@@ -50,6 +50,9 @@ class Container {
     var font:                   UIFont = UIFont()
     var defaultFont:                   UIFont = UIFont()
     var text: String = ""
+    var characterSpacing: Float = 1.0
+    
+    var textAlignment: String = "left"
     
     var isButton: Bool = false
     var href: String = ""
@@ -169,11 +172,14 @@ class Container {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .left
         
-        let attrs = [NSAttributedStringKey.font: self.font as UIFont,
-                     NSAttributedStringKey.paragraphStyle: paragraphStyle,
-                     NSAttributedStringKey.foregroundColor: self.color]
+        let fontAttrs: [NSAttributedStringKey: Any] =
+                            [NSAttributedStringKey.font: self.font as UIFont,
+                             NSAttributedStringKey.paragraphStyle: paragraphStyle,
+                             NSAttributedStringKey.foregroundColor: self.color,
+                             NSAttributedStringKey.kern: self.characterSpacing]
         
         let message = self.text
+        let stringSize = message.size(withAttributes: fontAttrs)
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.total_width), height: CGFloat(self.total_height)))
         self.image = renderer.image { context in
@@ -185,8 +191,18 @@ class Container {
             for border in self.borders {
                 context.fill(border)
             }
-
-            message.draw(with: self.nucleus, options: .usesLineFragmentOrigin, attributes: attrs, context: nil)
+            
+            if self.textAlignment == "centre" {
+                
+                let drawRect = CGRect(x: CGFloat((self.nucleus.width / 2.0) - (stringSize.width/2.0)),
+                                      y: CGFloat((self.nucleus.height / 2.0) - (stringSize.height/2.0)),
+                                      width: CGFloat(stringSize.width),
+                                      height: CGFloat(stringSize.height))
+                message.draw(with: drawRect, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
+                
+            } else {
+                message.draw(with: self.nucleus, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
+            }
         }
 
         self.plane = SCNPlane(width: CGFloat(self.total_width * self.scale), height: CGFloat(self.total_height * self.scale))

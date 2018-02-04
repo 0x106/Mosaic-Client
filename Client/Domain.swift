@@ -20,6 +20,7 @@ class Domain {
     var requestURL: String = ""
     let viewport: Viewport = Viewport()
     let scale: Float = 0.001
+    let velocityScale: Float = 0.0001
     var isReady: Bool = false
     var otherNodes: [SCNNode] = [SCNNode]()
     var ZOffsets: [Float] = [Float]()
@@ -160,7 +161,7 @@ class Domain {
     }
     
     func scroll(_ velocity: CGPoint) {
-        self.rootNode.position.y += Float(velocity.y) * self.scale
+        self.rootNode.position.y += Float(velocity.y) * self.velocityScale
         update()
     }
     
@@ -175,7 +176,7 @@ class Domain {
                     }
                     element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
                 } else {
-                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
+//                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
                 }
             }
             

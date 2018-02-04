@@ -18,7 +18,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     let client = Client()
     let trackingStatus = false
     let button = UIButton()
-    
+    var clientCanMove: Bool = true
     let animate_tests = AnimateTest()
     
     override func viewDidLoad() {
@@ -39,6 +39,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
+        
+//        let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(ViewController.moveSceneToPlane(withGestureRecognizer:)))
+//        sceneView.addGestureRecognizer(tapGestureRecognizer)
         
         DEBUG = false
         if DEBUG {
@@ -65,23 +68,50 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+        
+        print("tap tap")
+        
         if let touchLocation = touches.first?.location(in: self.sceneView) {
+            
+            if self.clientCanMove {
+                if let hit = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent).first{
+                    print("plane tapped")
+                    let x = hit.worldTransform.columns.3.x
+                    let y = hit.worldTransform.columns.3.y
+                    let z = hit.worldTransform.columns.3.z + 0.0
+                    
+                    let translation = SCNAction.move(to: SCNVector3Make(x,y,z), duration: 2.0)
+                    let rotation = SCNAction.rotateBy(x: -.pi/2.0, y: 0.0, z: 0.0, duration: 2.0)
+                    
+                    let motion = SCNAction.group([translation, rotation])
+                    
+                    self.client.rootNode.runAction(motion)
+                    self.clientCanMove = false
+                }
+            }
+            
             if let hit = self.sceneView.hitTest(touchLocation, options: nil).first {
+                
                 guard let nodeName = hit.node.name else {
                     return
                 }
+                print("UI tapped: \(nodeName)")
                 if nodeName == "searchBarNode" {
                     client.field.becomeFirstResponder()
                 } else if nodeName == "searchBarButtonNode" {
                     guard let search = client.field.text else { return }
+                    print("Search request: \(search)")
                     client.field.resignFirstResponder()
                     client.request(withURL: search)
                 } else {
+                    
+                    print("tapped link?")
                     
                     // will fail if we haven't got a domain yet
                     guard let currentDomain = client.currentDomain else {return}
                     
                     guard let tappedNode = currentDomain.getNode(withKey: nodeName) else {return}
+                    print(tappedNode.text)
                     if tappedNode.isButton {
                         client.request(withURL: tappedNode.href)
                     }
@@ -143,7 +173,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let plane = SCNPlane(width: width, height: height)
         
         // 3
-        plane.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(CGFloat(0.4))
+        plane.materials.first?.diffuse.contents = UIColor.blue.withAlphaComponent(CGFloat(0.1   ))
         
         // 4
         let planeNode = SCNNode(geometry: plane)
@@ -176,6 +206,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let y = CGFloat(planeAnchor.center.y)
         let z = CGFloat(planeAnchor.center.z)
         planeNode.position = SCNVector3(x, y, z)
+    }
+    
+    @objc func moveSceneToPlane(withGestureRecognizer recognizer: UIGestureRecognizer) {
+        if self.clientCanMove {
+            let tapLocation = recognizer.location(in: sceneView)
+            let hitTestResults = sceneView.hitTest(tapLocation, types: .existingPlaneUsingExtent)
+            
+            guard let hitTestResult = hitTestResults.first else { return }
+            let x = hitTestResult.worldTransform.columns.3.x
+            let y = hitTestResult.worldTransform.columns.3.y
+            let z = hitTestResult.worldTransform.columns.3.z + 0.0
+            
+            let translation = SCNAction.move(to: SCNVector3Make(x,y,z), duration: 2.0)
+            let rotation = SCNAction.rotateBy(x: -.pi/2.0, y: 0.0, z: 0.0, duration: 2.0)
+            
+            let motion = SCNAction.group([translation, rotation])
+            
+            self.client.rootNode.runAction(motion)
+        }
+        self.clientCanMove = false
     }
     
 }
