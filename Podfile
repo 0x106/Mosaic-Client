@@ -8,7 +8,5 @@ target 'Client' do
   # Pods for Client
   pod 'Alamofire'
   pod 'Alamofire-SwiftyJSON'
-  pod "AsyncSwift"
   pod 'AlamofireImage', '~> 3.3'
-  pod 'SSZipArchive'
 end

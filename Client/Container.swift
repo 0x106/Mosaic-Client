@@ -63,7 +63,12 @@ class Container {
     var nodeKey: String = ""
     var image: UIImage = UIImage()
     var plane: SCNPlane = SCNPlane()
+    
     let scale: Float = 0.001
+    let z_offset: Float = 0.01
+    var maxZOffset: Float = 0.0
+    
+    var requestURL: String = ""
     
     let top     = 0
     let bottom  = 1
@@ -84,11 +89,16 @@ class Container {
           withKey       key: String,
           withlayout    layout: JSON,
           withStyle     style: JSON,
-          withParent    parent: JSON) {
+          withParent    parent: JSON,
+          withAttrs     attrs: JSON,
+          withRequestURL requestURL: String,
+          withMaxZ       maxZOffset: Float) {
         
         self.nodeKey = key
         self.rootNode.name = self.nodeKey
         let computedStyle = computeStylesFromDict(style)
+        self.requestURL = requestURL
+        self.maxZOffset = maxZOffset
         
         self.text = labelText
         
@@ -115,35 +125,37 @@ class Container {
         self.background_color        = (computedStyle["background-color"] as! UIColor)
         self.color                   = (computedStyle["color"] as! UIColor)
         
-        if let bgImage = getAttribute(style, "background-image"), bgImage.stringValue != "none" {
-            self.canDraw = false // don't try and draw over top of images
+        if containerType == "IMG" {
+            
+            if let src = getAttribute(attrs, "src") {
+                self.imageURL = self.requestURL + src.stringValue
+                self.loadImage()
+            }
+            
+        } else if let bgImage = getAttribute(style, "background-image"), bgImage.stringValue != "none" {
+            
             if bgImage.stringValue.hasPrefix("url") {
                 self.imageURL = parseHREFFromURL(bgImage.stringValue)
                 self.loadImage()
-                
-                self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
-                self.plane.firstMaterial?.isDoubleSided = true
-                self.rootNode.geometry = self.plane
-                self.z = -0.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
             }
             
         } else {
             if self.text == "" {
-                self.z = -0.01 - (Float(indexFromKey(key)) * self.scale * 0.1) + randomFloat(min: -0.01, max: 0.0)
+//                self.z = -0.01 - (Float(indexFromKey(key)) * self.scale * self.z_offset) + randomFloat(min: -0.01, max: 0.0)
+//                self.z = (0.01 + (Float(indexFromKey(key)) * self.scale * self.z_offset) + randomFloat(min: 0.0, max: 0.01)) - (self.maxZOffset * self.scale)
+                self.z = ( ( Float(indexFromKey(key)) - self.maxZOffset ) * self.scale * self.z_offset ) - 0.01 - randomFloat(min: 0.0, max: 0.01)
             } else {
                 self.z = 0.0
             }
-            
-            self.computeFonts(style)
         }
         
+        self.computeFonts(style)
         self.determineLayout()
         self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
                                                 (  -self.y - (self.total_height/2.0))*self.scale,
                                                 self.z)
         
         // we 'hide' any nodes until they have been drawn etc
-//        self.rootNode.isHidden = true
         self.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
     }
     
@@ -182,7 +194,6 @@ class Container {
         self.plane.firstMaterial?.isDoubleSided = true
         self.rootNode.geometry = self.plane
         self.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
-//        self.rootNode.isHidden = false
         self.isRendered = true
     }
     
@@ -221,6 +232,9 @@ class Container {
     
     func loadImage() {
         if self.imageURL != "" {
+            
+            self.plane = SCNPlane(width: CGFloat(self.nucleus_width*self.scale), height: CGFloat(self.nucleus_height*self.scale))
+            
             Alamofire.request(self.imageURL).responseImage { response in
                 if let image = response.result.value {
                     self.image = image
@@ -228,6 +242,13 @@ class Container {
                     print("image added")
                 }
             }
+            
+            self.canDraw = false
+            self.plane.firstMaterial?.diffuse.contents = UIColor.blue
+            self.plane.firstMaterial?.isDoubleSided = true
+            self.rootNode.geometry = self.plane
+//            self.z = -0.01 - (Float(indexFromKey(self.nodeKey)) * self.scale * self.z_offset) + randomFloat(min: -0.01, max: 0.0)
+            self.z = ( ( Float(indexFromKey(self.nodeKey)) - self.maxZOffset ) * self.scale * self.z_offset ) - 0.01 - randomFloat(min: 0.0, max: 0.01)
         }
     }
     
@@ -259,8 +280,6 @@ class Container {
                 break
             }
         }
-        
-        // if it doesn't use the Google Fonts API and if the specified fonts don't exist on iOS.
         if !fontIsSet { self.font = self.defaultFont }
     }
     

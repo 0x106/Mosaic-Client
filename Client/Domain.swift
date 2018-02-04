@@ -17,10 +17,17 @@ class Domain {
     var nodes: [Container] = [Container]()
     var rootNode: SCNNode = SCNNode()
     var requestID: String = ""
+    var requestURL: String = ""
     let viewport: Viewport = Viewport()
     let scale: Float = 0.001
     var isReady: Bool = false
     var otherNodes: [SCNNode] = [SCNNode]()
+    var ZOffsets: [Float] = [Float]()
+    var maxZOffset: Float = 0.0
+    
+    init(_ requestURL: String) {
+        self.requestURL = requestURL
+    }
     
     func setData(_ data: JSON, _ requestID: String) {
         
@@ -30,9 +37,9 @@ class Domain {
         let ignoreNameTags = ["#document", "HTML", "IFRAME"];
         let ignoreValueTags = ["Cached", "Similar"];
         
-//        print(self.data)
-        
         let containerGroup = DispatchGroup()
+        
+        self.getZOffsets()
         
         for (key, object) in self.data {
                 
@@ -44,10 +51,12 @@ class Domain {
             if      !ignoreNameTags.contains(name)
                 &&  !ignoreValueTags.contains(value)
                 &&  layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0
-                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY") {
+                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
 
                 let pkey = object["pkey"].stringValue
                 let parent = self.data[pkey]
+                
+                let attrs = object["attr"]
             
                 let domainWorker = DispatchQueue(label: "domainWorker", qos: .userInitiated)
                 domainWorker.async {
@@ -58,8 +67,12 @@ class Domain {
                                                withKey:      key,
                                                withlayout:   layout,
                                                withStyle:    style,
-                                               withParent:   parent)
+                                               withParent:   parent,
+                                               withAttrs:    attrs,
+                                               withRequestURL: self.requestURL,
+                                               withMaxZ:     self.maxZOffset)
                     {
+                        print(element.rootNode.worldPosition)
                         self.nodes.append(element)
                         containerGroup.leave()
                     } else {}
@@ -70,8 +83,6 @@ class Domain {
         containerGroup.notify(queue: .main) {
             self.drawNodes()
         }
-        
-        // self.rootNode.eulerAngles = SCNVector3Make(-(.pi / 12.0), 0.0, 0.0)
     }
     
     func drawNodes() {
@@ -109,12 +120,10 @@ class Domain {
     
     func moveItemsToCentre() {
         var domainCentre = centre()
-        
         for element in self.nodes {
             element.rootNode.position.x -= Float(domainCentre.x)
             element.rootNode.position.y -= Float(domainCentre.y)
         }
-        
         domainCentre = centre()
     }
     
@@ -211,6 +220,16 @@ class Domain {
         point.y /= CGFloat(y_count)
         return point
     }
+    
+    private func getZOffsets() {
+        for (key, _) in self.data {
+            let index = Float(indexFromKey(key))
+            if index > self.maxZOffset {
+                self.maxZOffset = index
+            }
+            self.ZOffsets.append( index )
+        }
+    }
 }
 
 
@@ -239,11 +258,6 @@ class Viewport {
     }
 
 }
-
-
-
-
-
 
 
 

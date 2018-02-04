@@ -42,10 +42,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         DEBUG = false
         if DEBUG {
-            client.request(withURL: "http://1c61d4a0.ngrok.io")//, true)
+//            client.request(withURL: "http://1c61d4a0.ngrok.io")
+//            client.request(withURL: "google.co.nz")
         } else {
-//            client.request(withURL: "http://atlasreality.xyz", false)
-//            client.request(withURL: "http://1c61d4a0.ngrok.io")//, true)
             addButton()
         }
     }
@@ -59,8 +58,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @objc public func buttonPress() {
-        self.client.currentDomain.explosion()
-//        client.request(withURL: "atlasreality.xyz", true)
+//        self.client.currentDomain.explosion()
+//        client.request(withURL: "google.co.nz")
+//        client.request(withURL: "kohler.co.nz")
+//        client.request(withURL: "atlasreality.xyz", false)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -117,7 +118,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
         
-        self.sceneView.debugOptions = [.showConstraints, .showLightExtents, ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+//        self.sceneView.debugOptions = [.showConstraints, .showLightExtents, ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
         self.sceneView.automaticallyUpdatesLighting = true
         
         if !DEBUG {

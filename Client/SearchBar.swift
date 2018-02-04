@@ -27,6 +27,7 @@ class SearchBar {
         label.total_height = Float(label.cell.height)
         label.background_color = UIColor.white.withAlphaComponent(0.4)
         label.setFont("Arial", 20.0)
+        label.rootNode.name = "searchBarNode"
         label.draw()
 
         self.button.text = "Search"

@@ -125,7 +125,7 @@ class Client {
             }
             
             // initialise the new domain
-            self.domains.append(Domain())
+            self.domains.append(Domain(self.requestURL))
             self.currentDomain = self.domains[ self.domains.count - 1 ]
             
             // add the new domain to the scene
@@ -158,6 +158,13 @@ class Client {
         
         // e.g: http://atlasreality.xyz
         if url.hasPrefix("http://") || url.hasPrefix("https://") {
+            
+            var index = url.index(of: "/") ?? url.startIndex
+            index = url.index(after: index)
+            index = url.index(after: index)
+            
+            output = "https://www." + url[index..<url.endIndex]
+            
             return output
         }
         
