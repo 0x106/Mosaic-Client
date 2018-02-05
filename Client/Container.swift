@@ -177,8 +177,8 @@ class Container {
         let fontAttrs: [NSAttributedStringKey: Any] =
                             [NSAttributedStringKey.font: self.font as UIFont,
                              NSAttributedStringKey.paragraphStyle: paragraphStyle,
-                             NSAttributedStringKey.foregroundColor: self.color,
-                             NSAttributedStringKey.kern: self.characterSpacing]
+                             NSAttributedStringKey.foregroundColor: self.color]//,
+//                             NSAttributedStringKey.kern: self.characterSpacing]
         
         print("Font: \(self.font)")
         print("Color: \(self.color)")

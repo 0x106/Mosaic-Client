@@ -45,10 +45,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         DEBUG = true
         if DEBUG {
-//            client.request(withURL: "")
+            client.request(withURL: "", true)
 //            client.request(withURL: "google.co.nz", true)
 //            client.request(withURL: "techcrunch.com")
-            client.request(withURL: "atlasreality.xyz")
+//            client.request(withURL: "atlasreality.xyz")
 //            client.request(withURL: "https://www.google.co.nz/search?q=augmented+reality&oq=augmented+reality&aqs=chrome..69i57j69i60l3j69i59l2.2911j0j1&sourceid=chrome&ie=UTF-8")
         } else {
             addButton()
