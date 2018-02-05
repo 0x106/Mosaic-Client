@@ -67,7 +67,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //        self.client.currentDomain.explosion()
 //        client.request(withURL: "google.co.nz")
 //        client.request(withURL: "kohler.co.nz")
-//        client.request(withURL: "atlasreality.xyz", false)
+        client.request(withURL: "atlasreality.xyz", true)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -240,7 +240,7 @@ extension ViewController {
         let by = CGFloat(self.sceneView.bounds.maxY - 80)
         button.frame = CGRect(x: bx, y: by, width: CGFloat(48), height: CGFloat(48))
         button.backgroundColor = .clear
-        let buttonIcon = UIImage(named: "add")
+        let buttonIcon = UIImage(named: "1")
         button.setImage(buttonIcon, for: .normal)
         button.backgroundColor = UIColor(displayP3Red: 255, green: 255, blue: 255, alpha: 0.5)
         button.addTarget(self, action: #selector(buttonPress), for: .touchUpInside)
