@@ -156,9 +156,30 @@ class Container {
         
         self.computeFonts(style)
         self.determineLayout()
-        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
-                                                (  -self.y - (self.total_height/2.0))*self.scale,
+        
+//                self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
+//                                                        (  -self.y - (self.border_bottom_width + self.padding_bottom))*self.scale,
+//                                                        self.z)
+        
+//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0) + (self.nucleus_width/2.0))*self.scale,
+//                                                (  -self.y - (self.total_height/2.0) + (self.nucleus_height/2.0))*self.scale,
+//                                                self.z)
+//
+        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0) - (self.padding_left+self.border_left_width))*self.scale,
+                                                (  -self.y - (self.total_height/2.0) + (self.padding_top+self.border_top_width))*self.scale,
                                                 self.z)
+        
+//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
+//                                                (  -self.y - ((self.padding_top + self.padding_bottom )/2.0))*self.scale,
+//                                                self.z)
+        
+//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
+//                                                (  -self.y - ((self.border_top_width + self.border_bottom_width )))*self.scale,
+//                                                self.z)
+
+//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
+//                                                (   self.y + ((self.padding_top + self.padding_bottom + self.border_top_width + self.border_bottom_width )/2.0))*self.scale,
+//                                                self.z)
         
         // we 'hide' any nodes until they have been drawn etc
         self.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)

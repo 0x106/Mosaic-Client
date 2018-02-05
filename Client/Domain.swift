@@ -51,17 +51,18 @@ class Domain {
             if      !ignoreNameTags.contains(name)
                 &&  !ignoreValueTags.contains(value)
                 &&  layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0
-                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
+                &&  (name == "#text" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
+//                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
 
                 let pkey = object["pkey"].stringValue
                 let parent = self.data[pkey]
                 
                 let attrs = object["attr"]
             
-                let domainWorker = DispatchQueue(label: "domainWorker", qos: .userInitiated)
-                domainWorker.async {
+//                let domainWorker = DispatchQueue(label: "domainWorker", qos: .userInitiated)
+//                domainWorker.async {
     
-                    containerGroup.enter()
+//                    containerGroup.enter()
                     if let element = Container(withName:     name,
                                                withlabel:    value,
                                                withKey:      key,
@@ -73,15 +74,16 @@ class Domain {
                                                withMaxZ:     self.maxZOffset)
                     {
                         self.nodes.append(element)
-                        containerGroup.leave()
+//                        element.draw()
+//                        containerGroup.leave()
                     } else {}
-                }
+//                }
             }
         }
     
-        containerGroup.notify(queue: .main) {
+//        containerGroup.notify(queue: .main) {
             self.drawNodes()
-        }
+//        }
     }
     
     func drawNodes() {
@@ -91,7 +93,7 @@ class Domain {
                 self.rootNode.addChildNode(element.rootNode)
             }
             
-            self.moveItemsToCentre()
+//            self.moveItemsToCentre()
             
             self.isReady = true
             self.writeSceneToFile()
@@ -100,12 +102,12 @@ class Domain {
             let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
             containerDrawWorker.async {
                 for element in self.nodes {
-                    if self.viewport.contains(element.rootNode.worldPosition) { // if element is in viewport
+//                    if self.viewport.contains(element.rootNode.worldPosition) { // if element is in viewport
                         drawingGroup.enter()
                         element.draw()
                         self.rootNode.addChildNode(element.rootNode)
                         drawingGroup.leave()
-                    }
+//                    }
                 }
             }
             
