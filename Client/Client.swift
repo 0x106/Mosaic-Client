@@ -23,7 +23,7 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://c5fb0aa2.ngrok.io"
+    let server: String = "http://18d3347e.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
@@ -93,7 +93,7 @@ class Client {
         self.writeData = true
 
         let parameters: Parameters = ["atlasurl": requestURL]
-        print("Making network request.")
+        print("Making network request: \(serverEndpoint)\(requestURL)")
 
         Alamofire.request("\(self.serverEndpoint)", method: .get, parameters: parameters)
             .responseSwiftyJSON { dataResponse in

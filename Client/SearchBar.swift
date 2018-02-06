@@ -31,9 +31,9 @@ class SearchBar {
         label.rootNode.name = "searchBarNode"
         label.draw()
 
-        self.button.text = "Search"
-        button.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(250), height: CGFloat(100))
-        button.nucleus = CGRect(x: 0.0, y: 0.0, width: CGFloat(250), height: CGFloat(100))
+        self.button.text = "Go Go Gizmo"
+        button.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(400), height: CGFloat(100))
+        button.nucleus = CGRect(x: 0.0, y: 0.0, width: CGFloat(400), height: CGFloat(100))
 //        button.nucleus = CGRect(x: 20.0, y: 35.0, width: CGFloat(250), height: CGFloat(50))
         button.total_width = Float(button.cell.width)
         button.total_height = Float(button.cell.height)

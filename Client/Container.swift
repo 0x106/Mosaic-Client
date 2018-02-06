@@ -12,11 +12,23 @@ import SwiftyJSON
 import Alamofire
 import AlamofireImage
 
+enum borderStyleType {
+    case solid
+    case dashed
+    case none
+}
+
+
 class Container {
     
     var cell: CGRect = CGRect()
     var nucleus: CGRect   = CGRect()
     var borders: [CGRect] = [CGRect(), CGRect(), CGRect(), CGRect()]
+    
+    var borderStyles: [borderStyleType] = [borderStyleType.solid,
+                                           borderStyleType.solid,
+                                           borderStyleType.solid,
+                                           borderStyleType.solid]
     
     var nucleus_height:         Float = 0.0
     var nucleus_width:          Float = 0.0
@@ -99,13 +111,13 @@ class Container {
         
         self.nodeKey = key
         self.rootNode.name = self.nodeKey
-        let computedStyle = computeStylesFromDict(style)
+        guard let computedStyle = computeStylesFromDict(style) else {return}
         self.requestURL = requestURL
         self.maxZOffset = maxZOffset
         
         self.text = labelText
         
-        print("Adding element with text: \(self.text)")
+//        print("Adding element with text: \(self.text)")
         
         // check if this is a link - if so then make this a button and add the href that it points to.
         self.extractLink(parent)
@@ -130,6 +142,22 @@ class Container {
         self.background_color        = (computedStyle["background-color"] as! UIColor)
         self.color                   = (computedStyle["color"] as! UIColor)
         
+        if getAttribute(style, "border-top-style") == "none" {
+            self.borderStyles[top] = borderStyleType.none
+        }
+        
+        if getAttribute(style, "border-bottom-style") == "none" {
+            self.borderStyles[bottom] = borderStyleType.none
+        }
+        
+        if getAttribute(style, "border-left-style") == "none" {
+            self.borderStyles[left] = borderStyleType.none
+        }
+        
+        if getAttribute(style, "border-right-style") == "none" {
+            self.borderStyles[right] = borderStyleType.none
+        }
+    
         if containerType == "IMG" {
             
             if let src = getAttribute(attrs, "src") {
@@ -157,29 +185,9 @@ class Container {
         self.computeFonts(style)
         self.determineLayout()
         
-//                self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
-//                                                        (  -self.y - (self.border_bottom_width + self.padding_bottom))*self.scale,
-//                                                        self.z)
-        
-//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0) + (self.nucleus_width/2.0))*self.scale,
-//                                                (  -self.y - (self.total_height/2.0) + (self.nucleus_height/2.0))*self.scale,
-//                                                self.z)
-//
         self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0) - (self.padding_left+self.border_left_width))*self.scale,
                                                 (  -self.y - (self.total_height/2.0) + (self.padding_top+self.border_top_width))*self.scale,
                                                 self.z)
-        
-//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
-//                                                (  -self.y - ((self.padding_top + self.padding_bottom )/2.0))*self.scale,
-//                                                self.z)
-        
-//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
-//                                                (  -self.y - ((self.border_top_width + self.border_bottom_width )))*self.scale,
-//                                                self.z)
-
-//        self.rootNode.position = SCNVector3Make((   self.x + (self.total_width/2.0))*self.scale,
-//                                                (   self.y + ((self.padding_top + self.padding_bottom + self.border_top_width + self.border_bottom_width )/2.0))*self.scale,
-//                                                self.z)
         
         // we 'hide' any nodes until they have been drawn etc
         self.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
@@ -202,7 +210,7 @@ class Container {
 //                             NSAttributedStringKey.kern: self.characterSpacing]
         
         print("Font: \(self.font)")
-        print("Color: \(self.color)")
+//        print("Color: \(self.color)")
         
         let message = self.text
         let stringSize = message.size(withAttributes: fontAttrs)
@@ -214,9 +222,15 @@ class Container {
             context.fill(self.cell)
 
             self.border_color.setFill()
-            for border in self.borders {
-                context.fill(border)
-            }
+            
+            if borderStyles[top] != borderStyleType.none { context.fill(borders[top]) }
+            if borderStyles[bottom] != borderStyleType.none { context.fill(borders[bottom]) }
+            if borderStyles[left] != borderStyleType.none { context.fill(borders[left]) }
+            if borderStyles[right] != borderStyleType.none { context.fill(borders[right]) }
+            
+//            for border in self.borders {
+//                context.fill(border)
+//            }
             
             if self.textAlignment == "centre" {
                 
@@ -281,7 +295,7 @@ class Container {
                 if let image = response.result.value {
                     self.image = image
                     self.plane.firstMaterial?.diffuse.contents = self.image
-                    print("image added")
+//                    print("image added")
                 }
             }
             
@@ -305,6 +319,7 @@ class Container {
                 self.fonts.append( AtlasFont(String(ft), "", "", self.font_size) )
             }
         }
+        
         self.setFont("HelveticaNeue", 10.0)
     }
     
@@ -346,7 +361,17 @@ class Container {
 
 }
 
-
+class Border {
+    var layout: CGRect
+    var type: borderStyleType
+    var color: UIColor
+    
+    init(_ layout: CGRect, _ type: borderStyleType, _ color: UIColor) {
+        self.layout = layout
+        self.type = type
+        self.color = color
+    }
+}
 
 // end
 

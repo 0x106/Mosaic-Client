@@ -115,7 +115,7 @@ func parseResponseToDict(_ input: Data) -> [String : NSDictionary]? {
     return [:]
 }
 
-func computeStylesFromDict(_ style: JSON) -> Dictionary<String, Any> {
+func computeStylesFromDict(_ style: JSON) -> Dictionary<String, Any>? {
     var computedStyle: Dictionary<String, Any> = [:]
     
     for (_, property) in style {
@@ -132,6 +132,7 @@ func computeStylesFromDict(_ style: JSON) -> Dictionary<String, Any> {
         }
     }
     
+    if computedStyle.isEmpty {return nil}
     return computedStyle
 }
 
