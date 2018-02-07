@@ -42,16 +42,15 @@ class Domain {
         if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
             
             if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {
-                self.renderTree.push( newRootNode )
-                while renderTree.hasNextNode {
+            self.renderTree.push( newRootNode )
+                while self.renderTree.hasNextNode {
                     
-                    let node = renderTree.next()
-                    
+                    let node = self.renderTree.next()
                     for (_, childKey) in node.childrenKeys() {
-                        
+                            
                         if let childNodeData = self.data?[ childKey.stringValue ] {
                             if childNodeData.count > 0 {
-                                
+        
                                 if let childNode = Node( childKey.stringValue, childNodeData, self.requestURL, node.treeDepth + 1) {
                                     self.renderTree.push( childNode )
                                     node.addChild(childNode)
@@ -62,6 +61,8 @@ class Domain {
                 }
             }
             
+            self.render()
+
         } else {
             print("Error: No root node exists with key \(self.rootKey)")
         }
@@ -69,19 +70,13 @@ class Domain {
     
     func render() {
         
-//        renderTree._print()
+        renderTree._print()
         renderTree.draw()
         for node in renderTree.nodes {
             if node.canRender {
                 self.rootNode.addChildNode(node.rootNode)
             }
         }
-        
-        writeSceneToFile()
-        
-        print("Atlas processing complete. Goodbye.")
-        
-        exit()
     }
     
     private func getRootKey() {
@@ -91,114 +86,6 @@ class Domain {
                 return
             }
         }
-    }
-    
-    
-    
-    
-    
-    
-    func setData(_ data: JSON, _ requestID: String) {
-        
-        self.data = data
-        self.requestID = requestID
-        
-        print (self.data)
-        
-        let ignoreNameTags = ["#document", "HTML", "IFRAME"];
-        let ignoreValueTags = ["Cached", "Similar"];
-        
-        let containerGroup = DispatchGroup()
-        
-        self.getZOffsets()
-        
-        for (key, object) in self.data {
-                
-            let name = object["nodeName"].stringValue
-            let layout = object["nodeLayout"]
-            let style = object["nodeStyle"]
-            let value = object["nodeValue"].stringValue
-            
-            if      !ignoreNameTags.contains(name)
-                &&  !ignoreValueTags.contains(value)
-                &&  layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0
-                &&  (name == "#text" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG" || name == "INPUT" || name == "DIV") {
-//                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
-                let pkey = object["pkey"].stringValue
-                let parent = self.data[pkey]
-                
-                let attrs = object["attr"]
-                
-                let display = getAttribute(style, "display")?.stringValue
-//                print(display)
-            
-//                let domainWorker = DispatchQueue(label: "domainWorker", qos: .userInitiated)
-//                domainWorker.async {
-    
-//                    containerGroup.enter()
-                    if let element = Container(withName:     name,
-                                               withlabel:    value,
-                                               withKey:      key,
-                                               withlayout:   layout,
-                                               withStyle:    style,
-                                               withParent:   parent,
-                                               withAttrs:    attrs,
-                                               withRequestURL: self.requestURL,
-                                               withMaxZ:     self.maxZOffset)
-                    {
-//                        self.nodes.append(element)
-//                        element.draw()
-//                        containerGroup.leave()
-                    } else {}
-//                }
-            }
-        }
-    
-//        containerGroup.notify(queue: .main) {
-            self.drawNodes()
-//        }
-    }
-    
-    func drawNodes() {
-        if DEBUG {
-//            for element in self.nodes {
-//                element.draw()
-//                self.rootNode.addChildNode(element.rootNode)
-//            }
-            
-//            self.moveItemsToCentre()
-            
-            self.isReady = true
-            self.writeSceneToFile()
-        } else {
-            let drawingGroup = DispatchGroup()
-            let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
-            containerDrawWorker.async {
-//                for element in self.nodes {
-////                    if self.viewport.contains(element.rootNode.worldPosition) { // if element is in viewport
-//                        drawingGroup.enter()
-//                        element.draw()
-//                        self.rootNode.addChildNode(element.rootNode)
-//                        drawingGroup.leave()
-////                    }
-//                }
-            }
-            
-            drawingGroup.notify(queue: .main) {
-                self.moveItemsToCentre()
-                self.isReady = true
-                self.writeSceneToFile()
-            }
-        }
-    }
-    
-    func moveItemsToCentre() {
-        var domainCentre = centre()
-//        for element in self.nodes {
-//            element.rootNode.position.x -= Float(domainCentre.x)
-//            element.rootNode.position.y -= Float(domainCentre.y)
-//        }
-        domainCentre = centre()
     }
     
     func getNode(withKey ref: String) -> Node? {
@@ -211,24 +98,12 @@ class Domain {
         }
         return nil
     }
-    
-    private func writeSceneToFile() {
-        if DEBUG {
-            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
-            let file = URL(fileURLWithPath: documents + "/\(self.requestID).scn")
-            
-            let scene = SCNScene()
-            scene.rootNode.addChildNode(self.rootNode)
-            scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-            print("Domain scene written to: \(file)")
-        }
-    }
-    
+
     func scroll(_ velocity: CGPoint) {
         self.rootNode.position.y -= Float(velocity.y) * self.velocityScale
         update()
     }
-    
+
     func update() {
 //        let updateWorker = DispatchQueue(label: "updateWorker", qos: .userInitiated)
 //        updateWorker.async {
@@ -247,35 +122,144 @@ class Domain {
 //        }
     }
     
-    func centre() -> CGPoint {
-        var point = CGPoint(x: 0.0, y: 0.0)
-        
-        var x_count = 0, y_count = 0
-//        for element in self.nodes {
-//            point.x += CGFloat(element.rootNode.position.x)
-//            x_count += 1
+    
+}
+    
 //
-//            if element.rootNode.position.y > Float(-1.0) && element.rootNode.position.y < Float(1.0) {
-//                point.y += CGFloat(element.rootNode.position.y)
-//                y_count += 1
+//
+//    func setData(_ data: JSON, _ requestID: String) {
+//
+//        self.data = data
+//        self.requestID = requestID
+//
+//        print (self.data)
+//
+//        let ignoreNameTags = ["#document", "HTML", "IFRAME"];
+//        let ignoreValueTags = ["Cached", "Similar"];
+//
+//        let containerGroup = DispatchGroup()
+//
+//        self.getZOffsets()
+//
+//        for (key, object) in self.data {
+//
+//            let name = object["nodeName"].stringValue
+//            let layout = object["nodeLayout"]
+//            let style = object["nodeStyle"]
+//            let value = object["nodeValue"].stringValue
+//
+//            if      !ignoreNameTags.contains(name)
+//                &&  !ignoreValueTags.contains(value)
+//                &&  layout["width"].doubleValue > 0 && layout["height"].doubleValue > 0
+//                &&  (name == "#text" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG" || name == "INPUT" || name == "DIV") {
+////                &&  (name == "#text" || name == "DIV" || name == "TD" || name == "TABLE" || name == "NAV" || name == "LI" || name == "BODY" || name == "IMG") {
+//                let pkey = object["pkey"].stringValue
+//                let parent = self.data[pkey]
+//
+//                let attrs = object["attr"]
+//
+//                let display = getAttribute(style, "display")?.stringValue
+////                print(display)
+//
+////                let domainWorker = DispatchQueue(label: "domainWorker", qos: .userInitiated)
+////                domainWorker.async {
+//
+////                    containerGroup.enter()
+//                    if let element = Container(withName:     name,
+//                                               withlabel:    value,
+//                                               withKey:      key,
+//                                               withlayout:   layout,
+//                                               withStyle:    style,
+//                                               withParent:   parent,
+//                                               withAttrs:    attrs,
+//                                               withRequestURL: self.requestURL,
+//                                               withMaxZ:     self.maxZOffset)
+//                    {
+////                        self.nodes.append(element)
+////                        element.draw()
+////                        containerGroup.leave()
+//                    } else {}
+////                }
 //            }
 //        }
-        
-        point.x /= CGFloat(x_count)
-        point.y /= CGFloat(y_count)
-        return point
-    }
-    
-    private func getZOffsets() {
-        for (key, _) in self.data {
-            let index = Float(indexFromKey(key))
-            if index > self.maxZOffset {
-                self.maxZOffset = index
-            }
-//            self.ZOffsets.append( index )
-        }
-    }
-}
+//
+////        containerGroup.notify(queue: .main) {
+//            self.drawNodes()
+////        }
+//    }
+//
+//    func drawNodes() {
+//        if DEBUG {
+////            for element in self.nodes {
+////                element.draw()
+////                self.rootNode.addChildNode(element.rootNode)
+////            }
+//
+////            self.moveItemsToCentre()
+//
+//            self.isReady = true
+////            self.writeSceneToFile()
+//        } else {
+//            let drawingGroup = DispatchGroup()
+//            let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
+//            containerDrawWorker.async {
+////                for element in self.nodes {
+//////                    if self.viewport.contains(element.rootNode.worldPosition) { // if element is in viewport
+////                        drawingGroup.enter()
+////                        element.draw()
+////                        self.rootNode.addChildNode(element.rootNode)
+////                        drawingGroup.leave()
+//////                    }
+////                }
+//            }
+//
+//            drawingGroup.notify(queue: .main) {
+//                self.moveItemsToCentre()
+//                self.isReady = true
+////                self.writeSceneToFile()
+//            }
+//        }
+//    }
+//
+//    func moveItemsToCentre() {
+//        var domainCentre = centre()
+////        for element in self.nodes {
+////            element.rootNode.position.x -= Float(domainCentre.x)
+////            element.rootNode.position.y -= Float(domainCentre.y)
+////        }
+//        domainCentre = centre()
+//    }
+//
+//
+//    func centre() -> CGPoint {
+//        var point = CGPoint(x: 0.0, y: 0.0)
+//
+//        var x_count = 0, y_count = 0
+////        for element in self.nodes {
+////            point.x += CGFloat(element.rootNode.position.x)
+////            x_count += 1
+////
+////            if element.rootNode.position.y > Float(-1.0) && element.rootNode.position.y < Float(1.0) {
+////                point.y += CGFloat(element.rootNode.position.y)
+////                y_count += 1
+////            }
+////        }
+//
+//        point.x /= CGFloat(x_count)
+//        point.y /= CGFloat(y_count)
+//        return point
+//    }
+//
+//    private func getZOffsets() {
+//        for (key, _) in self.data {
+//            let index = Float(indexFromKey(key))
+//            if index > self.maxZOffset {
+//                self.maxZOffset = index
+//            }
+////            self.ZOffsets.append( index )
+//        }
+//    }
+//}
 
 
 class Viewport {

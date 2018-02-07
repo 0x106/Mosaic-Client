@@ -12,6 +12,8 @@ import Alamofire
 import Alamofire_SwiftyJSON
 import SwiftyJSON
 
+var globalRequestID: String = ""
+
 class Client {
 
     let searchBar = SearchBar()
@@ -63,6 +65,8 @@ class Client {
         } else {
             requestURL = checkURL(url)
         }
+        
+        globalRequestID = requestID
 
         // check to see if a local cache of this url exists
         if refresh {
@@ -134,7 +138,6 @@ class Client {
 
             // add the new domain to the scene            
             self.currentDomain.constructRenderTree(response, self.requestID)
-            self.currentDomain.render()
             
             self.rootNode.addChildNode(self.currentDomain.rootNode)
 

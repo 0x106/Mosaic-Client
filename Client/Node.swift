@@ -135,6 +135,9 @@ class Node {
             
         } else {
             
+            // TODO: Rounded corners
+            // https://stackoverflow.com/questions/30368739/how-to-draw-a-simple-rounded-rect-in-swift-rounded-corners
+            
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
             self.image = renderer.image { context in
 

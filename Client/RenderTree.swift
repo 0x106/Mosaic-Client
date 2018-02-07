@@ -52,13 +52,46 @@ class RenderTree {
     
     func draw() {
         var counter: Int = 0
+        let renderGroup = DispatchGroup()
         for node in self.nodes {
-            if node.canRender {
-                if node.render() {
-                    counter += 1
+            
+            let renderTreeWorker = DispatchQueue(label: "renderTreeWorker", qos: .userInitiated)
+            renderTreeWorker.async {
+                renderGroup.enter()
+                if node.canRender {
+                    if node.render() {
+                        counter += 1
+                    }
                 }
+                renderGroup.leave()
             }
         }
-        print("\(counter) nodes rendered.")
+        
+        renderGroup.notify(queue: .main) {
+            print("\(counter) nodes rendered.")
+            self.writeSceneToFile()
+            print("Atlas processing complete. Goodbye.")
+            exit()
+        }
+    }
+}
+
+extension RenderTree {
+    private func writeSceneToFile() {
+        if DEBUG {
+            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let file = URL(fileURLWithPath: documents + "/\(globalRequestID).scn")
+            
+            let scene = SCNScene()
+            let rootNode = SCNNode()
+            for node in self.nodes {
+                if node.canRender {
+                    rootNode.addChildNode(node.rootNode)
+                }
+            }
+            scene.rootNode.addChildNode(rootNode)
+            scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
+            print("Domain scene written to: \(file)")
+        }
     }
 }
