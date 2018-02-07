@@ -26,6 +26,7 @@ class Node {
     var key: String
     var children: [Node] = [Node]()
     var treeDepth: Int = 0
+    var text: String = ""
     
     // AR properties
     var rootNode: SCNNode = SCNNode()
@@ -55,6 +56,8 @@ class Node {
     var backgroundColor: UIColor = UIColor()
     var borderColor: [UIColor] = [UIColor(), UIColor(), UIColor(), UIColor()]
     
+    var canRender: Bool = true
+    
     init(_ _key: String,
          _ _data: JSON,
          _ _depth: Int) {
@@ -63,26 +66,35 @@ class Node {
         self.key = _key
         self.rootNode.name = self.key
         self.treeDepth = _depth
+    
+        self.text = checkText(self.data["nodeValue"].stringValue)
+        
     }
     
-    private func hasStyle() -> Bool {
+    private func checkText(_ value: String) -> String {
+        var copy: String = String(value).replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
+        if copy == "" {
+            return copy
+        }
+        return value
+    }
+    
+    private func hasStyle() {
         if self.computedStyle["background-image"] as! String == "none"
             && (self.backgroundColor.isEqual( wa ) || self.backgroundColor.isEqual( wb ) || self.backgroundColor.isEqual( wc ))
-            && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ))
-            && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ))
-            && (self.borderColor[right].isEqual( wa ) || self.borderColor[right].isEqual( wb ) || self.borderColor[right].isEqual( wc ))
-            && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ))
-            && self.data["nodeValue"] == "" {
-            return false
+            && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ) || self.computedStyle["border-top-style"] as! String == "none")
+            && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ) || self.computedStyle["border-left-style"] as! String == "none")
+            && (self.borderColor[right].isEqual( wa ) || self.borderColor[right].isEqual( wb ) || self.borderColor[right].isEqual( wc ) || self.computedStyle["border-right-style"] as! String == "none")
+            && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ) || self.computedStyle["border-bottom-style"] as! String == "none")
+            && self.text == "" {
+            self.canRender = false
+            return
         }
-        
-        return true
     }
     
-    func determineProperties() -> Bool {
+    func determineProperties() {
         // do this on a separate thread
         if self.data["nodeStyle"].exists() {
-            
             if let style = computeStylesFromDict(self.data["nodeStyle"]) {
                 
                 self.computedStyle = style
@@ -99,21 +111,24 @@ class Node {
                 self.borderColor[left] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[right] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[bottom] = self.computedStyle["border-top-color"] as! UIColor
+            } else {
+                self.canRender = false
+                return
             }
-            
-            return true
+        } else {
+            self.canRender = false
+            return
         }
-        
-        return false
     }
     
-    func determineLayout() -> Bool {
+    func determineLayout() {
         
         let x = Float(self.data["nodeLayout"]["x"].doubleValue)
         let y = Float(self.data["nodeLayout"]["y"].doubleValue)
      
         if x <= 0 || y <= 0 {
-            return false
+            self.canRender = false
+            return
         }
     
         self.rootNode.position = SCNVector3Make(   (x + (self.totalWidth/2.0)) * self.scale,
@@ -146,21 +161,19 @@ class Node {
                            y: CGFloat(0.0),
                            width: CGFloat(self.totalWidth),
                            height: CGFloat(self.totalHeight))
-        
-        return true
     }
     
-    func determineType() -> Bool {
+    func determineType() {
         if self.data["nodeName"] == "#document"
             || self.data["nodeName"] == "HTML"
             || self.data["nodeName"] == "IFRAME"
             || self.data["nodeName"] == "BODY" {
-            return false
+            self.canRender = false
+            return
         }
-        return true
     }
     
-    func determineFont() -> Bool {
+    func determineFont() {
         
         let font_list = (self.computedStyle["font-family"] as! String).replacingOccurrences(of: ",", with: "").split(separator: " ")
         let googleFonts = getAttribute(self.data["nodeStyle"], "googleFonts")
@@ -175,8 +188,6 @@ class Node {
 
         // find the font or use whatever is passed in as the default
         self.setFont("HelveticaNeue", 10.0)
-        
-        return true
     }
     
     func setFont(_ selectedFont: String, _ size: Float) {
@@ -196,14 +207,13 @@ class Node {
         if !fontIsSet { self.font = self.defaultFont }
     }
     
-    func render() {
+    func render() -> Bool {
         
-        
-        if !determineType() {return}
-        if !determineProperties() {return}
-        if !hasStyle() {return}
-        if !determineLayout() {return}
-        if !determineFont() {return}
+        determineType()             ;if !self.canRender {return false}
+        determineProperties()       ;if !self.canRender {return false}
+        hasStyle()                  ;if !self.canRender {return false}
+        determineLayout()           
+        determineFont()
         
         if self.data["nodeName"] == "#text" {
             
@@ -215,13 +225,10 @@ class Node {
                  NSAttributedStringKey.paragraphStyle: paragraphStyle,
                  NSAttributedStringKey.foregroundColor: self.color]//,
             //   NSAttributedStringKey.kern: self.characterSpacing]
-            
-            let message = self.data["nodeValue"].stringValue
-            let stringSize = message.size(withAttributes: fontAttrs)
-            
+                    
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
             self.image = renderer.image { context in
-                message.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
+                self.text.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
             }
             
         } else {
@@ -246,11 +253,12 @@ class Node {
             }
         }
         
-        self.geometry = SCNPlane(width: CGFloat(self.totalWidth * self.scale), height: CGFloat(self.totalHeight * self.scale))
-        self.geometry?.firstMaterial?.diffuse.contents = self.image
-        self.rootNode.geometry = self.geometry
-        
-        self.rootNode.geometry?.firstMaterial?.isDoubleSided = true
+//        self.geometry = SCNPlane(width: CGFloat(self.totalWidth * self.scale), height: CGFloat(self.totalHeight * self.scale))
+//        self.geometry?.firstMaterial?.diffuse.contents = self.image
+//        self.rootNode.geometry = self.geometry
+//        self.rootNode.geometry?.firstMaterial?.isDoubleSided = true
+//        
+        return true
     }
     
     func childrenKeys() -> JSON {
@@ -258,7 +266,9 @@ class Node {
     }
     
     func _print() {
+//        if self.key.hasPrefix("#text") {
         print( "Node [\(self.treeDepth)]: \(self.key)" )
+//        }
     }
     
     func addChild(_ _child: Node) {

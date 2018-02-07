@@ -5,6 +5,12 @@
 //  Created by Jordan Campbell on 7/02/18.
 //  Copyright © 2018 Atlas Innovation. All rights reserved.
 //
+//  1. Some nodes have children that aren't actually included in the snapshot.
+//      This means that they are added to the render tree 
+//
+//
+//
+//
 
 import Foundation
 import ARKit
@@ -37,13 +43,17 @@ class RenderTree {
             for child in node.children {
                 child._print()
             }
-            print("=======================")
+//            print("=======================")
         }
     }
     
     func draw() {
+        var counter: Int = 0
         for node in self.nodes {
-            node.render()
+            if node.render() {
+                counter += 1
+            }
         }
+        print("\(counter) nodes rendered.")
     }
 }

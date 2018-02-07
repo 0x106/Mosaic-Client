@@ -25,8 +25,6 @@ class Domain {
     let scale: Float = 0.001
     let velocityScale: Float = 0.0001
     var isReady: Bool = false
-    var otherNodes: [SCNNode] = [SCNNode]()
-    var ZOffsets: [Float] = [Float]()
     var maxZOffset: Float = 0.0
     
     init(_ requestURL: String) {
@@ -40,41 +38,40 @@ class Domain {
         self.requestID = _requestID
         
         self.getRootKey()
-                
+    
         if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
-           
-            self.renderTree.push(
-                Node( self.rootKey, renderTreeRootNodeData, 0)
-            )
-            
+            self.renderTree.push( Node( self.rootKey, renderTreeRootNodeData, 0) )
             while renderTree.hasNextNode {
-                
                 let node = renderTree.next()
-                
+                node.childrenKeys()
                 for (_, childKey) in node.childrenKeys() {
-                    if let nodeData = self.data?[ childKey.stringValue ] {
-                        
-                        let childNode = Node( childKey.stringValue, nodeData, node.treeDepth + 1)
-                        
-                        self.renderTree.push(
-                            childNode
-                        )
-                        
-                        node.addChild(childNode)
+                    if let childNodeData = self.data?[ childKey.stringValue ] {
+                        if childNodeData.count > 0 {
+                            let childNode = Node( childKey.stringValue, childNodeData, node.treeDepth + 1)
+                            self.renderTree.push( childNode )
+                            node.addChild(childNode)
+                        }else {
+                        }
+                    } else {
                     }
                 }
             }
         } else {
             print("Error: No root node exists with key \(self.rootKey)")
         }
+    }
     
+    func render() {
+        
         renderTree.draw()
         for node in renderTree.nodes {
-            self.rootNode.addChildNode(node.rootNode)
+            if node.canRender {
+                self.rootNode.addChildNode(node.rootNode)
+            }
         }
         
         writeSceneToFile()
-
+        
         print("Atlas processing complete. Goodbye.")
         
         exit()
@@ -82,7 +79,7 @@ class Domain {
     
     private func getRootKey() {
         for (key, value) in self.data {
-            if key.hasPrefix("#document") {
+            if key.hasPrefix("#document-1-") {
                 self.rootKey = key
                 return
             }
@@ -277,7 +274,7 @@ class Domain {
             if index > self.maxZOffset {
                 self.maxZOffset = index
             }
-            self.ZOffsets.append( index )
+//            self.ZOffsets.append( index )
         }
     }
 }

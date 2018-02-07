@@ -134,6 +134,7 @@ class Client {
 
             // add the new domain to the scene            
             self.currentDomain.constructRenderTree(response, self.requestID)
+            self.currentDomain.render()
             
             self.rootNode.addChildNode(self.currentDomain.rootNode)
 

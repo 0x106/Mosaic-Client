@@ -36,10 +36,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         DEBUG = true
         if DEBUG {
-//            client.request(withURL: "", false)
-            // client.request(withURL: "https://news.ycombinator.com")
-            // client.request(withURL: "google.co.nz")
-             client.request(withURL: "atlasreality.xyz")
+//            client.request(withURL: "", true)
+            client.request(withURL: "stuff.co.nz", false)
+//             client.request(withURL: "https://news.ycombinator.com")
+//             client.request(withURL: "google.co.nz", true)
+//             client.request(withURL: "atlasreality.xyz", true)
         } else {
             // client.request(withURL: "atlasreality.xyz")
             // addButton()
