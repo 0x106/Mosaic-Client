@@ -36,8 +36,6 @@ class AtlasFont {
     
     func load(_ fontURL: String) {
         
-        print("Loading Google Font with: name = \(self.name), url = \(self.url) and weight = \(self.weight)")
-        
         let documentsUrl = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         self.fileURL = documentsUrl.appendingPathComponent("\(self.name)-\(self.weight).ttf")
         

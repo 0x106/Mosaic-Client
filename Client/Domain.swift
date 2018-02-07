@@ -13,7 +13,10 @@ import SwiftyJSON
 class Domain {
     
     var data: JSON!
-    var nodes: [Container] = [Container]()
+    var renderTree: RenderTree = RenderTree()
+    var rootKey: String = ""
+    
+    
     var rootNode: SCNNode = SCNNode()
     var requestID: String = ""
     var requestURL: String = ""
@@ -28,6 +31,69 @@ class Domain {
     init(_ requestURL: String) {
         self.requestURL = requestURL
     }
+    
+    func constructRenderTree(_ _data: JSON,
+                     _ _requestID: String) {
+        
+        self.data = _data
+        self.requestID = _requestID
+        
+        self.getRootKey()
+                
+        if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
+           
+            self.renderTree.push(
+                Node( self.rootKey, renderTreeRootNodeData, 0)
+            )
+            
+            while renderTree.hasNextNode {
+                
+                let node = renderTree.next()
+                
+                for (_, childKey) in node.childrenKeys() {
+                    if let nodeData = self.data?[ childKey.stringValue ] {
+                        
+                        let childNode = Node( childKey.stringValue, nodeData, node.treeDepth + 1)
+                        
+                        self.renderTree.push(
+                            childNode
+                        )
+                        
+                        node.addChild(childNode)
+                    }
+                }
+            }
+        } else {
+            print("Error: No root node exists with key \(self.rootKey)")
+        }
+        
+        renderTree._print()
+    
+        renderTree.draw()
+        for node in renderTree.nodes {
+            self.rootNode.addChildNode(node.rootNode)
+        }
+        
+        writeSceneToFile()
+
+        print("Atlas processing complete. Goodbye.")
+        
+        exit()
+    }
+    
+    private func getRootKey() {
+        for (key, value) in self.data {
+            if key.hasPrefix("#document") {
+                self.rootKey = key
+                return
+            }
+        }
+    }
+    
+    
+    
+    
+    
     
     func setData(_ data: JSON, _ requestID: String) {
         
@@ -77,7 +143,7 @@ class Domain {
                                                withRequestURL: self.requestURL,
                                                withMaxZ:     self.maxZOffset)
                     {
-                        self.nodes.append(element)
+//                        self.nodes.append(element)
 //                        element.draw()
 //                        containerGroup.leave()
                     } else {}
@@ -92,10 +158,10 @@ class Domain {
     
     func drawNodes() {
         if DEBUG {
-            for element in self.nodes {
-                element.draw()
-                self.rootNode.addChildNode(element.rootNode)
-            }
+//            for element in self.nodes {
+//                element.draw()
+//                self.rootNode.addChildNode(element.rootNode)
+//            }
             
 //            self.moveItemsToCentre()
             
@@ -105,14 +171,14 @@ class Domain {
             let drawingGroup = DispatchGroup()
             let containerDrawWorker = DispatchQueue(label: "containerDrawWorker", qos: .userInitiated)
             containerDrawWorker.async {
-                for element in self.nodes {
-//                    if self.viewport.contains(element.rootNode.worldPosition) { // if element is in viewport
-                        drawingGroup.enter()
-                        element.draw()
-                        self.rootNode.addChildNode(element.rootNode)
-                        drawingGroup.leave()
-//                    }
-                }
+//                for element in self.nodes {
+////                    if self.viewport.contains(element.rootNode.worldPosition) { // if element is in viewport
+//                        drawingGroup.enter()
+//                        element.draw()
+//                        self.rootNode.addChildNode(element.rootNode)
+//                        drawingGroup.leave()
+////                    }
+//                }
             }
             
             drawingGroup.notify(queue: .main) {
@@ -125,10 +191,10 @@ class Domain {
     
     func moveItemsToCentre() {
         var domainCentre = centre()
-        for element in self.nodes {
-            element.rootNode.position.x -= Float(domainCentre.x)
-            element.rootNode.position.y -= Float(domainCentre.y)
-        }
+//        for element in self.nodes {
+//            element.rootNode.position.x -= Float(domainCentre.x)
+//            element.rootNode.position.y -= Float(domainCentre.y)
+//        }
         domainCentre = centre()
     }
     
@@ -144,11 +210,11 @@ class Domain {
     }
     
     func getNode(withKey ref: String) -> Container? {
-        for node in self.nodes {
-            if node.nodeKey == ref {
-                return node
-            }
-        }
+//        for node in self.nodes {
+//            if node.nodeKey == ref {
+//                return node
+//            }
+//        }
         return nil
     }
     
@@ -170,56 +236,36 @@ class Domain {
     }
     
     func update() {
-        let updateWorker = DispatchQueue(label: "updateWorker", qos: .userInitiated)
-        updateWorker.async {
-            for element in self.nodes {
-                if self.viewport.contains(element.rootNode.worldPosition) {
-                 
-                    if !element.isRendered {
-                        element.draw()
-                    }
-                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
-                } else {
-//                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
-                }
-            }
-            
-        }
-    }
-    
-    func explosion() {
-        
-        let domainCentre = centre()
-        let animationScale: Float = 0.01
-        
-        for element in self.nodes {
-            
-            let node = element.rootNode
-            
-            let point = pointOnCircle(0.4, node.position.x, Float(domainCentre.x), node.position.y, Float(domainCentre.y))
-            
-            let motion = SCNVector3Make(Float(point.x) * animationScale, Float(point.y) * animationScale, -1.0)
-            let action = SCNAction.move(to: motion, duration: 1.0)
-            
-            // node.runAction(SCNAction.repeatForever(action))
-            node.runAction(action)
-            
-        }
+//        let updateWorker = DispatchQueue(label: "updateWorker", qos: .userInitiated)
+//        updateWorker.async {
+//            for element in self.nodes {
+//                if self.viewport.contains(element.rootNode.worldPosition) {
+//
+//                    if !element.isRendered {
+//                        element.draw()
+//                    }
+//                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
+//                } else {
+////                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
+//                }
+//            }
+//
+//        }
     }
     
     func centre() -> CGPoint {
         var point = CGPoint(x: 0.0, y: 0.0)
         
         var x_count = 0, y_count = 0
-        for element in self.nodes {
-            point.x += CGFloat(element.rootNode.position.x)
-            x_count += 1
-            
-            if element.rootNode.position.y > Float(-1.0) && element.rootNode.position.y < Float(1.0) {
-                point.y += CGFloat(element.rootNode.position.y)
-                y_count += 1
-            }
-        }
+//        for element in self.nodes {
+//            point.x += CGFloat(element.rootNode.position.x)
+//            x_count += 1
+//
+//            if element.rootNode.position.y > Float(-1.0) && element.rootNode.position.y < Float(1.0) {
+//                point.y += CGFloat(element.rootNode.position.y)
+//                y_count += 1
+//            }
+//        }
         
         point.x /= CGFloat(x_count)
         point.y /= CGFloat(y_count)

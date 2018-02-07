@@ -23,7 +23,7 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://18d3347e.ngrok.io"
+    let server: String = "http://34d3dce6.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
@@ -57,9 +57,7 @@ class Client {
         self.orb.animate()
         self.searchBar.rootNode.isHidden = true
 
-        // check url
         if url == "" {
-            // primitive test of the server index.hbs
             requestURL = server
             self.requestID = urlToID(requestURL)
         } else {
@@ -118,12 +116,14 @@ class Client {
                         let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
                         let file = URL(fileURLWithPath: documents + "/\(self.requestID).json")
                         try data.write(to: file)
+                        print("Wrote request data to file.")
                     } catch {
+                        print("Couldn't write to file: \(self.requestID).json")
                     }
                 }
             }
 
-            // remove any pages currently in the scene
+            // remove any pages currently in the scene (still keep a reference to them)
             if let domain = self.currentDomain {
                 domain.rootNode.removeFromParentNode()
             }
@@ -132,8 +132,9 @@ class Client {
             self.domains.append(Domain(self.requestURL))
             self.currentDomain = self.domains[ self.domains.count - 1 ]
 
-            // add the new domain to the scene
-            self.currentDomain.setData(response, self.requestID)
+            // add the new domain to the scene            
+            self.currentDomain.constructRenderTree(response, self.requestID)
+            
             self.rootNode.addChildNode(self.currentDomain.rootNode)
 
             self.orb.rootNode.isHidden = true
