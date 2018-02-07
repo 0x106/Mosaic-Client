@@ -69,9 +69,12 @@ class RenderTree {
         
         renderGroup.notify(queue: .main) {
             print("\(counter) nodes rendered.")
-            self.writeSceneToFile()
-            print("Atlas processing complete. Goodbye.")
-            exit()
+            if DEBUG {
+                self.writeSceneToFile()
+                exit()
+            }
+            print("Atlas processing complete.")
+            
         }
     }
 }

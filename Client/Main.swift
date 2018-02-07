@@ -36,14 +36,14 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         DEBUG = true
         if DEBUG {
-//            client.request(withURL: "", true)
-            client.request(withURL: "stuff.co.nz", false)
+            client.request(withURL: "", false)
+//            client.request(withURL: "stuff.co.nz", true)
 //             client.request(withURL: "https://news.ycombinator.com")
 //             client.request(withURL: "google.co.nz", true)
 //             client.request(withURL: "atlasreality.xyz", true)
         } else {
             // client.request(withURL: "atlasreality.xyz")
-            // addButton()
+             addButton()
         }
     }
 
@@ -56,7 +56,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @objc public func buttonPress() {
-        client.request(withURL: "atlasreality.xyz", true)
+//        client.request(withURL: "atlasreality.xyz", true)
+        client.request(withURL: "stuff.co.nz", true)
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {

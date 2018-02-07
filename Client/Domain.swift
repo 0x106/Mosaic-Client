@@ -69,8 +69,6 @@ class Domain {
     }
     
     func render() {
-        
-        renderTree._print()
         renderTree.draw()
         for node in renderTree.nodes {
             if node.canRender {
