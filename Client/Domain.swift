@@ -15,12 +15,13 @@ class Domain {
     var data: JSON!
     var renderTree: RenderTree = RenderTree()
     var rootKey: String = ""
-    
-    
     var rootNode: SCNNode = SCNNode()
+    
     var requestID: String = ""
     var requestURL: String = ""
+    
     let viewport: Viewport = Viewport()
+    
     let scale: Float = 0.001
     let velocityScale: Float = 0.0001
     var isReady: Bool = false
@@ -66,8 +67,6 @@ class Domain {
         } else {
             print("Error: No root node exists with key \(self.rootKey)")
         }
-        
-        renderTree._print()
     
         renderTree.draw()
         for node in renderTree.nodes {

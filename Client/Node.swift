@@ -15,6 +15,10 @@ private let left = 1
 private let right = 2
 private let bottom = 3
 
+private let wa = UIColor(red: 0, green: 0, blue: 0).withAlphaComponent(CGFloat(0.0))
+private let wb = UIColor(red: 0, green: 0, blue: 0).withAlphaComponent(CGFloat(1.0))
+private let wc = UIColor(red: 0, green: 0, blue: 0)
+
 class Node {
     
     // all the necessary data for the node
@@ -61,6 +65,20 @@ class Node {
         self.treeDepth = _depth
     }
     
+    private func hasStyle() -> Bool {
+        if self.computedStyle["background-image"] as! String == "none"
+            && (self.backgroundColor.isEqual( wa ) || self.backgroundColor.isEqual( wb ) || self.backgroundColor.isEqual( wc ))
+            && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ))
+            && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ))
+            && (self.borderColor[right].isEqual( wa ) || self.borderColor[right].isEqual( wb ) || self.borderColor[right].isEqual( wc ))
+            && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ))
+            && self.data["nodeValue"] == "" {
+            return false
+        }
+        
+        return true
+    }
+    
     func determineProperties() -> Bool {
         // do this on a separate thread
         if self.data["nodeStyle"].exists() {
@@ -69,7 +87,7 @@ class Node {
                 
                 self.computedStyle = style
                 
-                self.font_size = self.computedStyle["font-size"] as! Float
+                self.font_size = self.computedStyle["font-size"] as! Float - 2.0
                 
                 self.totalWidth = Float(self.data["nodeLayout"]["width"].doubleValue)
                 self.totalHeight = Float(self.data["nodeLayout"]["height"].doubleValue)
@@ -180,8 +198,10 @@ class Node {
     
     func render() {
         
+        
         if !determineType() {return}
         if !determineProperties() {return}
+        if !hasStyle() {return}
         if !determineLayout() {return}
         if !determineFont() {return}
         
@@ -229,6 +249,8 @@ class Node {
         self.geometry = SCNPlane(width: CGFloat(self.totalWidth * self.scale), height: CGFloat(self.totalHeight * self.scale))
         self.geometry?.firstMaterial?.diffuse.contents = self.image
         self.rootNode.geometry = self.geometry
+        
+        self.rootNode.geometry?.firstMaterial?.isDoubleSided = true
     }
     
     func childrenKeys() -> JSON {
