@@ -91,7 +91,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
                 } else {
                     guard let currentDomain = client.currentDomain else {return}
                     guard let tappedNode = currentDomain.getNode(withKey: nodeName) else {return}
-                    print(tappedNode.text)
                     if tappedNode.isButton {
                         client.request(withURL: tappedNode.href)
                     }

@@ -23,7 +23,7 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://34d3dce6.ngrok.io"
+    let server: String = "http://46eeac14.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""

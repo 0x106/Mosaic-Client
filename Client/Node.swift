@@ -9,6 +9,8 @@
 import Foundation
 import ARKit
 import SwiftyJSON
+import AlamofireImage
+import Alamofire
 
 private let top = 0
 private let left = 1
@@ -27,6 +29,10 @@ class Node {
     var children: [Node] = [Node]()
     var treeDepth: Int = 0
     var text: String = ""
+    var isButton: Bool = false
+    var href: String = ""
+    var imageURL: String = ""
+    var requestURL: String = ""
     
     // AR properties
     var rootNode: SCNNode = SCNNode()
@@ -36,7 +42,6 @@ class Node {
     
     var totalWidth: Float = 0.0
     var totalHeight: Float = 0.0
-
     var borderSize: [Float] = [0.0, 0.0, 0.0, 0.0]
     var border: [CGRect] = [CGRect(), CGRect(), CGRect(), CGRect()]
     
@@ -56,165 +61,62 @@ class Node {
     var backgroundColor: UIColor = UIColor()
     var borderColor: [UIColor] = [UIColor(), UIColor(), UIColor(), UIColor()]
     
+    // false if the node won't be created
+    // true if it's fine to render & use this node
     var canRender: Bool = true
     
-    init(_ _key: String,
+    // false if we shouldn't draw any properties to the image (but the node and image should exist)
+    // true if we should render this node
+    var canDrawOverlay: Bool = true
+    
+    init?(_ _key: String,
          _ _data: JSON,
+         _ _requestURL: String,
          _ _depth: Int) {
         
         self.data = _data
         self.key = _key
         self.rootNode.name = self.key
         self.treeDepth = _depth
-    
+        self.requestURL = _requestURL
         self.text = checkText(self.data["nodeValue"].stringValue)
         
+        self.setup()
+        
+//        if setup() {
+//            print("Node: \(self.key) initialised")
+//        } else {
+//            print("Node: \(self.key) failed to initialise.")
+//            return nil
+//        }
+        
+        return
     }
     
-    private func checkText(_ value: String) -> String {
-        var copy: String = String(value).replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
-        if copy == "" {
-            return copy
-        }
-        return value
-    }
-    
-    private func hasStyle() {
-        if self.computedStyle["background-image"] as! String == "none"
-            && (self.backgroundColor.isEqual( wa ) || self.backgroundColor.isEqual( wb ) || self.backgroundColor.isEqual( wc ))
-            && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ) || self.computedStyle["border-top-style"] as! String == "none")
-            && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ) || self.computedStyle["border-left-style"] as! String == "none")
-            && (self.borderColor[right].isEqual( wa ) || self.borderColor[right].isEqual( wb ) || self.borderColor[right].isEqual( wc ) || self.computedStyle["border-right-style"] as! String == "none")
-            && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ) || self.computedStyle["border-bottom-style"] as! String == "none")
-            && self.text == "" {
-            self.canRender = false
-            return
-        }
-    }
-    
-    func determineProperties() {
-        // do this on a separate thread
-        if self.data["nodeStyle"].exists() {
-            if let style = computeStylesFromDict(self.data["nodeStyle"]) {
-                
-                self.computedStyle = style
-                
-                self.font_size = self.computedStyle["font-size"] as! Float - 2.0
-                
-                self.totalWidth = Float(self.data["nodeLayout"]["width"].doubleValue)
-                self.totalHeight = Float(self.data["nodeLayout"]["height"].doubleValue)
-                
-                self.color = self.computedStyle["color"] as! UIColor
-                self.backgroundColor = self.computedStyle["background-color"] as! UIColor
-                
-                self.borderColor[top] = self.computedStyle["border-top-color"] as! UIColor
-                self.borderColor[left] = self.computedStyle["border-top-color"] as! UIColor
-                self.borderColor[right] = self.computedStyle["border-top-color"] as! UIColor
-                self.borderColor[bottom] = self.computedStyle["border-top-color"] as! UIColor
-            } else {
-                self.canRender = false
-                return
-            }
-        } else {
-            self.canRender = false
-            return
-        }
-    }
-    
-    func determineLayout() {
+    func setup() -> Bool {
+       
+        self.determineType()
+//        if !self.canRender { print("Type error for node: \(self.key)"); return false}
+        if !self.canRender { return false }
         
-        let x = Float(self.data["nodeLayout"]["x"].doubleValue)
-        let y = Float(self.data["nodeLayout"]["y"].doubleValue)
-     
-        if x <= 0 || y <= 0 {
-            self.canRender = false
-            return
-        }
-    
-        self.rootNode.position = SCNVector3Make(   (x + (self.totalWidth/2.0)) * self.scale,
-                                                   -(y + (self.totalHeight/2.0)) * self.scale,
-                                                   -Float(6 - self.treeDepth)*self.scale)
+        self.determineProperties()
+//        if !self.canRender {print("Property error for node: \(self.key)"); return false}
+        if !self.canRender { return false }
         
-        self.borderSize[top] = computedStyle["border-top-width"] as! Float
-        self.borderSize[left] = computedStyle["border-left-width"] as! Float
-        self.borderSize[right] = computedStyle["border-right-width"] as! Float
-        self.borderSize[bottom] = computedStyle["border-bottom-width"] as! Float
+        self.hasStyle()
+//        if !self.canRender {print("Style error for node: \(self.key)"); return false}
+        if !self.canRender { return false }
         
-        self.border[top] = CGRect(x: CGFloat(0.0),
-                                  y: CGFloat(0.0),
-                                  width: CGFloat(self.totalWidth),
-                                  height: CGFloat(self.borderSize[top]))
-        self.border[left] = CGRect(x: CGFloat(0.0),
-                                  y: CGFloat(0.0),
-                                  width: CGFloat(self.borderSize[left]),
-                                  height: CGFloat(self.totalHeight))
-        self.border[right] = CGRect(x: CGFloat(self.totalWidth - self.borderSize[right]),
-                                  y: CGFloat(0.0),
-                                  width: CGFloat(self.borderSize[right]),
-                                  height: CGFloat(self.totalHeight))
-        self.border[bottom] = CGRect(x: CGFloat(0.0),
-                                  y: CGFloat(self.totalHeight - self.borderSize[bottom]),
-                                  width: CGFloat(self.totalWidth),
-                                  height: CGFloat(self.borderSize[bottom]))
+        self.determineLayout()
+        self.determineFont()
         
-        self.cell = CGRect(x: CGFloat(0.0),
-                           y: CGFloat(0.0),
-                           width: CGFloat(self.totalWidth),
-                           height: CGFloat(self.totalHeight))
-    }
-    
-    func determineType() {
-        if self.data["nodeName"] == "#document"
-            || self.data["nodeName"] == "HTML"
-            || self.data["nodeName"] == "IFRAME"
-            || self.data["nodeName"] == "BODY"
-            || (self.data["nodeName"] == "#text" && self.text == ""){
-            self.canRender = false
-            return
-        }
-    }
-    
-    func determineFont() {
-        
-        let font_list = (self.computedStyle["font-family"] as! String).replacingOccurrences(of: ",", with: "").split(separator: " ")
-        let googleFonts = getAttribute(self.data["nodeStyle"], "googleFonts")
-
-        for ft in font_list {
-            if var gf = hasAttribute(googleFonts!, String(ft)) {
-                self.fonts.append( AtlasFont(String(ft), gf["url"].stringValue, gf["weight"].stringValue, self.font_size) )
-            } else {
-                self.fonts.append( AtlasFont(String(ft), "", "", self.font_size) )
-            }
-        }
-
-        // find the font or use whatever is passed in as the default
-        self.setFont("HelveticaNeue", 10.0)
-    }
-    
-    func setFont(_ selectedFont: String, _ size: Float) {
-        
-        if selectedFont != "" {
-            self.defaultFont = UIFont(name: selectedFont, size: CGFloat(size))!
-        }
-        
-        var fontIsSet: Bool = false
-        for possibleFont in self.fonts {
-            if possibleFont.isAvailable {
-                self.font = possibleFont.font
-                fontIsSet = true
-                break
-            }
-        }
-        if !fontIsSet { self.font = self.defaultFont }
+        return true
     }
     
     func render() -> Bool {
         
-        determineType()             ;if !self.canRender {return false}
-        determineProperties()       ;if !self.canRender {return false}
-        hasStyle()                  ;if !self.canRender {return false}
-        determineLayout()           
-        determineFont()
+        // if the image is / will be drawn then we don't need to render anything
+        if !self.canDrawOverlay {return true}
         
         if self.data["nodeName"] == "#text" {
             
@@ -260,22 +162,193 @@ class Node {
 
         return true
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+// ============================== //
+//         Node Functions         //
+// ============================== //
+
+extension Node {
+    // screen for nodes that we won't render
+    // Perform type specific behaviour (i.e extract href from A tags)
+    func determineType() {
+        if self.data["nodeName"] == "#document"
+            || self.data["nodeName"] == "HTML"
+            || self.data["nodeName"] == "IFRAME"
+            || self.data["nodeName"] == "BODY"
+            || (self.data["nodeName"] == "#text" && self.text == ""){
+            self.canRender = false
+            return
+        }
+        
+        if self.data["nodeName"] == "A" {
+            self.isButton = true
+            
+            // get the href
+            if let hyperlink = getAttribute(self.data["attr"], "href") {
+                self.isButton = true
+                self.href = hyperlink.stringValue
+            }
+        }
+    }
     
     func childrenKeys() -> JSON {
         return self.data["nodeChildren"]
     }
     
     func _print() {
-//        if self.key.hasPrefix("#text") {
         print( "Node [\(self.treeDepth)]: \(self.key)" )
-//        }
     }
     
     func addChild(_ _child: Node) {
-//        self.children.append(_child)
+        // self.children.append(_child)
     }
     
-    func determineComputedStyles() {
-        
+    private func checkText(_ value: String) -> String {
+        let copy: String = String(value).replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
+        if copy == "" { return copy }
+        return value
     }
+    
+    private func hasStyle() {
+        if self.computedStyle["background-image"] as! String == "none"
+            && (self.backgroundColor.isEqual( wa ) || self.backgroundColor.isEqual( wb ) || self.backgroundColor.isEqual( wc ))
+            && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ) || self.computedStyle["border-top-style"] as! String == "none")
+            && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ) || self.computedStyle["border-left-style"] as! String == "none")
+            && (self.borderColor[right].isEqual( wa ) || self.borderColor[right].isEqual( wb ) || self.borderColor[right].isEqual( wc ) || self.computedStyle["border-right-style"] as! String == "none")
+            && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ) || self.computedStyle["border-bottom-style"] as! String == "none")
+            && self.text == "" {
+            self.canRender = false
+            return
+        }
+    }
+    
+    func determineProperties() {
+        // do this on a separate thread
+        if self.data["nodeStyle"].exists() {
+            if let style = computeStylesFromDict(self.data["nodeStyle"]) {
+                
+                self.computedStyle = style
+                
+                self.font_size = self.computedStyle["font-size"] as! Float - 2.0
+                
+                self.totalWidth = Float(self.data["nodeLayout"]["width"].doubleValue)
+                self.totalHeight = Float(self.data["nodeLayout"]["height"].doubleValue)
+                
+                self.color = self.computedStyle["color"] as! UIColor
+                self.backgroundColor = self.computedStyle["background-color"] as! UIColor
+                
+                self.borderColor[top] = self.computedStyle["border-top-color"] as! UIColor
+                self.borderColor[left] = self.computedStyle["border-top-color"] as! UIColor
+                self.borderColor[right] = self.computedStyle["border-top-color"] as! UIColor
+                self.borderColor[bottom] = self.computedStyle["border-top-color"] as! UIColor
+                
+                if self.data["nodeName"] == "IMG" {
+                    if let src = getAttribute(self.data["attr"], "src") {
+                        if src.stringValue.hasPrefix("http") || src.stringValue.hasPrefix("www") {
+                            self.imageURL = src.stringValue
+                        } else {
+                            self.imageURL = self.requestURL + src.stringValue
+                        }
+                        self.loadImage()
+                    }
+                }
+                
+                let bgImage = self.computedStyle["background-image"] as! String
+                if bgImage != "none" {
+                    if bgImage.hasPrefix("url") {
+                        self.imageURL = parseHREFFromURL(bgImage)
+                        if !self.imageURL.hasPrefix("data") {
+                            self.loadImage()
+                        }
+                    }
+                }
+
+            } else {
+                self.canRender = false
+                return
+            }
+        } else {
+            self.canRender = false
+            return
+        }
+    }
+    
+    func determineLayout() {
+        
+        let x = Float(self.data["nodeLayout"]["x"].doubleValue)
+        let y = Float(self.data["nodeLayout"]["y"].doubleValue)
+        
+        if x <= 0 || y <= 0 {
+            self.canRender = false
+            return
+        }
+        
+        self.rootNode.position = SCNVector3Make(   (x + (self.totalWidth/2.0)) * self.scale,
+                                                   -(y + (self.totalHeight/2.0)) * self.scale,
+                                                   -Float(6 - self.treeDepth)*self.scale)
+        
+        self.borderSize[top] = computedStyle["border-top-width"] as! Float
+        self.borderSize[left] = computedStyle["border-left-width"] as! Float
+        self.borderSize[right] = computedStyle["border-right-width"] as! Float
+        self.borderSize[bottom] = computedStyle["border-bottom-width"] as! Float
+        
+        self.border[top] = CGRect(x: CGFloat(0.0),
+                                  y: CGFloat(0.0),
+                                  width: CGFloat(self.totalWidth),
+                                  height: CGFloat(self.borderSize[top]))
+        self.border[left] = CGRect(x: CGFloat(0.0),
+                                   y: CGFloat(0.0),
+                                   width: CGFloat(self.borderSize[left]),
+                                   height: CGFloat(self.totalHeight))
+        self.border[right] = CGRect(x: CGFloat(self.totalWidth - self.borderSize[right]),
+                                    y: CGFloat(0.0),
+                                    width: CGFloat(self.borderSize[right]),
+                                    height: CGFloat(self.totalHeight))
+        self.border[bottom] = CGRect(x: CGFloat(0.0),
+                                     y: CGFloat(self.totalHeight - self.borderSize[bottom]),
+                                     width: CGFloat(self.totalWidth),
+                                     height: CGFloat(self.borderSize[bottom]))
+        
+        self.cell = CGRect(x: CGFloat(0.0),
+                           y: CGFloat(0.0),
+                           width: CGFloat(self.totalWidth),
+                           height: CGFloat(self.totalHeight))
+    }
+    
+    func loadImage() {
+        if self.imageURL != "" {
+            
+            self.geometry = SCNPlane(width: CGFloat(self.totalWidth*self.scale), height: CGFloat(self.totalHeight*self.scale))
+            self.geometry?.firstMaterial?.diffuse.contents = UIColor.blue // temporary placeholder
+            
+            Alamofire.request(self.imageURL).responseImage { response in
+                if let image = response.result.value {
+                    self.image = image
+                    self.geometry?.firstMaterial?.diffuse.contents = self.image
+                }
+            }
+            
+            // indicates that we'll load something into the image so don't render anything to it
+            self.canDrawOverlay = false
+            self.geometry?.firstMaterial?.isDoubleSided = true
+            self.rootNode.geometry = self.geometry
+        }
+    }
+
 }
+
+
+
+

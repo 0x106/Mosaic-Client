@@ -40,22 +40,28 @@ class Domain {
         self.getRootKey()
     
         if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
-            self.renderTree.push( Node( self.rootKey, renderTreeRootNodeData, 0) )
-            while renderTree.hasNextNode {
-                let node = renderTree.next()
-                node.childrenKeys()
-                for (_, childKey) in node.childrenKeys() {
-                    if let childNodeData = self.data?[ childKey.stringValue ] {
-                        if childNodeData.count > 0 {
-                            let childNode = Node( childKey.stringValue, childNodeData, node.treeDepth + 1)
-                            self.renderTree.push( childNode )
-                            node.addChild(childNode)
-                        }else {
-                        }
-                    } else {
+            
+            if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {
+                self.renderTree.push( newRootNode )
+                while renderTree.hasNextNode {
+                    
+                    let node = renderTree.next()
+                    
+                    for (_, childKey) in node.childrenKeys() {
+                        
+                        if let childNodeData = self.data?[ childKey.stringValue ] {
+                            if childNodeData.count > 0 {
+                                
+                                if let childNode = Node( childKey.stringValue, childNodeData, self.requestURL, node.treeDepth + 1) {
+                                    self.renderTree.push( childNode )
+                                    node.addChild(childNode)
+                                } else {}
+                            }else {}
+                        } else {}
                     }
                 }
             }
+            
         } else {
             print("Error: No root node exists with key \(self.rootKey)")
         }
@@ -63,6 +69,7 @@ class Domain {
     
     func render() {
         
+//        renderTree._print()
         renderTree.draw()
         for node in renderTree.nodes {
             if node.canRender {
@@ -78,7 +85,7 @@ class Domain {
     }
     
     private func getRootKey() {
-        for (key, value) in self.data {
+        for (key, _) in self.data {
             if key.hasPrefix("#document-1-") {
                 self.rootKey = key
                 return
@@ -194,23 +201,14 @@ class Domain {
         domainCentre = centre()
     }
     
-    // spending a lot of time in this function.
-    func getObject(withKey ref: String) -> JSON? {
-        for (_, object) in self.data {
-            let query = object["key"].stringValue
-            if query == ref {
-                return object
+    func getNode(withKey ref: String) -> Node? {
+        for node in self.renderTree.nodes {
+            if node.canRender {
+                if node.key == ref {
+                    return node
+                }
             }
         }
-        return nil
-    }
-    
-    func getNode(withKey ref: String) -> Container? {
-//        for node in self.nodes {
-//            if node.nodeKey == ref {
-//                return node
-//            }
-//        }
         return nil
     }
     

@@ -43,15 +43,20 @@ class RenderTree {
             for child in node.children {
                 child._print()
             }
-//            print("=======================")
         }
+    }
+    
+    func renderedNodes() -> [Node] {
+        return nodes
     }
     
     func draw() {
         var counter: Int = 0
         for node in self.nodes {
-            if node.render() {
-                counter += 1
+            if node.canRender {
+                if node.render() {
+                    counter += 1
+                }
             }
         }
         print("\(counter) nodes rendered.")
