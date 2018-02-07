@@ -167,7 +167,8 @@ class Node {
         if self.data["nodeName"] == "#document"
             || self.data["nodeName"] == "HTML"
             || self.data["nodeName"] == "IFRAME"
-            || self.data["nodeName"] == "BODY" {
+            || self.data["nodeName"] == "BODY"
+            || (self.data["nodeName"] == "#text" && self.text == ""){
             self.canRender = false
             return
         }
@@ -223,8 +224,7 @@ class Node {
             let fontAttrs: [NSAttributedStringKey: Any] =
                 [NSAttributedStringKey.font: self.font as UIFont,
                  NSAttributedStringKey.paragraphStyle: paragraphStyle,
-                 NSAttributedStringKey.foregroundColor: self.color]//,
-            //   NSAttributedStringKey.kern: self.characterSpacing]
+                 NSAttributedStringKey.foregroundColor: self.color]
                     
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
             self.image = renderer.image { context in
@@ -235,29 +235,29 @@ class Node {
             
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
             self.image = renderer.image { context in
-                
+
                 self.backgroundColor.setFill()
                 context.fill(self.cell)
-                
+
                 self.borderColor[top].setFill()
                 context.fill(self.border[top])
-                
+
                 self.borderColor[left].setFill()
                 context.fill(self.border[left])
-                
+
                 self.borderColor[right].setFill()
                 context.fill(self.border[right])
-                
+
                 self.borderColor[bottom].setFill()
                 context.fill(self.border[bottom])
             }
         }
         
-//        self.geometry = SCNPlane(width: CGFloat(self.totalWidth * self.scale), height: CGFloat(self.totalHeight * self.scale))
-//        self.geometry?.firstMaterial?.diffuse.contents = self.image
-//        self.rootNode.geometry = self.geometry
-//        self.rootNode.geometry?.firstMaterial?.isDoubleSided = true
-//        
+        self.geometry = SCNPlane(width: CGFloat(self.totalWidth * self.scale), height: CGFloat(self.totalHeight * self.scale))
+        self.geometry?.firstMaterial?.diffuse.contents = self.image
+        self.rootNode.geometry = self.geometry
+        self.rootNode.geometry?.firstMaterial?.isDoubleSided = true
+
         return true
     }
     
