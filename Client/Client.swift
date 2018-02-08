@@ -11,6 +11,7 @@ import ARKit
 import Alamofire
 import Alamofire_SwiftyJSON
 import SwiftyJSON
+import SocketIO
 
 var globalRequestID: String = ""
 
@@ -31,9 +32,59 @@ class Client {
     var requestID: String = ""
 
     var writeData: Bool = true
+    
+//    let socket = AtlasSocket()
+    var manager: SocketManager
+    var socket: SocketIOClient
+    var connected: Bool = false
 
     init() {
 
+        manager = SocketManager(socketURL: URL(string: "http://localhost:3000")!, config: [.log(false), .compress])
+        socket = manager.defaultSocket
+        
+        socket.on(clientEvent: .connect) {[weak self] data, ack in
+            print("socket connected")
+            self?.connected = true
+        }
+        
+        //        socket.onAny {
+        //            print("Got event: \($0.event), with items: \($0.items!)")
+        //        }
+        
+        socket.on("renderTree") { data, ack in
+            performance.stop("*request-0")
+            print(data)
+            performance.results()
+        }
+        
+        socket.on("node") { data, ack in
+            
+//            let _data: Data = data as! Data
+            print("Received new node data.")
+            //            performance.stop("*request-0")
+            //            print(data)
+            //            performance.results()
+            
+//            self.process(data)
+            print("Node data:")
+            let _data: Dictionary<String, Any> = data[0] as! Dictionary<String, Any>
+            print(_data["key"]!)
+            
+            print("============================")
+            
+        }
+        
+        socket.on("response") { data, ack in
+            print("message received")
+            
+            self.send_msg("Neuromancer")
+            performance.start("*request-0")
+            self.send_url("http://atlasreality.xyz")
+        }
+        
+        socket.connect()
+        
         performance.measure("clientinit") {
             self.serverEndpoint = "\(self.server)/client"
 
@@ -48,6 +99,30 @@ class Client {
 
             rootNode.position = SCNVector3Make(0, 0, -1)
         }
+    }
+    
+    func process(_ _data: [Any]) {
+//        do {
+//            let response = try JSON(data: _data)
+//            let response: JSON =
+//            self.writeData = false
+//            print("unpacked data")
+//            exit()
+//            self.addNewDomain(response)
+//        } catch {
+//            print("Couldn't unpack socket data")
+//            exit()
+//        }
+    }
+    
+    func send_msg(_ message: String) {
+        print("Sending message: \(message)")
+        socket.emit("msg", message)
+    }
+    
+    func send_url(_ url: String) {
+        print("Sending URL: \(url)")
+        socket.emit("url", url)
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
