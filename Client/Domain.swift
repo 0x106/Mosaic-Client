@@ -42,6 +42,12 @@ class Domain {
             self.getRootKey()
         }
 
+        
+        // THE FOLLOWING CODE IS INCOMPLETE AND WILL LEAD TO ERRORS
+        // Some of the nodes won't work properly. The synchronous version
+        //  accounts for this during render tree construction but the
+        //  async version does not.
+        //  To fix: need to account for dud nodes.
         if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
             performance.measure("constructRenderTreeAsync") {
                 self.asyncRenderTree.push( self.rootKey )
