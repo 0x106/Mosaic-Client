@@ -82,8 +82,8 @@ class Client {
             dataLoaderWorker.async {
                 do {
                     let data = try Data(contentsOf: file)
-                    print("Reading data from local file.")
                     let response = try JSON(data: data)
+                    print("Reading data from local file.")
                     self.writeData = false
                     self.addNewDomain(response)
                 } catch {

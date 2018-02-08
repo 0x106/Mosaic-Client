@@ -81,35 +81,35 @@ class Node {
         self.requestURL = _requestURL
         self.text = checkText(self.data["nodeValue"].stringValue)
     
-        self.setup()
+//        self.setup()
         
         return
     }
     
     func setup() -> Bool {
        
-        performance.measure("Determine Type") {
+//        performance.measure("Determine Type") {
             self.determineType()
-        }
+//        }
         if !self.canRender { return false }
         
-        performance.measure("Determine Properties") {
+//        performance.measure("Determine Properties") {
             self.determineProperties()
-        }
+//        }
         if !self.canRender { return false }
         
-        performance.measure("Determine Style") {
+//        performance.measure("Determine Style") {
             self.hasStyle()
-        }
+//        }
         if !self.canRender { return false }
         
-        performance.measure("Determine Layout") {
+//        performance.measure("Determine Layout") {
         self.determineLayout()
-        }
+//        }
         
-        performance.measure("Determine Font") {
+//        performance.measure("Determine Font") {
             self.determineFont()
-        }
+//        }
         
         return true
     }

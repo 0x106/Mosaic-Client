@@ -86,31 +86,44 @@ class RenderTree {
         let renderGroup = DispatchGroup()
         
         performance.measure("Add Nodes to Render Queue") {
+            performance.start("*RENDER_GROUP-0")
+            
             for node in self.nodes {
                 
                 let renderTreeWorker = DispatchQueue(label: "renderTreeWorker", qos: .userInitiated)
                 renderTreeWorker.async {
                     renderGroup.enter()
-                    if node.canRender {
-                        performance.measure("Node Render") {
-                            if node.render() {
-                                counter += 1
+                        node.setup()
+                        if node.canRender {
+                            performance.measure("Node Render") {
+                                if node.render() {
+                                    counter += 1
+                                }
                             }
                         }
-                    }
                     renderGroup.leave()
                 }
             }
         }
         
         renderGroup.notify(queue: .main) {
+            
+            performance.stop("*RENDER_GROUP-0")
+            performance.stop("*CLIENT_REQUEST-0")
+            
             print("\(counter) nodes rendered.")
             if DEBUG {
-                performance.stop("*CLIENT_REQUEST-0")
+                
                 self.writeSceneToFile()
+                print("Atlas processing complete.")
                 exit()
             }
+            
+            performance.results()
+            
             print("Atlas processing complete.")
+
+            exit()
             
         }
     }
