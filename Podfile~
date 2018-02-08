@@ -9,5 +9,4 @@ target 'Client' do
   pod 'Alamofire'
   pod 'Alamofire-SwiftyJSON'
   pod 'AlamofireImage', '~> 3.3'
-  pod 'Socket.IO-Client-Swift', '~> 13.1.0'
 end
