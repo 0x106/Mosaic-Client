@@ -34,22 +34,24 @@ class Client {
 
     init() {
 
-        self.serverEndpoint = "\(self.server)/client"
+        performance.measure("clientinit") {
+            self.serverEndpoint = "\(self.server)/client"
 
-        field.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-        field.isHidden = true
+            field.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+            field.isHidden = true
 
-        orb.rootNode.isHidden = true
-        searchBar.rootNode.isHidden = false
+            orb.rootNode.isHidden = true
+//            searchBar.rootNode.isHidden = false
 
-        rootNode.addChildNode(orb.rootNode)
-        rootNode.addChildNode(searchBar.rootNode)
+            rootNode.addChildNode(orb.rootNode)
+//            rootNode.addChildNode(searchBar.rootNode)
 
-        rootNode.position = SCNVector3Make(0, 0, -1)
+            rootNode.position = SCNVector3Make(0, 0, -1)
+        }
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-        self.searchBar.updateText( textField.text! )
+//        self.searchBar.updateText( textField.text! )
     }
 
     func request(withURL url: String, _ refresh: Bool = false) {
@@ -57,7 +59,7 @@ class Client {
         // show loading animation
         self.orb.rootNode.isHidden = false
         self.orb.animate()
-        self.searchBar.rootNode.isHidden = true
+//        self.searchBar.rootNode.isHidden = true
 
         if url == "" {
             requestURL = server
@@ -92,6 +94,8 @@ class Client {
     }
 
     private func networkRequest() {
+        
+        performance.start("*networkRequest-0")
         self.writeData = true
 
         let parameters: Parameters = ["atlasurl": requestURL]
@@ -101,6 +105,7 @@ class Client {
             .responseSwiftyJSON { dataResponse in
 
                 guard let response = dataResponse.value else {return}
+                performance.stop("*networkRequest-0")
                 self.addNewDomain(response)
         }
     }

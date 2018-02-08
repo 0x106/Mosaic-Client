@@ -75,6 +75,7 @@ class RenderTree {
         renderGroup.notify(queue: .main) {
             print("\(counter) nodes rendered.")
             if DEBUG {
+                performance.stop("*CLIENT_REQUEST-0")
                 self.writeSceneToFile()
                 exit()
             }

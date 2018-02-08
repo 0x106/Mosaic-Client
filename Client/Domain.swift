@@ -41,26 +41,27 @@ class Domain {
             self.getRootKey()
         }
         if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
-            
-            if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {
-            self.renderTree.push( newRootNode )
-                while self.renderTree.hasNextNode {
-                    
-                    let node = self.renderTree.next()
-                    for (_, childKey) in node.childrenKeys() {
+            performance.measure("constructRenderTree") {
+                if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {
+                self.renderTree.push( newRootNode )
+                    while self.renderTree.hasNextNode {
+                        
+                        let node = self.renderTree.next()
+                        for (_, childKey) in node.childrenKeys() {
                             
-                        if let childNodeData = self.data?[ childKey.stringValue ] {
-                            if childNodeData.count > 0 {
-        
-                                if let childNode = Node( childKey.stringValue, childNodeData, self.requestURL, node.treeDepth + 1) {
-                                    self.renderTree.push( childNode )
-                                    node.addChild(childNode)
-                                } else {}
-                            }else {}
-                        } else {}
+                            if let childNodeData = self.data?[ childKey.stringValue ] {
+                                if childNodeData.count > 0 {
+            
+                                    if let childNode = Node( childKey.stringValue, childNodeData, self.requestURL, node.treeDepth + 1) {
+                                        self.renderTree.push( childNode )
+                                        node.addChild(childNode)
+                                    } else {}
+                                }else {}
+                            } else {}
+                        }
                     }
                 }
-            }
+            } // end perf measure
             
             self.render()
 

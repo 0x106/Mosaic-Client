@@ -33,9 +33,12 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(self.handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
         
-        DEBUG = true
+        DEBUG = false
         if DEBUG {
-             client.request(withURL: "google.co.nz", true)
+            performance.start("*CLIENT_REQUEST-0")
+//            client.request(withURL: "google.co.nz", false)
+//            client.request(withURL: "atlasreality.xyz", false)
+            client.request(withURL: "stuff.co.nz")
         } else {
             // client.request(withURL: "atlasreality.xyz")
              addButton()
@@ -51,7 +54,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @objc public func buttonPress() {
-        client.request(withURL: "stuff.co.nz", true)
+//        client.request(withURL: "stuff.co.nz", true)
+        performance.results()
     }
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
