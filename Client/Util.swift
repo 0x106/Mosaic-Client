@@ -409,7 +409,7 @@ func createNode(withGeometry type: String) -> SCNNode {
 }
 
 
-
+let performance = PerformanceMeasure()
 
 // end
 

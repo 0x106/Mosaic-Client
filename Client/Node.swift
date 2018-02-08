@@ -80,35 +80,36 @@ class Node {
         self.treeDepth = _depth
         self.requestURL = _requestURL
         self.text = checkText(self.data["nodeValue"].stringValue)
-        
+    
         self.setup()
-        
-//        if setup() {
-//            print("Node: \(self.key) initialised")
-//        } else {
-//            print("Node: \(self.key) failed to initialise.")
-//            return nil
-//        }
         
         return
     }
     
     func setup() -> Bool {
        
-        self.determineType()
-//        if !self.canRender { print("Type error for node: \(self.key)"); return false}
+        performance.measure("Determine Type") {
+            self.determineType()
+        }
         if !self.canRender { return false }
         
-        self.determineProperties()
-//        if !self.canRender {print("Property error for node: \(self.key)"); return false}
+        performance.measure("Determine Properties") {
+            self.determineProperties()
+        }
         if !self.canRender { return false }
         
-        self.hasStyle()
-//        if !self.canRender {print("Style error for node: \(self.key)"); return false}
+        performance.measure("Determine Style") {
+            self.hasStyle()
+        }
         if !self.canRender { return false }
         
+        performance.measure("Determine Layout") {
         self.determineLayout()
-        self.determineFont()
+        }
+        
+        performance.measure("Determine Font") {
+            self.determineFont()
+        }
         
         return true
     }

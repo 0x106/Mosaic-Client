@@ -37,8 +37,9 @@ class Domain {
         self.data = _data
         self.requestID = _requestID
         
-        self.getRootKey()
-    
+        performance.measure("Get Root Key") {
+            self.getRootKey()
+        }
         if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
             
             if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {

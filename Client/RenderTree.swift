@@ -53,17 +53,22 @@ class RenderTree {
     func draw() {
         var counter: Int = 0
         let renderGroup = DispatchGroup()
-        for node in self.nodes {
-            
-            let renderTreeWorker = DispatchQueue(label: "renderTreeWorker", qos: .userInitiated)
-            renderTreeWorker.async {
-                renderGroup.enter()
-                if node.canRender {
-                    if node.render() {
-                        counter += 1
+        
+        performance.measure("Add Nodes to Render Queue") {
+            for node in self.nodes {
+                
+                let renderTreeWorker = DispatchQueue(label: "renderTreeWorker", qos: .userInitiated)
+                renderTreeWorker.async {
+                    renderGroup.enter()
+                    if node.canRender {
+                        performance.measure("Node Render") {
+                            if node.render() {
+                                counter += 1
+                            }
+                        }
                     }
+                    renderGroup.leave()
                 }
-                renderGroup.leave()
             }
         }
         
@@ -94,6 +99,7 @@ extension RenderTree {
             }
             scene.rootNode.addChildNode(rootNode)
             scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
+            performance.results()
             print("Domain scene written to: \(file)")
         }
     }

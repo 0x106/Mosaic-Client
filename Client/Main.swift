@@ -23,7 +23,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+                
         // Set the view's delegate
         sceneView.delegate = self
         sceneView.session.delegate = self
@@ -36,10 +36,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         DEBUG = true
         if DEBUG {
-            client.request(withURL: "", false)
-//            client.request(withURL: "stuff.co.nz", true)
+//            client.request(withURL: "", false)
+//            client.request(withURL: "stuff.co.nz", false)
 //             client.request(withURL: "https://news.ycombinator.com")
-//             client.request(withURL: "google.co.nz", true)
+             client.request(withURL: "google.co.nz", true)
 //             client.request(withURL: "atlasreality.xyz", true)
         } else {
             // client.request(withURL: "atlasreality.xyz")
