@@ -26,10 +26,6 @@ class AtlasSocket {
             self?.connected = true
         }
         
-        //        socket.onAny {
-        //            print("Got event: \($0.event), with items: \($0.items!)")
-        //        }
-        
         socket.on("renderTree") { data, ack in
             performance.stop("*request-0")
             print(data)

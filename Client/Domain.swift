@@ -76,6 +76,13 @@ class Domain {
         }
     }
     
+    func addNodeAsync(_ nodeData: Any) {
+        let data: Dictionary<String, Any> = nodeData as! Dictionary<String, Any>
+        print("Adding new node with key: \(data["key"]!)")
+            
+        guard let node: Node2 = Node2(data, "", 0) else {return}
+    }
+    
     func render() {
         renderTree.draw()
         for node in renderTree.nodes {

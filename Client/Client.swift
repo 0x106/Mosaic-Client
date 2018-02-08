@@ -37,6 +37,7 @@ class Client {
     var manager: SocketManager
     var socket: SocketIOClient
     var connected: Bool = false
+    var sceneData: [Dictionary<String, Any>] = [Dictionary<String, Any>]()
 
     init() {
 
@@ -48,10 +49,6 @@ class Client {
             self?.connected = true
         }
         
-        //        socket.onAny {
-        //            print("Got event: \($0.event), with items: \($0.items!)")
-        //        }
-        
         socket.on("renderTree") { data, ack in
             performance.stop("*request-0")
             print(data)
@@ -60,18 +57,31 @@ class Client {
         
         socket.on("node") { data, ack in
             
+//            let _data: Dictionary<String, Any> = data[0] as! Dictionary<String, Any>
+//            print(_data)
+            
+//            for (k,v) in _data {
+//                print(k)
+//            }
+            
+//            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
+//            nodeWorker.async {
+                self.currentDomain.addNodeAsync(data[0])
+//            }
+            
 //            let _data: Data = data as! Data
-            print("Received new node data.")
+//            print("Received new node data.")
             //            performance.stop("*request-0")
             //            print(data)
             //            performance.results()
             
 //            self.process(data)
-            print("Node data:")
-            let _data: Dictionary<String, Any> = data[0] as! Dictionary<String, Any>
-            print(_data["key"]!)
+//            print("Node data:")
+//            let _data: Dictionary<String, Any> = data[0] as! Dictionary<String, Any>
             
-            print("============================")
+//            self.sceneData.append(_data)
+            
+//            print("============================")
             
         }
         
@@ -81,6 +91,7 @@ class Client {
             self.send_msg("Neuromancer")
             performance.start("*request-0")
             self.send_url("http://atlasreality.xyz")
+//            self.send_url("http://stuff.co.nz")
         }
         
         socket.connect()
@@ -99,6 +110,15 @@ class Client {
 
             rootNode.position = SCNVector3Make(0, 0, -1)
         }
+        
+        // remove any pages currently in the scene (still keep a reference to them)
+        if let domain = self.currentDomain {
+            domain.rootNode.removeFromParentNode()
+        }
+        
+        // initialise the new domain
+        self.domains.append(Domain(self.requestURL))
+        self.currentDomain = self.domains[ self.domains.count - 1 ]
     }
     
     func process(_ _data: [Any]) {
@@ -122,7 +142,11 @@ class Client {
     
     func send_url(_ url: String) {
         print("Sending URL: \(url)")
-        socket.emit("url", url)
+        
+        self.requestURL = url
+        socket.emit("url", self.requestURL)
+        self.requestID = urlToID(url)
+        
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
@@ -183,6 +207,10 @@ class Client {
                 performance.stop("*networkRequest-0")
                 self.addNewDomain(response)
         }
+    }
+    
+    func addNewDomainAsync() {
+        
     }
 
     func addNewDomain(_ response: JSON) {

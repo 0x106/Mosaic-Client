@@ -13,6 +13,7 @@
 		DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64692019A90C00F15119 /* SearchBar.swift */; };
 		DA3E646C2019A96D00F15119 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E646B2019A96D00F15119 /* Util.swift */; };
 		DA53762F202CF4CC00561098 /* Socket.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA53762E202CF4CC00561098 /* Socket.swift */; };
+		DA537631202CFF8500561098 /* Node2.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA537630202CFF8500561098 /* Node2.swift */; };
 		DA7D3D91202A411400ADB001 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7D3D90202A411400ADB001 /* Node.swift */; };
 		DA7D3D93202A451500ADB001 /* RenderTree.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA7D3D92202A451500ADB001 /* RenderTree.swift */; };
 		DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */; };
@@ -35,6 +36,7 @@
 		DA3E64692019A90C00F15119 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		DA3E646B2019A96D00F15119 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 		DA53762E202CF4CC00561098 /* Socket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Socket.swift; sourceTree = "<group>"; };
+		DA537630202CFF8500561098 /* Node2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node2.swift; sourceTree = "<group>"; };
 		DA7D3D90202A411400ADB001 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		DA7D3D92202A451500ADB001 /* RenderTree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderTree.swift; sourceTree = "<group>"; };
 		DA86E6C32019A29C00DDE8C9 /* Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Client.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -101,6 +103,7 @@
 				DA53762E202CF4CC00561098 /* Socket.swift */,
 				DA7D3D92202A451500ADB001 /* RenderTree.swift */,
 				DA7D3D90202A411400ADB001 /* Node.swift */,
+				DA537630202CFF8500561098 /* Node2.swift */,
 				DA3E646B2019A96D00F15119 /* Util.swift */,
 				DAFC07DE202BC55000638CAC /* Performance.swift */,
 				DAFC07E0202BDA0F00638CAC /* UserInterface.swift */,
@@ -277,6 +280,7 @@
 				DAFC07DF202BC55000638CAC /* Performance.swift in Sources */,
 				DAFD57CD20265477003C0372 /* Animate.swift in Sources */,
 				DA1415BD202022D9002C773F /* Fonts.swift in Sources */,
+				DA537631202CFF8500561098 /* Node2.swift in Sources */,
 				DAFC07E1202BDA0F00638CAC /* UserInterface.swift in Sources */,
 				DA87E778201A879300BDADAE /* Domain.swift in Sources */,
 			);
