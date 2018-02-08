@@ -33,7 +33,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(self.handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
         
-        DEBUG = false
+        DEBUG = true
         if DEBUG {
             performance.start("*CLIENT_REQUEST-0")
 //            client.request(withURL: "google.co.nz", false)

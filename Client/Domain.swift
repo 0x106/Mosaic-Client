@@ -14,6 +14,7 @@ class Domain {
     
     var data: JSON!
     var renderTree: RenderTree = RenderTree()
+    var asyncRenderTree: AsyncRenderTree = AsyncRenderTree()
     var rootKey: String = ""
     var rootNode: SCNNode = SCNNode()
     
@@ -40,34 +41,69 @@ class Domain {
         performance.measure("Get Root Key") {
             self.getRootKey()
         }
+
         if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
-            performance.measure("constructRenderTree") {
-                if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {
-                self.renderTree.push( newRootNode )
-                    while self.renderTree.hasNextNode {
+            performance.measure("constructRenderTreeAsync") {
+                self.asyncRenderTree.push( self.rootKey )
+                while self.asyncRenderTree.hasNextNode {
+                    
+                    // ---- async
+                    
+                    let nodeKey = self.asyncRenderTree.next()
+                    
+                    for (_, childKey) in (self.data?[ nodeKey ]["nodeChildren"])! {
                         
-                        let node = self.renderTree.next()
-                        for (_, childKey) in node.childrenKeys() {
-                            
-                            if let childNodeData = self.data?[ childKey.stringValue ] {
-                                if childNodeData.count > 0 {
-            
-                                    if let childNode = Node( childKey.stringValue, childNodeData, self.requestURL, node.treeDepth + 1) {
-                                        self.renderTree.push( childNode )
-                                        node.addChild(childNode)
-                                    } else {}
-                                }else {}
-                            } else {}
-                        }
+                        if let childNodeData = self.data?[ childKey.stringValue ] {
+                            if childNodeData.count > 0 {
+                                self.asyncRenderTree.push( childKey.stringValue )
+                            }else {}
+                        } else {}
                     }
+                    // ----
                 }
             } // end perf measure
             
+            asyncRenderTree._print()
+            exit()
+            
             self.render()
-
+            
         } else {
             print("Error: No root node exists with key \(self.rootKey)")
         }
+//        if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
+//            performance.measure("constructRenderTree") {
+//                if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {
+//                self.renderTree.push( newRootNode )
+//                    while self.renderTree.hasNextNode {
+//
+//                        // ---- async
+//
+//                        let node = self.renderTree.next()
+//
+//                        for (_, childKey) in node.childrenKeys() {
+//
+//                            if let childNodeData = self.data?[ childKey.stringValue ] {
+//                                if childNodeData.count > 0 {
+//
+//                                    if let childNode = Node( childKey.stringValue, childNodeData, self.requestURL, node.treeDepth + 1) {
+//                                        self.renderTree.push( childNode )
+//                                        node.addChild(childNode)
+//                                    } else {}
+//                                }else {}
+//                            } else {}
+//                        }
+//
+//                        // ----
+//                    }
+//                }
+//            } // end perf measure
+//
+//            self.render()
+//
+//        } else {
+//            print("Error: No root node exists with key \(self.rootKey)")
+//        }
     }
     
     func render() {
