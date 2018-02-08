@@ -84,7 +84,7 @@ class Node {
         // TODO: try make this as async as possible
 //        let setupWorker = DispatchQueue(label: "setupWorker", qos: .userInitiated)
 //        setupWorker.async {
-            self.setup()
+//            self.setup()
 //        }
         
         return

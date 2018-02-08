@@ -60,6 +60,7 @@ class RenderTree {
                 let renderTreeWorker = DispatchQueue(label: "renderTreeWorker", qos: .userInitiated)
                 renderTreeWorker.async {
                     renderGroup.enter()
+                    node.setup()
                     if node.canRender {
                         performance.measure("Node Render") {
                             if node.render() {
