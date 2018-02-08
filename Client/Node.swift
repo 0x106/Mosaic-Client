@@ -81,7 +81,11 @@ class Node {
         self.requestURL = _requestURL
         self.text = checkText(self.data["nodeValue"].stringValue)
     
-        self.setup()
+        // TODO: try make this as async as possible
+//        let setupWorker = DispatchQueue(label: "setupWorker", qos: .userInitiated)
+//        setupWorker.async {
+            self.setup()
+//        }
         
         return
     }

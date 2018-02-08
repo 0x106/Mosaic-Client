@@ -16,37 +16,6 @@ import Foundation
 import ARKit
 import SwiftyJSON
 
-class AsyncRenderTree {
-    
-    var ptr: Int = 0
-    var nodes: [Node] = [Node]()
-    var hasNextNode: Bool = false
-    
-    var keys: [String] = [String]()
-    
-    func push(_ _key: String) {
-//        self.nodes.append(_node)
-        self.keys.append(_key)
-        self.hasNextNode = true
-    }
-    
-    func next() -> String {
-        self.ptr += 1
-        
-        if self.ptr == self.nodes.count {
-            self.hasNextNode = false
-        }
-        return self.keys[ self.ptr - 1 ]
-//        return self.nodes[ self.ptr - 1 ]
-    }
-    
-    func _print() {
-        for _key in self.keys {
-            print("Node []: \(_key)")
-        }
-    }
-}
-
 class RenderTree {
     
     var ptr: Int = 0
@@ -104,6 +73,7 @@ class RenderTree {
         }
         
         renderGroup.notify(queue: .main) {
+            print("\(self.nodes.count) nodes in tree.")
             print("\(counter) nodes rendered.")
             if DEBUG {
                 performance.stop("*CLIENT_REQUEST-0")
