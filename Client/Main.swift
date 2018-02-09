@@ -36,14 +36,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         DEBUG = false
         if DEBUG {
             performance.start("*CLIENT_REQUEST-0")
-//            client.request(withURL: "")
-//            client.request(withURL: "google.co.nz", false)
-//            client.request(withURL: "atlasreality.xyz", false)
-//            client.request(withURL: "stuff.co.nz")
-//            client.request(withURL: "news.ycombinator.com")
         } else {
-            // client.request(withURL: "atlasreality.xyz")
-//            client.request(withURL: "stuff.co.nz")
             addButton()
         }
     }
@@ -57,7 +50,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @objc public func buttonPress() {
-//        client.request(withURL: "stuff.co.nz", true)
         performance.results()
     }
     

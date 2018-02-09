@@ -69,42 +69,6 @@ let palatinatePurple = UIColor(red: 0x68, green: 0x2D, blue: 0x63)
 let tealBlue = UIColor(red: 0x38, green: 0x86, blue: 0x97)
 let zeroColor = UIColor(red: 0x00, green: 0x00, blue: 0x00).withAlphaComponent(CGFloat(0.0))
 
-func parseColorString(_ input: String) -> UIColor {
-    // default color
-    var output: UIColor = palatinatePurple
-    
-    let text = input.replacingOccurrences(of: ",", with: "")
-    
-    let startIndex = text.index(of: "(") ?? input.endIndex
-    let endIndex = text.index(of: ")") ?? input.endIndex
-    
-    let pre = (text[startIndex..<endIndex])
-    let desc = pre.suffix(pre.count-1)
-    
-    let values = desc.split(separator: " ")
-    
-    if input.hasPrefix("rgba") {
-//        print("-----> \(values)")
-        output = UIColor(red: Int(values[0])!, green: Int(values[1])!, blue: Int(values[2])!).withAlphaComponent(CGFloat(Float(values[3])!))
-    } else if input.hasPrefix("rgb") {
-        output = UIColor(red: Int(values[0])!, green: Int(values[1])!, blue: Int(values[2])!).withAlphaComponent(CGFloat(1.0))
-    } else {
-    }
-    
-//    print("Computed color: \(output)")
-    return output
-}
-
-// e.g. "2px" --> 2.0
-func parseSizeString(_ input: String) -> Float {
-    if input.hasSuffix("px") {
-        let index = input.index(of: "p") ?? input.startIndex
-        let output: Float = Float(input.prefix(upTo: index)) ?? 0.0
-        return output
-    }
-    return 0.0
-}
-
 func parseResponseToDict(_ input: Data) -> [String : NSDictionary]? {
     do {
         let output = try JSONSerialization.jsonObject(with: input, options: []) as? [String : NSDictionary]
@@ -113,27 +77,6 @@ func parseResponseToDict(_ input: Data) -> [String : NSDictionary]? {
         print("ERROR: ", error)
     }
     return [:]
-}
-
-func computeStylesFromDict(_ style: JSON) -> Dictionary<String, Any>? {
-    var computedStyle: Dictionary<String, Any> = [:]
-    
-    for (_, property) in style {
-                
-        let propertyName = property["name"].stringValue
-        let propertyValue = property["value"].stringValue
-
-        if propertyName.hasSuffix("color") {
-            computedStyle[propertyName] = parseColorString(propertyValue)
-        } else if propertyName.hasSuffix("width") || propertyName.hasSuffix("size") || propertyName.hasPrefix("padding") {
-            computedStyle[propertyName] = parseSizeString(propertyValue)
-        } else {    // presumably anything that makes it in here has a string propertyvalue (or at least a known type)
-            computedStyle[propertyName] = propertyValue
-        }
-    }
-    
-    if computedStyle.isEmpty {return nil}
-    return computedStyle
 }
 
 func parseHREFFromURL(_ url: String) -> String {
@@ -289,50 +232,7 @@ extension String {
         }
     }
     
-//    func sliceWithUpper(from: String, to: String) -> String? {
-//        return (range(of: from)?.upperBound).flatMap { substringFrom in
-//            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
-//                String(self[substringFrom..<substringTo])
-//            }
-//        }
-//    }
-//
-//    func slice(from: String, to: String) -> String? {
-//        return (range(of: from)?.upperBound).flatMap { substringFrom in
-//            (range(of: to, range: substringFrom..<endIndex)?.lowerBound).map { substringTo in
-//                String(self[substringFrom..<substringTo])
-//            }
-//        }
-//    }
 }
-
-func getAttribute(_ object: JSON, _ query: String) -> JSON? {
-    
-    for (key, value) in object {
-        if query == value["name"].stringValue {
-            return value["value"]
-        }
-    }
-    
-    return nil
-}
-
-func hasAttribute(_ object: JSON, _ query: String) -> JSON? {
-    for (key, value) in object {
-        
-        if query == "background-image" {
-            print(key, value)
-        }
-        
-        if query == key {
-            return value
-        }
-    }
-    
-    return nil
-}
-
-
 
 
 

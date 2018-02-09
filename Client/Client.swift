@@ -41,8 +41,6 @@ class Client {
     let renderGroup = DispatchGroup()
 
     init() {
-
-//        http://2a682d5e.ngrok.io
         manager = SocketManager(socketURL: URL(string: "http://2a682d5e.ngrok.io")!, config: [.log(false), .compress])
         socket = manager.defaultSocket
         
@@ -108,20 +106,6 @@ class Client {
         self.rootNode.addChildNode(self.currentDomain.rootNode)
     }
     
-    func process(_ _data: [Any]) {
-//        do {
-//            let response = try JSON(data: _data)
-//            let response: JSON =
-//            self.writeData = false
-//            print("unpacked data")
-//            exit()
-//            self.addNewDomain(response)
-//        } catch {
-//            print("Couldn't unpack socket data")
-//            exit()
-//        }
-    }
-    
     func send_msg(_ message: String) {
         print("Sending message: \(message)")
         socket.emit("msg", message)
@@ -158,7 +142,7 @@ class Client {
 
         // check to see if a local cache of this url exists
         if refresh {
-            self.networkRequest()
+//            self.networkRequest()
         } else {
 
             let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -173,33 +157,11 @@ class Client {
                     self.writeData = false
                     self.addNewDomain(response)
                 } catch {
-                    self.networkRequest()
+//                    self.networkRequest()
                 }
             }
         }
     }
-
-    private func networkRequest() {
-        
-        performance.start("*networkRequest-0")
-        self.writeData = true
-
-        let parameters: Parameters = ["atlasurl": requestURL]
-        print("Making network request: \(serverEndpoint)\(requestURL)")
-
-        Alamofire.request("\(self.serverEndpoint)", method: .get, parameters: parameters)
-            .responseSwiftyJSON { dataResponse in
-
-                guard let response = dataResponse.value else {return}
-                performance.stop("*networkRequest-0")
-                self.addNewDomain(response)
-        }
-    }
-    
-    func addNewDomainAsync() {
-        
-    }
-
     func addNewDomain(_ response: JSON) {
 
         print("Adding domain.")
