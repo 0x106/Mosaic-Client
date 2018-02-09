@@ -13,6 +13,7 @@
 		DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64692019A90C00F15119 /* SearchBar.swift */; };
 		DA3E646C2019A96D00F15119 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E646B2019A96D00F15119 /* Util.swift */; };
 		DA537631202CFF8500561098 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA537630202CFF8500561098 /* Node.swift */; };
+		DA537632202D4B4600561098 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA9F97E5202797700078B477 /* Assets.xcassets */; };
 		DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */; };
 		DA86E6C92019A29C00DDE8C9 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6C82019A29C00DDE8C9 /* art.scnassets */; };
 		DA86E6CB2019A29C00DDE8C9 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E6CA2019A29C00DDE8C9 /* Main.swift */; };
@@ -184,6 +185,7 @@
 			files = (
 				DA86E6C92019A29C00DDE8C9 /* art.scnassets in Resources */,
 				DA86E6D32019A29C00DDE8C9 /* LaunchScreen.storyboard in Resources */,
+				DA537632202D4B4600561098 /* Assets.xcassets in Resources */,
 				DA86E6CE2019A29C00DDE8C9 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

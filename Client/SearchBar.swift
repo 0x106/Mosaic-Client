@@ -15,12 +15,15 @@ class SearchBar {
 
     var label: Label = Label()
     var button: Label = Label()
-
+    var toggle: Bool = true
     var rootNode: SCNNode = SCNNode()
+    var cursorTimer: Timer!
+    var text = ""
 
     init() {
 
-        self.label.text = "Neuromancer Wintermute Hyperion"
+        self.label.text = ""
+        self.text = ""
         label.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(750), height: CGFloat(100))
         label.nucleus = CGRect(x: 20.0, y: 35, width: CGFloat(750), height: CGFloat(50))
         label.totalWidth = Float(label.cell.width)
@@ -46,14 +49,31 @@ class SearchBar {
 
         self.rootNode.addChildNode(label.rootNode)
         self.rootNode.addChildNode(button.rootNode)
+        
+        self.rootNode.position = SCNVector3Make(0, 0, -0.4)
+        
+        cursorTimer = Timer.scheduledTimer(timeInterval: 0.6, target: self, selector: #selector(cursorBlink), userInfo: nil, repeats: true)
 
         print("Search bar initialised")
     }
 
     func updateText(_ text: String) {
         self.label.text = text
+        self.text = text
         self.label.render()
+        
     }
 
+    @objc func cursorBlink() {
+        if toggle {
+            self.label.text = self.text + "|"
+            toggle = false
+        } else {
+            self.label.text = self.text
+            toggle = true
+        }
+        self.label.render()
+    }
+    
 }
 

@@ -26,7 +26,7 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://46eeac14.ngrok.io"
+    let server: String = "http://fdeec1b7.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
@@ -41,69 +41,53 @@ class Client {
     let renderGroup = DispatchGroup()
 
     init() {
-        manager = SocketManager(socketURL: URL(string: "http://2a682d5e.ngrok.io")!, config: [.log(false), .compress])
+        manager = SocketManager(socketURL: URL(string: self.server)!, config: [.log(false), .compress])
         socket = manager.defaultSocket
         
         socket.on(clientEvent: .connect) {[weak self] data, ack in
             print("socket connected")
             self?.connected = true
+            self?.rootNode.addChildNode((self?.searchBar.rootNode)!)
         }
-        
-        socket.on("renderTree") { data, ack in
-            performance.stop("*request-0")
-            print(data)
-            performance.results()
-        }
-        
-        socket.on("renderTreeComplete") { data, ack in
-            print("RenderTreeComplete")
-//            self.currentDomain?.writeSceneToFile()
+
+        socket.on("renderTreeStart") {[weak self] data, ack in
+            if !(self?.orb.rootNode.isHidden)! {
+                self?.orb.rootNode.isHidden = true
+            }
         }
         
         socket.on("node") { data, ack in
             let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
             nodeWorker.async {
-//                self.renderGroup.enter()
                 self.currentDomain.addNodeAsync(data[0])
-//                self.renderGroup.leave()
             }
         }
-        
-        socket.on("response") { data, ack in
-            print("message received")
-            
-            self.send_msg("Neuromancer")
-            performance.start("*request-0")
-//            self.send_url("http://atlasreality.xyz")
-//            self.send_url("http://stuff.co.nz")
-        }
-        
+    
         socket.connect()
         
-        performance.measure("clientinit") {
-            self.serverEndpoint = "\(self.server)/client"
+        self.serverEndpoint = "\(self.server)/client"
 
-            field.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
-            field.isHidden = true
+        field.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        field.isHidden = true
 
-            orb.rootNode.isHidden = true
-            searchBar.rootNode.isHidden = false
+        orb.rootNode.isHidden = true
+        searchBar.rootNode.isHidden = false
 
-            rootNode.addChildNode(orb.rootNode)
-            rootNode.addChildNode(searchBar.rootNode)
-
-            rootNode.position = SCNVector3Make(0, 0, -1)
-        }
-        
+        rootNode.addChildNode(orb.rootNode)
+        rootNode.position = SCNVector3Make(0, 0, -1)
+    
+    }
+    
+    func initDomain() {
         // remove any pages currently in the scene (still keep a reference to them)
         if let domain = self.currentDomain {
             domain.rootNode.removeFromParentNode()
         }
-        
-        // initialise the new domain
+    
         self.domains.append(Domain(self.requestURL))
         self.currentDomain = self.domains[ self.domains.count - 1 ]
         self.rootNode.addChildNode(self.currentDomain.rootNode)
+        
     }
     
     func send_msg(_ message: String) {
@@ -113,15 +97,12 @@ class Client {
     
     func send_url(_ url: String) {
         print("Sending URL: \(url)")
-        
-        self.requestURL = url
+        initDomain()
         socket.emit("url", self.requestURL)
-        self.requestID = urlToID(url)
-        
     }
 
     @objc func textFieldDidChange(_ textField: UITextField) {
-//        self.searchBar.updateText( textField.text! )
+        self.searchBar.updateText( textField.text! )
     }
 
     func request(withURL url: String, _ refresh: Bool = false) {
@@ -129,7 +110,7 @@ class Client {
         // show loading animation
         self.orb.rootNode.isHidden = false
         self.orb.animate()
-//        self.searchBar.rootNode.isHidden = true
+        self.searchBar.rootNode.isHidden = true
 
         if url == "" {
             requestURL = server
@@ -142,7 +123,7 @@ class Client {
 
         // check to see if a local cache of this url exists
         if refresh {
-//            self.networkRequest()
+            self.send_url(self.requestURL)
         } else {
 
             let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -157,7 +138,7 @@ class Client {
                     self.writeData = false
                     self.addNewDomain(response)
                 } catch {
-//                    self.networkRequest()
+                    self.send_url(self.requestURL)
                 }
             }
         }
@@ -227,12 +208,11 @@ class Client {
         // e.g: http://atlasreality.xyz
         if url.hasPrefix("http://") || url.hasPrefix("https://") {
 
-            var index = url.index(of: "/") ?? url.startIndex
-            index = url.index(after: index)
-            index = url.index(after: index)
-
-            output = "https://www." + url[index..<url.endIndex]
-
+//            var index = url.index(of: "/") ?? url.startIndex
+//            index = url.index(after: index)
+//            index = url.index(after: index)
+//
+//            output = "https://www." + url[index..<url.endIndex]
             return output
         }
 

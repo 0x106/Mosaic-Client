@@ -24,9 +24,9 @@ extension ViewController {
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         guard   let planeAnchor = anchor as?  ARPlaneAnchor,
-            let planeNode = node.childNodes.first,
-            let plane = planeNode.geometry as? SCNPlane
-            else { return }
+                let planeNode = node.childNodes.first,
+                let plane = planeNode.geometry as? SCNPlane
+        else { return }
         plane.width = CGFloat(planeAnchor.extent.x)
         plane.height = CGFloat(planeAnchor.extent.z)
         planeNode.position = SCNVector3(CGFloat(planeAnchor.center.x),CGFloat(planeAnchor.center.y),CGFloat(planeAnchor.center.z))
@@ -72,16 +72,20 @@ extension ViewController {
                     return
                 }
                 if nodeName == "searchBarNode" {
-                    client.field.becomeFirstResponder()
+                    
+                    if client.field.isFirstResponder {
+                        client.field.resignFirstResponder()
+                    } else {
+                        client.field.becomeFirstResponder()
+                    }
+                    
                 } else if nodeName == "searchBarButtonNode" {
-                    guard let search = client.field.text else { return }
-                    client.field.resignFirstResponder()
-                    client.request(withURL: search)
+                    self.searchRequest()
                 } else {
                     guard let currentDomain = client.currentDomain else {return}
                     guard let tappedNode = currentDomain.getNode(withKey: nodeName) else {return}
                     if tappedNode.isButton {
-                        client.request(withURL: tappedNode.href)
+                        client.request(withURL: tappedNode.href, true)
                     }
                 }
             }
@@ -94,18 +98,5 @@ extension ViewController {
         self.client.currentDomain?.scroll( velocity )
         if let _ = self.sceneView.hitTest(touch, types: ARHitTestResult.ResultType.featurePoint).first {}
     }
-    
-    func addButton() {
-        let bx = CGFloat((self.sceneView.bounds.maxX/2) - 24)
-        let by = CGFloat(self.sceneView.bounds.maxY - 80)
-        button.frame = CGRect(x: bx, y: by, width: CGFloat(48), height: CGFloat(48))
-        button.backgroundColor = .clear
-        let buttonIcon = UIImage(named: "1")
-        button.setImage(buttonIcon, for: .normal)
-        button.backgroundColor = UIColor(displayP3Red: 255, green: 255, blue: 255, alpha: 0.5)
-        button.addTarget(self, action: #selector(buttonPress), for: .touchUpInside)
-        button.layer.cornerRadius = 0.5 * button.bounds.size.width
-        button.clipsToBounds = true
-        self.sceneView.addSubview(button)
-    }
+
 }

@@ -12,8 +12,6 @@ import SwiftyJSON
 
 class Domain {
     
-    var data: JSON!
-    var rootKey: String = ""
     var rootNode: SCNNode = SCNNode()
     var nodes: [Node] = [Node]()
     var requestID: String = ""
@@ -23,8 +21,6 @@ class Domain {
     
     let scale: Float = 0.001
     let velocityScale: Float = 0.0001
-    var isReady: Bool = false
-    var maxZOffset: Float = 0.0
     
     init(_ requestURL: String) {
         self.requestURL = requestURL

@@ -11,6 +11,8 @@ import SceneKit
 import ARKit
 import SwiftyJSON
 
+var searchButtonVisible: Bool = false
+
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
     @IBOutlet var sceneView: ARSCNView!
@@ -46,11 +48,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if !DEBUG {
             self.sceneView.scene.rootNode.addChildNode(client.rootNode)
             self.sceneView.addSubview(client.field)
+            self.addButton()
         }
     }
     
     @objc public func buttonPress() {
-        performance.results()
+//        performance.results()
+        if self.client.searchBar.rootNode.isHidden {
+           self.client.searchBar.rootNode.isHidden = false
+        } else {
+            self.searchRequest()
+        }
     }
     
     func session(_ session: ARSession, didUpdate frame: ARFrame) {
@@ -87,6 +95,29 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         super.viewWillDisappear(animated)
         sceneView.session.pause()
     }
+    
+    func addButton() {
+        let bx = CGFloat((self.sceneView.bounds.maxX/2) - 24)
+        let by = CGFloat(self.sceneView.bounds.maxY - 80)
+        button.frame = CGRect(x: bx, y: by, width: CGFloat(48), height: CGFloat(48))
+        button.backgroundColor = .clear
+        
+        if let buttonIcon = UIImage(named: "search") {
+            button.setImage(buttonIcon, for: .normal)
+            button.backgroundColor = UIColor(displayP3Red: 255, green: 255, blue: 255, alpha: 0.0)
+            button.addTarget(self, action: #selector(buttonPress), for: .touchUpInside)
+            button.layer.cornerRadius = 0.5 * button.bounds.size.width
+            button.clipsToBounds = true
+            self.sceneView.addSubview(button)
+        }
+    }
+    
+    func searchRequest() {
+        guard let search = client.field.text else { return }
+        client.field.resignFirstResponder()
+        client.request(withURL: search, true)
+    }
+    
 }
 
 
