@@ -100,6 +100,7 @@ class Label {
             context.fill(self.border[bottom])
             
             if self.textAlignment == "center" {
+                let stringSize = self.text.size(withAttributes: fontAttrs)
                 let drawRect = CGRect(x: CGFloat((self.nucleus.width / 2.0) - (stringSize.width/2.0)),
                                       y: CGFloat((self.nucleus.height / 2.0) - (stringSize.height/2.0)),
                                       width: CGFloat(stringSize.width),
