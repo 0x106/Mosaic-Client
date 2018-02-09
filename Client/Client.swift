@@ -75,7 +75,7 @@ class Client {
             self.send_msg("Neuromancer")
             performance.start("*request-0")
 //            self.send_url("http://atlasreality.xyz")
-            self.send_url("http://stuff.co.nz")
+//            self.send_url("http://stuff.co.nz")
         }
         
         socket.connect()
@@ -87,10 +87,10 @@ class Client {
             field.isHidden = true
 
             orb.rootNode.isHidden = true
-//            searchBar.rootNode.isHidden = false
+            searchBar.rootNode.isHidden = false
 
             rootNode.addChildNode(orb.rootNode)
-//            rootNode.addChildNode(searchBar.rootNode)
+            rootNode.addChildNode(searchBar.rootNode)
 
             rootNode.position = SCNVector3Make(0, 0, -1)
         }

@@ -37,7 +37,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         if DEBUG {
             performance.start("*CLIENT_REQUEST-0")
         } else {
-            addButton()
+//            addButton()
         }
     }
 
