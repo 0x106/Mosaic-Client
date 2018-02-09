@@ -33,15 +33,17 @@ class Client {
 
     var writeData: Bool = true
     
-//    let socket = AtlasSocket()
     var manager: SocketManager
     var socket: SocketIOClient
     var connected: Bool = false
     var sceneData: [Dictionary<String, Any>] = [Dictionary<String, Any>]()
+    
+    let renderGroup = DispatchGroup()
 
     init() {
 
-        manager = SocketManager(socketURL: URL(string: "http://localhost:3000")!, config: [.log(false), .compress])
+//        http://2a682d5e.ngrok.io
+        manager = SocketManager(socketURL: URL(string: "http://2a682d5e.ngrok.io")!, config: [.log(false), .compress])
         socket = manager.defaultSocket
         
         socket.on(clientEvent: .connect) {[weak self] data, ack in
@@ -55,34 +57,18 @@ class Client {
             performance.results()
         }
         
+        socket.on("renderTreeComplete") { data, ack in
+            print("RenderTreeComplete")
+//            self.currentDomain?.writeSceneToFile()
+        }
+        
         socket.on("node") { data, ack in
-            
-//            let _data: Dictionary<String, Any> = data[0] as! Dictionary<String, Any>
-//            print(_data)
-            
-//            for (k,v) in _data {
-//                print(k)
-//            }
-            
-//            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
-//            nodeWorker.async {
+            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
+            nodeWorker.async {
+//                self.renderGroup.enter()
                 self.currentDomain.addNodeAsync(data[0])
-//            }
-            
-//            let _data: Data = data as! Data
-//            print("Received new node data.")
-            //            performance.stop("*request-0")
-            //            print(data)
-            //            performance.results()
-            
-//            self.process(data)
-//            print("Node data:")
-//            let _data: Dictionary<String, Any> = data[0] as! Dictionary<String, Any>
-            
-//            self.sceneData.append(_data)
-            
-//            print("============================")
-            
+//                self.renderGroup.leave()
+            }
         }
         
         socket.on("response") { data, ack in
@@ -90,8 +76,8 @@ class Client {
             
             self.send_msg("Neuromancer")
             performance.start("*request-0")
-            self.send_url("http://atlasreality.xyz")
-//            self.send_url("http://stuff.co.nz")
+//            self.send_url("http://atlasreality.xyz")
+            self.send_url("http://stuff.co.nz")
         }
         
         socket.connect()
@@ -119,6 +105,7 @@ class Client {
         // initialise the new domain
         self.domains.append(Domain(self.requestURL))
         self.currentDomain = self.domains[ self.domains.count - 1 ]
+        self.rootNode.addChildNode(self.currentDomain.rootNode)
     }
     
     func process(_ _data: [Any]) {
@@ -245,7 +232,7 @@ class Client {
             self.currentDomain = self.domains[ self.domains.count - 1 ]
 
             // add the new domain to the scene            
-            self.currentDomain.constructRenderTree(response, self.requestID)
+//            self.currentDomain.constructRenderTree(response, self.requestID)
             
             self.rootNode.addChildNode(self.currentDomain.rootNode)
 

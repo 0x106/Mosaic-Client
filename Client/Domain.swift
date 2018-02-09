@@ -13,10 +13,9 @@ import SwiftyJSON
 class Domain {
     
     var data: JSON!
-    var renderTree: RenderTree = RenderTree()
     var rootKey: String = ""
     var rootNode: SCNNode = SCNNode()
-    
+    var nodes: [Node] = [Node]()
     var requestID: String = ""
     var requestURL: String = ""
     
@@ -30,79 +29,22 @@ class Domain {
     init(_ requestURL: String) {
         self.requestURL = requestURL
     }
-    
-    func constructRenderTree(_ _data: JSON,
-                     _ _requestID: String) {
-        
-        self.data = _data
-        self.requestID = _requestID
-        
-        performance.measure("Get Root Key") {
-            self.getRootKey()
-        }
 
-        if let renderTreeRootNodeData = self.data?[ self.rootKey ] {
-            performance.measure("constructRenderTree") {
-                if let newRootNode = Node( self.rootKey, renderTreeRootNodeData, self.requestURL, 0) {
-                self.renderTree.push( newRootNode )
-                    while self.renderTree.hasNextNode {
-
-                        // ---- async
-
-                        let node = self.renderTree.next()
-
-                        for (_, childKey) in node.childrenKeys() {
-
-                            if let childNodeData = self.data?[ childKey.stringValue ] {
-                                if childNodeData.count > 0 {
-
-                                    if let childNode = Node( childKey.stringValue, childNodeData, self.requestURL, node.treeDepth + 1) {
-                                        self.renderTree.push( childNode )
-//                                        node.addChild(childNode)
-                                    } else {}
-                                }else {}
-                            } else {}
-                        }
-
-                        // ----
-                    }
-                }
-            } // end perf measure
-
-            self.render()
-
-        } else {
-            print("Error: No root node exists with key \(self.rootKey)")
-        }
-    }
-    
     func addNodeAsync(_ nodeData: Any) {
         let data: Dictionary<String, Any> = nodeData as! Dictionary<String, Any>
         print("Adding new node with key: \(data["key"]!)")
             
-        guard let node: Node2 = Node2(data, "", 0) else {return}
-    }
-    
-    func render() {
-        renderTree.draw()
-        for node in renderTree.nodes {
-            if node.canRender {
-                self.rootNode.addChildNode(node.rootNode)
-            }
-        }
-    }
-    
-    private func getRootKey() {
-        for (key, _) in self.data {
-            if key.hasPrefix("#document-1-") {
-                self.rootKey = key
-                return
-            }
+        guard let node: Node = Node(data, "", 0) else {return}
+        
+        if node.canRender {
+            node.render()
+            self.rootNode.addChildNode(node.rootNode)
+            self.nodes.append(node)
         }
     }
     
     func getNode(withKey ref: String) -> Node? {
-        for node in self.renderTree.nodes {
+        for node in self.nodes {
             if node.canRender {
                 if node.key == ref {
                     return node
@@ -133,6 +75,20 @@ class Domain {
 //            }
 //
 //        }
+    }
+    
+    func writeSceneToFile() {
+        if DEBUG {
+            let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let file = URL(fileURLWithPath: documents + "/\(globalRequestID).scn")
+            
+            let scene = SCNScene()
+            scene.rootNode.addChildNode(self.rootNode)
+            scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
+            performance.results()
+            print("Domain scene written to: \(file)")
+            exit()
+        }
     }
     
     
