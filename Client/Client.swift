@@ -30,9 +30,9 @@ class Client {
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
-//    let defaultSearchURL: String = "http://stuff.co.nz"
+    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://atlasreality.xyz"
-    let defaultSearchURL: String = "http://afore.vc"
+//    let defaultSearchURL: String = "http://afore.vc"
 
     var writeData: Bool = true
     

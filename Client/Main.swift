@@ -80,28 +80,31 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // if tracking has been established
         else {
             
-            let center = self.sceneView.center
-            
-            if let domain = self.client.currentDomain {
-                
-//                domain.process()
-                
-                if let hit = self.sceneView.hitTest(center, options: nil).first {
-                    if let nodeName = hit.node.name {
-                        if let node = domain.getNode(withKey: nodeName) {
-                            
-                            for domainNode in (self.client.currentDomain?.nodes)! {
-                                if distance(domainNode.rootNode.position, node.rootNode.position) < 0.5 {
-                                    domainNode.setActive()
-                                }
-                            }
-
-                            node.setActive()
-
-                        }
-                    }
-                }
-            }
+//            let center = self.sceneView.center
+//
+//            if let domain = self.client.currentDomain {
+//
+////                domain.process()
+//
+//                if let hit = self.sceneView.hitTest(center, options: nil).first {
+//                    if let nodeName = hit.node.name {
+//                        if let node = domain.getNode(withKey: nodeName) {
+//
+//
+//                            // if a node gets moved then all its children have to as well.
+//
+//                            for domainNode in (self.client.currentDomain?.nodes)! {
+//                                if distance(domainNode.rootNode.position, node.rootNode.position) < 0.5 {
+//                                    domainNode.setActive()
+//                                }
+//                            }
+//
+//                            node.setActive()
+//
+//                        }
+//                    }
+//                }
+//            }
         }
     }
 

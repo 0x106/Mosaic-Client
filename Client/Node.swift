@@ -209,28 +209,11 @@ class Node {
     
     func setup() -> Bool {
         
-//        performance.measure("Determine Type") {
-            self.determineType()
-//        }
-        if !self.canRender { return false }
-
-//        performance.measure("Determine Properties") {
-            self.determineProperties()
-//        }
-        if !self.canRender { return false }
-
-//        performance.measure("Determine Style") {
-//            self.hasStyle()
-//        }
-        if !self.canRender { return false }
-
-//        performance.measure("Determine Layout") {
-            self.determineLayout()
-//        }
-
-//        performance.measure("Determine Font") {
-            self.determineFont()
-//        }
+        self.determineType()        ;if !self.canRender { return false }
+        self.determineProperties()  ;if !self.canRender { return false }
+        self.hasStyle()             ;if !self.canRender { return false }
+        self.determineLayout()      ;if !self.canRender { return false }
+        self.determineFont()
 
         return true
     }
@@ -239,8 +222,6 @@ class Node {
         
         // if the image is / will be drawn then we don't need to render anything
         if !self.canDrawOverlay {return true}
-
-        print(self.key)
         
         if self.nodeName == "#text" {
 
@@ -257,8 +238,6 @@ class Node {
                 self.text.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
             }
             
-            print(self.text)
-
         } else {
 
             // TODO: Rounded corners
@@ -410,7 +389,12 @@ class Node {
     
     func determineLayout() {
 
-        if self.x <= 0 || self.y <= 0 {
+        if self.x < 0 || self.y < 0 {
+            self.canRender = false
+            return
+        }
+        
+        if (self.totalWidth == 0 || self.totalHeight == 0) {
             self.canRender = false
             return
         }

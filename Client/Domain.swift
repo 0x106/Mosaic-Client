@@ -41,8 +41,6 @@ class Domain {
     var requestID: String = ""
     var requestURL: String = ""
     
-    let viewport: Viewport = Viewport()
-    
     let scale: Float = 0.001
     let velocityScale: Float = 0.0001
     
@@ -52,29 +50,31 @@ class Domain {
     var allDataSent: Bool = false
     var centered: Bool = false
     
+    var centerTimer: Timer!
+    
     init(_ requestURL: String) {
         self.requestURL = requestURL
         self.rootNode.position = SCNVector3Make(0, 0, -0.6)
+        centerTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(shiftDomainToCenter), userInfo: nil, repeats: true)
     }
 
     func addNodeAsync(_ data: Dictionary<String, Any>) {
         
         let key = data["key"] as! String
-            
+        
+//        print(data)
+        
         guard let node: Node = Node(data, "", 0) else {
-//            if self.renderMonitor.close(key) {self.process()}
             return
         }
         
         if node.canRender {
-//            self.renderMonitor.open(key)
             let _ = node.render()
             self.rootNode.addChildNode(node.rootNode)
             self.nodes.append(node)
             self.nodeDict[key] = node
-//            if self.renderMonitor.close(key) {self.process()}
         } else {
-//            if self.renderMonitor.close(key) {self.process()}
+//            print("Cannot render \(key) with type \(data["nodeName"])")
         }
     }
     
@@ -86,38 +86,11 @@ class Domain {
             }
         }
         
-        
-//        for node in self.nodes {
-//            if node.canRender {
-//                if node.key == ref {
-//                    return node
-//                }
-//            }
-//        }
         return nil
     }
 
     func scroll(_ velocity: CGPoint) {
         self.rootNode.position.y -= Float(velocity.y) * self.velocityScale
-        update()
-    }
-
-    func update() {
-//        let updateWorker = DispatchQueue(label: "updateWorker", qos: .userInitiated)
-//        updateWorker.async {
-//            for element in self.nodes {
-//                if self.viewport.contains(element.rootNode.worldPosition) {
-//
-//                    if !element.isRendered {
-//                        element.draw()
-//                    }
-//                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(1.0)
-//                } else {
-////                    element.rootNode.geometry?.firstMaterial?.transparency = CGFloat(0.2)
-//                }
-//            }
-//
-//        }
     }
     
     func writeSceneToFile() {
@@ -151,59 +124,43 @@ class Domain {
         
     }
     
-    func shiftDomainToCenter() {
+    @objc func shiftDomainToCenter() {
         var mx: Float = 0.0
         var my: Float = 0.0
         
-        for node in self.nodes {
-            mx += node.rootNode.position.x
-            my += node.rootNode.position.y
-        }
         
-        mx /= Float(self.nodes.count)
-        my /= Float(self.nodes.count)
+        if self.nodes.count > 0 {
+            for node in self.nodes {
+                mx += node.rootNode.position.x
+                my += node.rootNode.position.y
+            }
+            
+            mx /= Float(self.nodes.count)
+            my /= Float(self.nodes.count)
 
-//        self.rootNode.position = SCNVector3Make(self.rootNode.position.x - mx,
-//                                                self.rootNode.position.y - my,
-//                                                self.rootNode.position.z)
-        
+//            self.rootNode.position = SCNVector3Make(self.rootNode.position.x - mx,
+//                                                    self.rootNode.position.y - my,
+//                                                    self.rootNode.position.z)
+            
+            self.rootNode.position = SCNVector3Make( -mx,
+                                                     self.rootNode.position.y,
+                                                     self.rootNode.position.z)
+        }
 //        print(self.rootNode.position)
         
-        for node in self.nodes {
-            node.rootNode.position = SCNVector3Make(node.rootNode.position.x - mx,
-                                                    node.rootNode.position.y - my,
-                                                    node.rootNode.position.z)
-        }
+//        for node in self.nodes {
+//            node.rootNode.position = SCNVector3Make(node.rootNode.position.x - mx,
+//                                                    node.rootNode.position.y - my,
+//                                                    node.rootNode.position.z)
+//        }
         
     }
 }
 
 
-class Viewport {
-    
-    var x: [Float]
-    var y: [Float]
-    var z: [Float]
 
-    init() {
-        // set the initial view parameters
-        x = [-0.65, 0.65]
-        y = [-0.65, 0.65]
-        z = [-2.0, 2.0]
-    }
-    
-    func contains(_ position: SCNVector3) -> Bool {
-        if     (position.x >= self.x[0] && position.x <= self.x[1])
-            && (position.y >= self.y[0] && position.y <= self.y[1])
-            && (position.z >= self.z[0] && position.z <= self.z[1]) {
-            
-            return true
-        }
-        
-        return false
-    }
 
-}
+
 
 
 
