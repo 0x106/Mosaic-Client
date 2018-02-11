@@ -21,7 +21,7 @@ class Dodecahedron {
     
     var colour: UIColor
     
-    let sphereRadius = CGFloat(0.002)
+    let sphereRadius = CGFloat(0.0012)
     let lineRadius = CGFloat(0.001)
     
     var radius: Float
@@ -88,7 +88,7 @@ class Dodecahedron {
         addLines()
         
         rootNode.isHidden = true
-        rootNode.position = SCNVector3Make(-Float(root_x_offset / 2.0), 0, -0.28 + 1.0)
+//        rootNode.position = SCNVector3Make(-Float(root_x_offset / 2.0), 0, -0.28 + 1.0)
 //        rootNode.position = SCNVector3Make(-Float(root_x_offset / 2.0), 0, -1.0)
     }
     
