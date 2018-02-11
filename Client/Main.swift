@@ -81,19 +81,28 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         else {
             
             let center = self.sceneView.center
-            if let _ = self.client.currentDomain {
+            
+            if let domain = self.client.currentDomain {
+                
+//                domain.process()
                 
                 if let hit = self.sceneView.hitTest(center, options: nil).first {
-                    let forwards = SCNVector3Make(0, 0, 0.8)
-                    let motion = SCNAction.move(by: forwards, duration: 2.0)
-                    hit.node.runAction(motion)
+                    if let nodeName = hit.node.name {
+                        if let node = domain.getNode(withKey: nodeName) {
+                            
+                            for domainNode in (self.client.currentDomain?.nodes)! {
+                                if distance(domainNode.rootNode.position, node.rootNode.position) < 0.5 {
+                                    domainNode.setActive()
+                                }
+                            }
+
+                            node.setActive()
+
+                        }
+                    }
                 }
-                
             }
-            
         }
-        
-        
     }
 
     override func viewWillAppear(_ animated: Bool) {

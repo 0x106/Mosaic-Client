@@ -61,13 +61,25 @@ class Client {
         socket.on("node") {[weak self] data, ack in
             let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
             nodeWorker.async {
-                self?.currentDomain.addNodeAsync(data[0])
+//                self?.renderGroup.enter()
+                if let nodeData = data[0] as? Dictionary<String, Any> {
+                    if let key = nodeData["key"] as? String {
+//                        self?.currentDomain.renderNodeList.insert( key )
+//                        self?.currentDomain.renderMonitor.open(key)
+                        self?.currentDomain.addNodeAsync( nodeData )
+                    }
+                }
+//                self?.renderGroup.leave()
+//            self?.renderGroup.notify(queue: .main) {
+//                print()
+//            }
             }
         }
         
         socket.on("renderTreeComplete") {[weak self] data, ack in
             print("All render tree nodes sent")
-            self?.currentDomain.process()
+            self?.currentDomain.allDataSent = true
+//            self?.currentDomain.process()
         }
     
         socket.connect()

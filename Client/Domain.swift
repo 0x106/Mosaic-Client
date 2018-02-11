@@ -10,10 +10,34 @@ import Foundation
 import ARKit
 import SwiftyJSON
 
+class RenderMonitor {
+    private var renderList: Set<String> = Set<String>()
+    
+    func open(_ key: String) {
+        renderList.insert(key)
+    }
+    
+    func close(_ key: String) -> Bool {
+        if renderList.contains(key) {
+            renderList.remove(key)
+        }
+        
+        if renderList.count == 0 {
+            print("RenderList is empty")
+            return true
+        } else {
+            print(renderList)
+        }
+        
+        return false
+    }
+}
+
 class Domain {
     
     var rootNode: SCNNode = SCNNode()
     var nodes: [Node] = [Node]()
+    var nodeDict: Dictionary<String, Node?> = Dictionary<String, Node?>()
     var requestID: String = ""
     var requestURL: String = ""
     
@@ -23,46 +47,53 @@ class Domain {
     let velocityScale: Float = 0.0001
     
     var renderNodeList: Set = Set<String>()
+    var renderMonitor: RenderMonitor = RenderMonitor()
+    
+    var allDataSent: Bool = false
+    var centered: Bool = false
     
     init(_ requestURL: String) {
         self.requestURL = requestURL
         self.rootNode.position = SCNVector3Make(0, 0, -0.6)
     }
 
-    func addNodeAsync(_ nodeData: Any) {
-        let data: Dictionary<String, Any> = nodeData as! Dictionary<String, Any>
+    func addNodeAsync(_ data: Dictionary<String, Any>) {
         
-        if let key = data["key"] as? String {
-            renderNodeList.insert( key )
+        let key = data["key"] as! String
             
-            guard let node: Node = Node(data, "", 0) else {
-                renderNodeList.remove( key )
-                return
-            }
-            
-            if node.canRender {
-                node.render()
-                self.rootNode.addChildNode(node.rootNode)
-                self.nodes.append(node)
-                renderNodeList.remove(key)
-            } else {
-                renderNodeList.remove(key)
-            }
-        } else {
-            
+        guard let node: Node = Node(data, "", 0) else {
+//            if self.renderMonitor.close(key) {self.process()}
+            return
         }
         
-        
+        if node.canRender {
+//            self.renderMonitor.open(key)
+            let _ = node.render()
+            self.rootNode.addChildNode(node.rootNode)
+            self.nodes.append(node)
+            self.nodeDict[key] = node
+//            if self.renderMonitor.close(key) {self.process()}
+        } else {
+//            if self.renderMonitor.close(key) {self.process()}
+        }
     }
     
     func getNode(withKey ref: String) -> Node? {
-        for node in self.nodes {
-            if node.canRender {
-                if node.key == ref {
-                    return node
-                }
+        
+        if let node = self.nodeDict[ref] {
+            if (node?.canRender)! {
+                return node
             }
         }
+        
+        
+//        for node in self.nodes {
+//            if node.canRender {
+//                if node.key == ref {
+//                    return node
+//                }
+//            }
+//        }
         return nil
     }
 
@@ -105,14 +136,19 @@ class Domain {
     
     func process() {
         
-        self.shiftDomainToCenter()
-        print("Domain positioned at: \(self.rootNode.worldPosition )")
+        if self.allDataSent && !self.centered {
+            self.shiftDomainToCenter()
+            self.centered = true
+        }
         
 //        let renderPoll = DispatchQueue(label: "renderPoll", qos: .userInitiated)
 //        renderPoll.async {
 //            while(self.renderNodeList.count > 0) {}
 //            self.shiftDomainToCenter()
+//            print("Domain positioned at: \(self.rootNode.worldPosition )")
 //        }
+
+        
     }
     
     func shiftDomainToCenter() {
@@ -126,6 +162,12 @@ class Domain {
         
         mx /= Float(self.nodes.count)
         my /= Float(self.nodes.count)
+
+//        self.rootNode.position = SCNVector3Make(self.rootNode.position.x - mx,
+//                                                self.rootNode.position.y - my,
+//                                                self.rootNode.position.z)
+        
+//        print(self.rootNode.position)
         
         for node in self.nodes {
             node.rootNode.position = SCNVector3Make(node.rootNode.position.x - mx,
