@@ -26,12 +26,13 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://c2baf543.ngrok.io"
+    let server: String = "http://f9a57d39.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
 //    let defaultSearchURL: String = "http://stuff.co.nz"
-    let defaultSearchURL: String = "http://atlasreality.xyz"
+//    let defaultSearchURL: String = "http://atlasreality.xyz"
+    let defaultSearchURL: String = "http://afore.vc"
 
     var writeData: Bool = true
     

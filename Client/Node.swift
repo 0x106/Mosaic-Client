@@ -220,7 +220,7 @@ class Node {
         if !self.canRender { return false }
 
 //        performance.measure("Determine Style") {
-            self.hasStyle()
+//            self.hasStyle()
 //        }
         if !self.canRender { return false }
 
@@ -240,6 +240,8 @@ class Node {
         // if the image is / will be drawn then we don't need to render anything
         if !self.canDrawOverlay {return true}
 
+        print(self.key)
+        
         if self.nodeName == "#text" {
 
             let paragraphStyle = NSMutableParagraphStyle()
@@ -254,6 +256,8 @@ class Node {
             self.image = renderer.image { context in
                 self.text.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
             }
+            
+            print(self.text)
 
         } else {
 
@@ -331,10 +335,20 @@ class Node {
         return nil
     }
     
+    // if the original string is ONLY composed of whitespace and new lines then return an empty string,
+    // otherwise return the original
     private func checkText(_ value: String) -> String {
-        let copy: String = String(value).replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
-        if copy == "" { return copy }
-        return value
+        
+//        .trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        let checkOnlyWhiteSpaceNewLines: String = String(value).replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
+        if checkOnlyWhiteSpaceNewLines == "" {
+            return ""
+        }
+        
+        let trim: String = String(value).trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        return trim
     }
     
     private func hasStyle() {

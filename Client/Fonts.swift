@@ -40,11 +40,11 @@ class AtlasFont {
         self.fileURL = documentsUrl.appendingPathComponent("\(self.name)-\(self.weight).ttf")
         
         if let fontData = NSData(contentsOf: self.fileURL) {
-            print("Retrieving font from local file.")
+//            print("Retrieving font from local file.")
             self.create(fontData)
         } else {
             
-            print("Retrieving font from url.")
+//            print("Retrieving font from url.")
             
             let destination: DownloadRequest.DownloadFileDestination = {
                 _, _ in
