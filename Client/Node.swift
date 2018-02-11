@@ -207,28 +207,28 @@ class Node {
     
     func setup() -> Bool {
         
-        performance.measure("Determine Type") {
+//        performance.measure("Determine Type") {
             self.determineType()
-        }
+//        }
         if !self.canRender { return false }
 
-        performance.measure("Determine Properties") {
+//        performance.measure("Determine Properties") {
             self.determineProperties()
-        }
+//        }
         if !self.canRender { return false }
 
-        performance.measure("Determine Style") {
+//        performance.measure("Determine Style") {
             self.hasStyle()
-        }
+//        }
         if !self.canRender { return false }
 
-        performance.measure("Determine Layout") {
+//        performance.measure("Determine Layout") {
             self.determineLayout()
-        }
+//        }
 
-        performance.measure("Determine Font") {
+//        performance.measure("Determine Font") {
             self.determineFont()
-        }
+//        }
 
         return true
     }
@@ -437,6 +437,7 @@ class Node {
             self.geometry = SCNPlane(width: CGFloat(self.totalWidth*self.scale), height: CGFloat(self.totalHeight*self.scale))
             self.geometry?.firstMaterial?.diffuse.contents = UIColor.blue // temporary placeholder
 
+//            print("Requesting image with URL: \(self.imageURL)")
             Alamofire.request(self.imageURL).responseImage { response in
                 if let image = response.result.value {
                     self.image = image

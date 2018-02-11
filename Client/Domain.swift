@@ -22,21 +22,37 @@ class Domain {
     let scale: Float = 0.001
     let velocityScale: Float = 0.0001
     
+    var renderNodeList: Set = Set<String>()
+    
     init(_ requestURL: String) {
         self.requestURL = requestURL
+        self.rootNode.position = SCNVector3Make(0, 0, -0.6)
     }
 
     func addNodeAsync(_ nodeData: Any) {
         let data: Dictionary<String, Any> = nodeData as! Dictionary<String, Any>
-        print("Adding new node with key: \(data["key"]!)")
-            
-        guard let node: Node = Node(data, "", 0) else {return}
         
-        if node.canRender {
-            node.render()
-            self.rootNode.addChildNode(node.rootNode)
-            self.nodes.append(node)
+        if let key = data["key"] as? String {
+            renderNodeList.insert( key )
+            
+            guard let node: Node = Node(data, "", 0) else {
+                renderNodeList.remove( key )
+                return
+            }
+            
+            if node.canRender {
+                node.render()
+                self.rootNode.addChildNode(node.rootNode)
+                self.nodes.append(node)
+                renderNodeList.remove(key)
+            } else {
+                renderNodeList.remove(key)
+            }
+        } else {
+            
         }
+        
+        
     }
     
     func getNode(withKey ref: String) -> Node? {
@@ -81,13 +97,43 @@ class Domain {
             let scene = SCNScene()
             scene.rootNode.addChildNode(self.rootNode)
             scene.write(to: file, options: nil, delegate: nil, progressHandler: nil)
-            performance.results()
+//            performance.results()
             print("Domain scene written to: \(file)")
             exit()
         }
     }
     
+    func process() {
+        
+        self.shiftDomainToCenter()
+        print("Domain positioned at: \(self.rootNode.worldPosition )")
+        
+//        let renderPoll = DispatchQueue(label: "renderPoll", qos: .userInitiated)
+//        renderPoll.async {
+//            while(self.renderNodeList.count > 0) {}
+//            self.shiftDomainToCenter()
+//        }
+    }
     
+    func shiftDomainToCenter() {
+        var mx: Float = 0.0
+        var my: Float = 0.0
+        
+        for node in self.nodes {
+            mx += node.rootNode.position.x
+            my += node.rootNode.position.y
+        }
+        
+        mx /= Float(self.nodes.count)
+        my /= Float(self.nodes.count)
+        
+        for node in self.nodes {
+            node.rootNode.position = SCNVector3Make(node.rootNode.position.x - mx,
+                                                    node.rootNode.position.y - my,
+                                                    node.rootNode.position.z)
+        }
+        
+    }
 }
 
 

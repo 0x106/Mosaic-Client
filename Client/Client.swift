@@ -26,10 +26,12 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://fdeec1b7.ngrok.io"
+    let server: String = "http://c2baf543.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
+//    let defaultSearchURL: String = "http://stuff.co.nz"
+    let defaultSearchURL: String = "http://atlasreality.xyz"
 
     var writeData: Bool = true
     
@@ -55,27 +57,31 @@ class Client {
                 self?.orb.rootNode.isHidden = true
             }
         }
-        
-        socket.on("node") { data, ack in
+
+        socket.on("node") {[weak self] data, ack in
             let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
             nodeWorker.async {
-                self.currentDomain.addNodeAsync(data[0])
+                self?.currentDomain.addNodeAsync(data[0])
             }
+        }
+        
+        socket.on("renderTreeComplete") {[weak self] data, ack in
+            print("All render tree nodes sent")
+            self?.currentDomain.process()
         }
     
         socket.connect()
-        
-        self.serverEndpoint = "\(self.server)/client"
-
+    
         field.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
         field.isHidden = true
+        field.autocapitalizationType = UITextAutocapitalizationType.none;
 
         orb.rootNode.isHidden = true
         searchBar.rootNode.isHidden = false
 
         rootNode.addChildNode(orb.rootNode)
         rootNode.position = SCNVector3Make(0, 0, -1)
-    
+
     }
     
     func initDomain() {
