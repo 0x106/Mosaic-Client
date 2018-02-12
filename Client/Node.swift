@@ -802,14 +802,15 @@ class AFrame: Node {
         }
         
         if let aFramePosition = self.getAttribute("position") {
-            self.position = computePositionOrRotation(aFramePosition)
+            self.position = computePosition(aFramePosition)
         }
         
-        if let aFrameRotation = self.getAttribute("position") {
-            self.rotation = computePositionOrRotation(aFrameRotation)
-//            self.rotation.x = self.rotation.x * .pi / 180.0
-//            self.rotation.y = self.rotation.y * .pi / 180.0
-//            self.rotation.z = self.rotation.z * .pi / 180.0
+        if let aFrameRotation = self.getAttribute("rotation") {
+            self.rotation = computeRotation(aFrameRotation)
+            self.rotation.x = self.rotation.x * .pi / 180.0
+            self.rotation.y = self.rotation.y * .pi / 180.0
+            self.rotation.z = self.rotation.z * .pi / 180.0
+            print("\(self.key) \(self.rotation)")
         }
         if let _color = self.getAttribute("color") {
             self.geometry?.firstMaterial?.diffuse.contents = parseHEXStringToUIColor(_color)
@@ -820,18 +821,34 @@ class AFrame: Node {
         self.rootNode.eulerAngles = self.rotation
         
         self.rootNode.position = SCNVector3Make( (self.x * self.scale) + (self.position.x * self.aframePositionScale),
-                                                 -(self.y * self.scale) - (self.position.y * self.aframePositionScale),
-                                                -Float(self.treeDepth)*self.scale)
+                                                 -(self.y * self.scale) + (self.position.y * self.aframePositionScale),
+                                                 -(Float(self.treeDepth)*self.scale) +  (self.position.z * self.aframePositionScale) )
     }
     
-    func computePositionOrRotation(_ input: String) -> SCNVector3 {
+    func computePosition(_ input: String) -> SCNVector3 {
         let split = input.split(separator: " ")
-        let output = SCNVector3Make(Float(split[0]) ?? 0.0, Float(split[1]) ?? 0.0, Float(split[2]) ?? 0.0)
+        var output = SCNVector3Make(0, 0, 0)
+        if split.count == 3 {
+            output.x = Float(split[0]) ?? 0.0
+            output.y = Float(split[1]) ?? 0.0
+            output.z = Float(split[2]) ?? 0.0
+        }
         return output
     }
     
+    func computeRotation(_ input: String) -> SCNVector3 {
+        let split = input.split(separator: " ")
+        var output = SCNVector3Make(0, 0, 0)
+        if split.count == 3 {
+            output.x = Float(split[0]) ?? 0.0
+            output.y = Float(split[1]) ?? 0.0
+            output.z = Float(split[2]) ?? 0.0
+        }
+        return output
+    }
+    
+    
     private func parseHEXStringToUIColor(_ hex: String) -> UIColor {
-//        "#FFC65D"
         if hex.hasPrefix("#") {
             let a = Array(hex)
             let b = Int(UInt(String(a[1]) + String(a[2]), radix: 16)!)

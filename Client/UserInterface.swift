@@ -11,8 +11,6 @@ import ARKit
 
 extension ViewController {
     
-    
-    
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         let width = CGFloat(planeAnchor.extent.x)
