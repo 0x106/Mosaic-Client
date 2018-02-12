@@ -52,6 +52,8 @@ class Domain {
     
     var centerTimer: Timer!
     
+    
+    
     init(_ requestURL: String) {
         self.requestURL = requestURL
         self.rootNode.position = SCNVector3Make(0, 0, -0.6)

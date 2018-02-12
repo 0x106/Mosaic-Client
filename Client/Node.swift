@@ -21,6 +21,21 @@ private let wa = UIColor(red: 0, green: 0, blue: 0).withAlphaComponent(CGFloat(0
 private let wb = UIColor(red: 0, green: 0, blue: 0).withAlphaComponent(CGFloat(1.0))
 private let wc = UIColor(red: 0, green: 0, blue: 0)
 
+private enum nodeType {
+    case TEXT
+    case P
+    case A
+    case INPUT
+    case LI
+    case UL
+    case OL
+    case DIV
+    case BODY
+    case TABLE
+    case TR
+    case TD
+}
+
 class Label {
     
     var text: String = ""
@@ -133,7 +148,6 @@ class Node {
     var treeDepth: Int = 0
 
     var text: String = ""
-    var isButton: Bool = false
     var href: String = ""
     var imageURL: String = ""
     var requestURL: String = ""
@@ -169,6 +183,8 @@ class Node {
     var backgroundColor: UIColor = UIColor()
     var borderColor: [UIColor] = [UIColor(), UIColor(), UIColor(), UIColor()]
 
+    var inputField: UITextField?        //: Dictionary<String, UITextField> = Dictionary<String, UITextField>()
+    
     // false if the node won't be created
     // true if it's fine to render & use this node
     var canRender: Bool = true
@@ -179,6 +195,10 @@ class Node {
 
     //
     var isActive: Bool = false
+    
+    var isButton: Bool = false
+    
+    var canReceiveUserInput: Bool = false
     
     init?(_ _data: Dictionary<String, Any>,
           _ _requestURL: String,
@@ -209,10 +229,18 @@ class Node {
     
     func setup() -> Bool {
         
-        self.determineType()        ;if !self.canRender { return false }
-        self.determineProperties()  ;if !self.canRender { return false }
-        self.hasStyle()             ;if !self.canRender { return false }
-        self.determineLayout()      ;if !self.canRender { return false }
+        self.determineType()
+            if !self.canRender { return false }
+    
+        self.determineProperties()
+            if !self.canRender { return false }
+    
+        self.hasStyle()
+            if !self.canRender { return false }
+        
+        self.determineLayout()
+            if !self.canRender { return false }
+        
         self.determineFont()
 
         return true
@@ -235,6 +263,37 @@ class Node {
 
             let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
             self.image = renderer.image { context in
+                self.text.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
+            }
+            
+        } else if self.canReceiveUserInput {
+            
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = .left
+            
+            let fontAttrs: [NSAttributedStringKey: Any] =
+                [NSAttributedStringKey.font: self.font as UIFont,
+                 NSAttributedStringKey.paragraphStyle: paragraphStyle,
+                 NSAttributedStringKey.foregroundColor: self.color]
+            
+            let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
+            self.image = renderer.image { context in
+                
+                self.backgroundColor.setFill()
+                context.fill(self.cell)
+                
+                self.borderColor[top].setFill()
+                context.fill(self.border[top])
+                
+                self.borderColor[left].setFill()
+                context.fill(self.border[left])
+                
+                self.borderColor[right].setFill()
+                context.fill(self.border[right])
+                
+                self.borderColor[bottom].setFill()
+                context.fill(self.border[bottom])
+                
                 self.text.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
             }
             
@@ -291,6 +350,16 @@ class Node {
                 self.isButton = true
                 self.href = hyperlink
             }
+        }
+        
+        if self.nodeName == "INPUT" {
+            self.canReceiveUserInput = true
+            
+            // this is the only non-text node that has its text value set.
+            // TODO / BUG: If there is a default value on the input then it
+            //              is plausible that this is already included as a
+            //              #text node and would then be rendered twice.
+            self.text = checkText(self.nodeValue)
         }
     }
     
@@ -394,7 +463,7 @@ class Node {
             return
         }
         
-        if (self.totalWidth == 0 || self.totalHeight == 0) {
+        if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 10000 || self.totalHeight > 10000) {
             self.canRender = false
             return
         }
@@ -572,6 +641,26 @@ class Node {
             self.rootNode.runAction(SCNAction.group([motion, scale]))
             self.isActive = true
         }
+    }
+    
+    @objc func updateUserInput(_ textField: UITextField) {
+        self.text = textField.text!
+        print("Updated node text: \(self.text)")
+        let _ = self.render()
+    }
+    
+    func addNewTextField(_ key: String) -> UITextField? {
+        self.inputField = UITextField()
+        self.inputField!.addTarget(self, action: #selector( self.updateUserInput(_:) ), for: .editingChanged)
+        self.inputField!.autocapitalizationType = UITextAutocapitalizationType.none;
+        self.inputField!.becomeFirstResponder()
+        return self.inputField
+    }
+    
+    func removeTextField(_ key: String) {
+        guard let field = self.inputField else {return}
+        field.resignFirstResponder()
+        self.inputField = nil
     }
     
 }

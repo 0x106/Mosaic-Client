@@ -54,6 +54,8 @@ extension ViewController {
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touchLocation = touches.first?.location(in: self.sceneView) {
             if self.clientCanMove {
+                
+                // Did we touch a plane?
                 if let hit = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent).first{
                     let x = hit.worldTransform.columns.3.x
                     let y = hit.worldTransform.columns.3.y
@@ -69,6 +71,8 @@ extension ViewController {
                 }
             }
             
+            
+            // did we hit one of the nodes that belong to the current domain?
             if let hit = self.sceneView.hitTest(touchLocation, options: nil).first {
                 
                 guard let nodeName = hit.node.name else {
@@ -89,6 +93,19 @@ extension ViewController {
                     guard let tappedNode = currentDomain.getNode(withKey: nodeName) else {return}
                     if tappedNode.isButton {
                         client.request(withURL: tappedNode.href, true)
+                    }
+                    if tappedNode.canReceiveUserInput {
+                        
+                        print("Selected an input node")
+                        
+                        if let currentActiveField = tappedNode.inputField {
+                            print("Current active field exists for key: \(tappedNode.key)")
+                            tappedNode.removeTextField(tappedNode.key)
+                        } else {
+                            print("Creating text field for key: \(tappedNode.key)")
+                            guard let nodeField = tappedNode.addNewTextField(tappedNode.key) else {return}
+                            self.sceneView.addSubview(nodeField)
+                        }
                     }
                 }
             }

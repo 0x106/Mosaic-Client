@@ -30,7 +30,9 @@ class Client {
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
-    let defaultSearchURL: String = "http://stuff.co.nz"
+//    let defaultSearchURL: String = "http://google.co.nz"
+    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
+//    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://atlasreality.xyz"
 //    let defaultSearchURL: String = "http://afore.vc"
 
