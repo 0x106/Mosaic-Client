@@ -146,15 +146,18 @@ class Node {
     var nodeValue: String = ""
     var nodeName: String = ""
     var treeDepth: Int = 0
+    
+    var config: Dictionary<String, Any>?
+    var configID: String?
 
     var text: String = ""
     var href: String = ""
     var imageURL: String = ""
     var requestURL: String = ""
-    var children: [String]
-    var parents: [String]
-    var attr: [ Dictionary<String, String> ]
-    var style: [ Dictionary<String, Any> ]
+    var children: [String]?
+    var parents: [String]?
+    var attr: [ Dictionary<String, String> ]?
+    var style: [ Dictionary<String, Any> ]?
     
     // AR properties
     var rootNode: SCNNode = SCNNode()
@@ -193,27 +196,45 @@ class Node {
     // true if we should render this node
     var canDrawOverlay: Bool = true
 
-    //
     var isActive: Bool = false
     
     var isButton: Bool = false
-    
     var canReceiveUserInput: Bool = false
+    
+    var isAFrameNode: Bool = false
+    
+    init() {}
     
     init?(_ _data: Dictionary<String, Any>,
           _ _requestURL: String,
           _ _depth: Int) {
         
+        self.commonInit(_data, _requestURL, _depth)
+        
+        self.text = checkText(self.nodeValue)
+        let _ = self.setup()
+        return
+    }
+    
+    func commonInit(_ _data: Dictionary<String, Any>,
+                    _ _requestURL: String,
+                    _ _depth: Int) {
         self.key = _data["key"] as! String
         self.nodeName = _data["nodeName"] as! String
         self.nodeValue = _data["nodeValue"] as! String
         self.rootNode.name = self.key
         self.treeDepth = _depth
         self.requestURL = _requestURL
-        self.children = _data["nodeChildren"] as! [String]
-        self.parents = _data["pkey"] as! [String]
-        self.attr = _data["attr"] as! [Dictionary<String, String>]
-        self.style = _data["nodeStyle"] as! [Dictionary<String, Any>]
+//        self.children = _data["nodeChildren"] as! [String]
+//        self.parents = _data["pkey"] as! [String]
+        
+        if let _attr = _data["attr"] as? [Dictionary<String, String>] {
+            self.attr = _attr
+        }
+        if let _style = _data["nodeStyle"] as? [Dictionary<String, Any>] {
+            self.style = _style
+        }
+        
         self.treeDepth = _data["depth"] as! Int
         
         var tempLayout = _data["nodeLayout"] as! Dictionary<String, Any>
@@ -222,9 +243,27 @@ class Node {
         self.totalWidth = tempLayout["width"] as! Float
         self.totalHeight = tempLayout["height"] as! Float
         
-        self.text = checkText(self.nodeValue)
-        self.setup()
-        return
+        print("Node: \(self.key)")
+        
+        if let id = self.getConfigID() {
+            print("Config id: \(id)")
+            self.configID = id
+            if let retrievedConfig = getConfigVar(forKey: id) {
+                print("Config: \(retrievedConfig)")
+                self.config = retrievedConfig
+            }
+        }
+        
+        if let cf = self.config {
+            
+            print(cf)
+            
+            if let isVisible = cf["isVisible"] as? Bool {
+                if !isVisible {
+                    self.canRender = false
+                }
+            }
+        }
     }
     
     func setup() -> Bool {
@@ -249,7 +288,9 @@ class Node {
     func render() -> Bool {
         
         // if the image is / will be drawn then we don't need to render anything
-        if !self.canDrawOverlay {return true}
+        if !self.canDrawOverlay || self.isAFrameNode {return true}
+        
+        self.applyConfig()
         
         if self.nodeName == "#text" {
 
@@ -329,6 +370,17 @@ class Node {
 
         return true
     }
+    
+    func applyConfig() {
+        // if there was config applied to this node
+        if let cf = self.config {
+            
+            // if the background-color property was changed
+            if let bgColor = cf["background-color"] as? [Int] {
+                self.backgroundColor = UIColor(red: bgColor[0], green: bgColor[1], blue: bgColor[2])
+            }
+        }
+    }
 
     // screen for nodes that we won't render
     // Perform type specific behaviour (i.e extract href from A tags)
@@ -368,16 +420,32 @@ class Node {
     }
     
     func getAttribute(_ query: String) -> String? {
-        for attribute in self.attr {
+        
+        guard let attributes = self.attr else {return nil}
+        for attribute in attributes {
             if query == attribute["name"] { return attribute["value"] }
         }
         return nil
     }
     
     func getFontAttribute(_ query: String) -> Dictionary<String, Any>? {
-        for attribute in self.style {
+        guard let attributes = self.style else {return nil}
+        for attribute in attributes {
             if query == (attribute["name"] as! String) {
-                return attribute["value"] as! Dictionary<String, Any>
+                return attribute["value"] as? Dictionary<String, Any>
+            }
+        }
+        return nil
+    }
+    
+    func getConfigID() -> String? {
+        guard let attributes = self.attr else {return nil}
+        for attribute in attributes {
+            if let attrExists = attribute["name"]?.hasPrefix("-data-atlas") {
+                if attrExists {
+                    let result = attribute["name"]?.replacingOccurrences(of: "-data-atlas", with: "")
+                    return result
+                }
             }
         }
         return nil
@@ -413,15 +481,23 @@ class Node {
     }
     
     func determineProperties() {
-        if self.style.count > 1 {
+        
+        guard let currentStyle = self.style else {return}
+        
+        if currentStyle.count > 1 {
             
             if let style = computeStylesFromDict() {
                 self.computedStyle = style
                 self.font_size = self.computedStyle["font-size"] as! Float - 2.0
 
                 self.color = self.computedStyle["color"] as! UIColor
-                self.backgroundColor = self.computedStyle["background-color"] as! UIColor
-
+                
+                if let cf = self.config {
+                    if let bgColor = cf["background-color"] as? [Int] {
+                        self.backgroundColor = UIColor(red: bgColor[0], green: bgColor[1], blue: bgColor[2])
+                    } else {self.backgroundColor = self.computedStyle["background-color"] as! UIColor}
+                } else {self.backgroundColor = self.computedStyle["background-color"] as! UIColor}
+                
                 self.borderColor[top] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[left] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[right] = self.computedStyle["border-top-color"] as! UIColor
@@ -559,8 +635,8 @@ class Node {
     
     func computeStylesFromDict() -> Dictionary<String, Any>? {
         var computedStyle: Dictionary<String, Any> = [:]
-        
-        for item in self.style {
+        guard let currentStyle = self.style else {return nil}
+        for item in currentStyle {
 
             let propertyName = item["name"] as! String
             
@@ -663,6 +739,109 @@ class Node {
         self.inputField = nil
     }
     
+}
+
+let AFrameTypes: [String] = ["A-SCENE", "A-BOX", "A-SPHERE", "A-CYLINDER", "A-PLANE", "A-SKY"]
+
+class AFrame: Node {
+    
+    private let aframePositionScale: Float = 0.1
+    private let aframeScale: Float = 0.01
+    private let defaultAFrameSize: Float = 0.1
+    private var position: SCNVector3
+    private var rotation: SCNVector3
+    
+    override init?(_ _data: Dictionary<String, Any>,
+                  _ _requestURL: String,
+                  _ _depth: Int) {
+        
+        position = SCNVector3Make(0.0, 0.0, 0.0)
+        rotation = SCNVector3Make(0.0, 0.0, 0.0)
+        
+        super.init()
+        
+        self.isAFrameNode = true
+        
+        self.commonInit(_data, _requestURL, _depth)
+        
+        self.initialise()
+        
+    }
+    
+    private func initialise() {
+        
+        var radius: Float = self.defaultAFrameSize
+        if let _radius = getAttribute("radius") {
+            radius = Float(_radius) ?? self.defaultAFrameSize
+        }
+        
+        var width: Float = self.defaultAFrameSize
+        if let _width = getAttribute("height") {
+            width = Float(_width) ?? self.defaultAFrameSize
+        }
+        
+        var height: Float = self.defaultAFrameSize
+        if let _height = getAttribute("height") {
+            height = Float(_height) ?? self.defaultAFrameSize
+        }
+        
+        switch self.nodeName {
+            case "A-BOX":
+                self.geometry = SCNBox(width: CGFloat(self.defaultAFrameSize),
+                                  height: CGFloat(self.defaultAFrameSize),
+                                  length: CGFloat(self.defaultAFrameSize),
+                                  chamferRadius: CGFloat(0.0))
+            case "A-SPHERE":
+                self.geometry = SCNSphere(radius: CGFloat(radius * self.aframePositionScale))
+            case "A-CYLINDER":
+                self.geometry = SCNCylinder(radius: CGFloat(radius * self.aframePositionScale), height: CGFloat(height * self.aframePositionScale))
+            case "A-PLANE":
+                self.geometry = SCNPlane(width: CGFloat(width * self.aframePositionScale), height: CGFloat(height * self.aframePositionScale))
+            default:
+                self.geometry = SCNGeometry()
+        }
+        
+        if let aFramePosition = self.getAttribute("position") {
+            self.position = computePositionOrRotation(aFramePosition)
+        }
+        
+        if let aFrameRotation = self.getAttribute("position") {
+            self.rotation = computePositionOrRotation(aFrameRotation)
+//            self.rotation.x = self.rotation.x * .pi / 180.0
+//            self.rotation.y = self.rotation.y * .pi / 180.0
+//            self.rotation.z = self.rotation.z * .pi / 180.0
+        }
+        if let _color = self.getAttribute("color") {
+            self.geometry?.firstMaterial?.diffuse.contents = parseHEXStringToUIColor(_color)
+        }
+        self.rootNode.geometry = self.geometry
+        self.rootNode.geometry?.firstMaterial?.isDoubleSided = true
+        
+        self.rootNode.eulerAngles = self.rotation
+        
+        self.rootNode.position = SCNVector3Make( (self.x * self.scale) + (self.position.x * self.aframePositionScale),
+                                                 -(self.y * self.scale) - (self.position.y * self.aframePositionScale),
+                                                -Float(self.treeDepth)*self.scale)
+    }
+    
+    func computePositionOrRotation(_ input: String) -> SCNVector3 {
+        let split = input.split(separator: " ")
+        let output = SCNVector3Make(Float(split[0]) ?? 0.0, Float(split[1]) ?? 0.0, Float(split[2]) ?? 0.0)
+        return output
+    }
+    
+    private func parseHEXStringToUIColor(_ hex: String) -> UIColor {
+//        "#FFC65D"
+        if hex.hasPrefix("#") {
+            let a = Array(hex)
+            let b = Int(UInt(String(a[1]) + String(a[2]), radix: 16)!)
+            let c = Int(UInt(String(a[3]) + String(a[4]), radix: 16)!)
+            let d = Int(UInt(String(a[5]) + String(a[6]), radix: 16)!)
+            let output = UIColor(red: b, green: c, blue: d)
+            return output
+        }
+        return UIColor.white
+    }
 }
 
 

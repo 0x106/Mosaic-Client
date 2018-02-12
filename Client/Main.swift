@@ -41,6 +41,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         } else {
 //            addButton()
         }
+        
+        initConfig()
     }
 
     func setup() {

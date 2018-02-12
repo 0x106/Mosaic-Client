@@ -51,9 +51,7 @@ class Domain {
     var centered: Bool = false
     
     var centerTimer: Timer!
-    
-    
-    
+
     init(_ requestURL: String) {
         self.requestURL = requestURL
         self.rootNode.position = SCNVector3Make(0, 0, -0.6)
@@ -64,19 +62,23 @@ class Domain {
         
         let key = data["key"] as! String
         
-//        print(data)
-        
-        guard let node: Node = Node(data, "", 0) else {
-            return
+        if let type = data["nodeName"] as? String {
+            if AFrameTypes.contains(type) {
+                guard let node: AFrame = AFrame(data, "", 0) else {return}
+                renderNode(node, key)
+            } else {
+                guard let node: Node = Node(data, "", 0) else {return}
+                renderNode(node, key)
+            }
         }
-        
+    }
+    
+    func renderNode(_ node: Node, _ key: String) {
         if node.canRender {
             let _ = node.render()
             self.rootNode.addChildNode(node.rootNode)
             self.nodes.append(node)
             self.nodeDict[key] = node
-        } else {
-//            print("Cannot render \(key) with type \(data["nodeName"])")
         }
     }
     
