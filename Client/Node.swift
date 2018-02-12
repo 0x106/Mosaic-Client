@@ -251,16 +251,8 @@ class Node {
             if let retrievedConfig = getConfigVar(forKey: id) {
                 print("Config: \(retrievedConfig)")
                 self.config = retrievedConfig
-            }
-        }
-        
-        if let cf = self.config {
-            
-            print(cf)
-            
-            if let isVisible = cf["isVisible"] as? Bool {
-                if !isVisible {
-                    self.canRender = false
+                if let isVisible = self.config!["isVisible"] as? Bool {
+                    if !isVisible { self.canRender = false }
                 }
             }
         }
@@ -547,7 +539,27 @@ class Node {
         self.rootNode.position = SCNVector3Make(   (self.x + (self.totalWidth/2.0)) * self.scale,
                                                    -(self.y + (self.totalHeight/2.0)) * self.scale,
                                                    -Float(6 - self.treeDepth)*self.scale)
-
+        
+        if let cf = self.config {
+            if let position = cf["position"] as? SCNVector3 {
+                self.rootNode.position.x += position.x * self.scale
+                self.rootNode.position.y += position.y * self.scale
+                self.rootNode.position.z += position.z * self.scale
+            }
+            
+            if let rotation = cf["rotation"] as? SCNVector3 {
+                self.rootNode.eulerAngles.x += rotation.x
+                self.rootNode.eulerAngles.y += rotation.y
+                self.rootNode.eulerAngles.z += rotation.z
+            }
+            
+            if let scale = cf["scale"] as? SCNVector3 {
+                self.rootNode.scale.x = scale.x
+                self.rootNode.scale.y = scale.y
+                self.rootNode.scale.z = scale.z
+            }
+        }
+        
         self.borderSize[top] = computedStyle["border-top-width"] as! Float
         self.borderSize[left] = computedStyle["border-left-width"] as! Float
         self.borderSize[right] = computedStyle["border-right-width"] as! Float
@@ -741,7 +753,28 @@ class Node {
     
 }
 
-let AFrameTypes: [String] = ["A-SCENE", "A-BOX", "A-SPHERE", "A-CYLINDER", "A-PLANE", "A-SKY"]
+let AFrameTypes: [String] = ["A-SCENE", "A-BOX", "A-SPHERE", "A-CYLINDER", "A-PLANE", "A-SKY", "A-ENTITY"]
+
+
+// example for A-ENTITY
+//["attr": <__NSArrayM 0x1c4648250>(
+//    {
+//    name = geometry;
+//    value = "primitive: sphere; radius: 1.5";
+//    },
+//    {
+//    name = light;
+//    value = "type: point; color: white; intensity: 2";
+//    },
+//    {
+//    name = material;
+//    value = "color: blue; shader: flat; src: glow.jpg";
+//    },
+//    {
+//    name = position;
+//    value = "0 0 -50";
+//    }
+//)
 
 class AFrame: Node {
     
@@ -765,6 +798,8 @@ class AFrame: Node {
         self.commonInit(_data, _requestURL, _depth)
         
         self.initialise()
+        
+        print(_data)
         
     }
     
@@ -802,11 +837,11 @@ class AFrame: Node {
         }
         
         if let aFramePosition = self.getAttribute("position") {
-            self.position = computePosition(aFramePosition)
+            self.position = SCNVectorFromString(aFramePosition)
         }
         
         if let aFrameRotation = self.getAttribute("rotation") {
-            self.rotation = computeRotation(aFrameRotation)
+            self.rotation = SCNVectorFromString(aFrameRotation)
             self.rotation.x = self.rotation.x * .pi / 180.0
             self.rotation.y = self.rotation.y * .pi / 180.0
             self.rotation.z = self.rotation.z * .pi / 180.0
@@ -824,19 +859,8 @@ class AFrame: Node {
                                                  -(self.y * self.scale) + (self.position.y * self.aframePositionScale),
                                                  -(Float(self.treeDepth)*self.scale) +  (self.position.z * self.aframePositionScale) )
     }
-    
-    func computePosition(_ input: String) -> SCNVector3 {
-        let split = input.split(separator: " ")
-        var output = SCNVector3Make(0, 0, 0)
-        if split.count == 3 {
-            output.x = Float(split[0]) ?? 0.0
-            output.y = Float(split[1]) ?? 0.0
-            output.z = Float(split[2]) ?? 0.0
-        }
-        return output
-    }
-    
-    func computeRotation(_ input: String) -> SCNVector3 {
+
+    func SCNVectorFromString(_ input: String) -> SCNVector3 {
         let split = input.split(separator: " ")
         var output = SCNVector3Make(0, 0, 0)
         if split.count == 3 {

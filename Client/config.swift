@@ -16,14 +16,14 @@ func initConfig() {
     var cf = Dictionary<String, Any>()
     cf["key"] = "-firstdiv"
     cf["isVisible"] = true
-    cf["position"] = SCNVector3Make(0, 0, 0)
-    cf["rotation"] = SCNVector3Make(0, 0, 0)
-    cf["scale"] = SCNVector3Make(0, 0, 0)
+    cf["position"] = SCNVector3Make(100, 0, 0) // do everything in 'px' units
+    cf["rotation"] = SCNVector3Make(0, .pi/4.0, 0)
+    cf["scale"] = SCNVector3Make(0.1, 1, 0.5)
     cf["background-color"] = [73, 91, 110]
 
+    // add this config data to the list of available
     config[ cf["key"] as! String ] = cf
 }
-
 
 func getConfigVar(forKey key: String) -> Dictionary<String, Any>? {
     return config[key]
