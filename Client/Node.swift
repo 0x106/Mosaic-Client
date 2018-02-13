@@ -240,8 +240,8 @@ class Node {
         var tempLayout = _data["nodeLayout"] as! Dictionary<String, Any>
         self.x = tempLayout["x"] as! Float
         self.y = tempLayout["y"] as! Float
-        self.totalWidth = tempLayout["width"] as! Float
-        self.totalHeight = tempLayout["height"] as! Float
+        self.totalWidth = tempLayout["width"] as! Float + 100
+        self.totalHeight = tempLayout["height"] as! Float + 100
         
         print("Node: \(self.key)")
         
@@ -262,33 +262,21 @@ class Node {
         
         self.determineType()
         if !self.canRender {
-            if self.nodeName == "IMG" {
-                print("Cannot render IMG due to: type")
-            }
             return false
         }
     
         self.determineProperties()
         if !self.canRender {
-            if self.nodeName == "IMG" {
-                print("Cannot render IMG due to: property")
-            }
             return false
         }
     
         self.hasStyle()
         if !self.canRender {
-            if self.nodeName == "IMG" {
-                print("Cannot render IMG due to: style")
-            }
             return false
         }
         
         self.determineLayout()
         if !self.canRender {
-            if self.nodeName == "IMG" {
-                print("Cannot render IMG due to: layout")
-            }
             return false
         }
         
@@ -318,7 +306,7 @@ class Node {
             self.image = renderer.image { context in
                 self.text.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
             }
-            
+                        
         } else if self.canReceiveUserInput {
             
             let paragraphStyle = NSMutableParagraphStyle()
@@ -466,9 +454,6 @@ class Node {
     // if the original string is ONLY composed of whitespace and new lines then return an empty string,
     // otherwise return the original
     private func checkText(_ value: String) -> String {
-        
-//        .trimmingCharacters(in: .whitespacesAndNewlines)
-        
         let checkOnlyWhiteSpaceNewLines: String = String(value).replacingOccurrences(of: " ", with: "").replacingOccurrences(of: "\n", with: "")
         if checkOnlyWhiteSpaceNewLines == "" {
             return ""
@@ -494,16 +479,16 @@ class Node {
     
     func determineProperties() {
         
-        guard let currentStyle = self.style else {
-            self.canRender = false
-            return
-        }
+//        guard let currentStyle = self.style else {
+//            self.canRender = false
+//            return
+//        }
         
-        if currentStyle.count > 1 {
+        if self.style!.count > 1 {
             
             if let style = computeStylesFromDict() {
                 self.computedStyle = style
-                self.font_size = self.computedStyle["font-size"] as! Float - 2.0
+                self.font_size = self.computedStyle["font-size"] as! Float - 0.0
 
                 self.color = self.computedStyle["color"] as! UIColor
                 
@@ -517,8 +502,8 @@ class Node {
                 self.borderColor[left] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[right] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[bottom] = self.computedStyle["border-top-color"] as! UIColor
+                
                 if self.nodeName == "IMG" {
-                    self.canDrawOverlay = false
                     if let src = getAttribute("src") {
                         if src.hasPrefix("http") || src.hasPrefix("www") {
                             self.imageURL = src
@@ -562,7 +547,7 @@ class Node {
             return
         }
         
-        if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 1000 || self.totalHeight > 1000) {
+        if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 10000 || self.totalHeight > 10000) {
             self.canRender = false
             return
         }
@@ -871,7 +856,7 @@ class AFrame: Node {
             self.rotation.x = self.rotation.x * .pi / 180.0
             self.rotation.y = self.rotation.y * .pi / 180.0
             self.rotation.z = self.rotation.z * .pi / 180.0
-            print("\(self.key) \(self.rotation)")
+//            print("\(self.key) \(self.rotation)")
         }
         if let _color = self.getAttribute("color") {
             self.geometry?.firstMaterial?.diffuse.contents = parseHEXStringToUIColor(_color)

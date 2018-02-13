@@ -39,36 +39,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(self.handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
 
-        DEBUG = false
-        if DEBUG {
-//            performance.start("*CLIENT_REQUEST-0")
-        } else {
-//            addButton()
-        }
-        
         initConfig()
-        
-//        testImageLoad()
     }
     
-    func testImageLoad() {
-        
-        let request = "http://cdn.shopify.com/s/files/1/0491/9773/products/orSlow-105-AW15-00_240x.jpg"
-        
-        print("Requesting: \(request)")
-        
-        Alamofire.request(request).responseImage { response in
-            print(response)
-            if let image = response.result.value {
-                let plane = SCNPlane(width: CGFloat(0.1), height: CGFloat(0.1))
-                plane.firstMaterial?.diffuse.contents = image
-                let node = SCNNode(geometry: plane)
-                node.position = SCNVector3Make(-0.5, 0, -1)
-                self.sceneView.scene.rootNode.addChildNode(node)
-            }
-        }
-    }
-
     func setup() {
         // don't run the AR session in debug mode
         if !DEBUG {
@@ -171,7 +144,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
 
-         self.sceneView.debugOptions = [.showConstraints, .showLightExtents, ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+//        self.sceneView.debugOptions = [.showConstraints, .showLightExtents, ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
         self.sceneView.automaticallyUpdatesLighting = true
         // sceneView.showsStatistics = true
 
@@ -205,6 +178,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         animationButton.frame = CGRect(x: bx2, y: by2, width: CGFloat(48), height: CGFloat(48))
         animationButton.backgroundColor = .clear
         
+        // https://www.flaticon.com/authors/zlatko-najdenovski - robot button author
         if let buttonIcon = UIImage(named: "robot") {
             animationButton.setImage(buttonIcon, for: .normal)
             animationButton.backgroundColor = UIColor(displayP3Red: 255, green: 255, blue: 255, alpha: 0.0)
@@ -213,10 +187,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             animationButton.clipsToBounds = true
             self.sceneView.addSubview(animationButton)
         }
-        
-        
-        
-//        https://www.flaticon.com/authors/zlatko-najdenovski - robot button author
         
     }
 

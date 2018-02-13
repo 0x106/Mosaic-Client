@@ -33,10 +33,10 @@ class Client {
 //    let defaultSearchURL: String = "http://google.co.nz"
 //    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
 //    let defaultSearchURL: String = "https://6c96ccc4.ngrok.io"
-    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
+//    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
 //    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://atlasreality.xyz"
-//    let defaultSearchURL: String = "http://afore.vc"
+    let defaultSearchURL: String = "http://afore.vc"
 
     var writeData: Bool = true
     
@@ -64,7 +64,7 @@ class Client {
         }
 
         socket.on("node") {[weak self] data, ack in
-            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .utility )//.userInitiated)
+            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated )//.utility)
             nodeWorker.async {
                 if let nodeData = data[0] as? Dictionary<String, Any> {
                     if let key = nodeData["key"] as? String {
