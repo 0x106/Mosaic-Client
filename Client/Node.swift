@@ -240,10 +240,8 @@ class Node {
         var tempLayout = _data["nodeLayout"] as! Dictionary<String, Any>
         self.x = tempLayout["x"] as! Float
         self.y = tempLayout["y"] as! Float
-        self.totalWidth = tempLayout["width"] as! Float + 100
-        self.totalHeight = tempLayout["height"] as! Float + 100
-        
-        print("Node: \(self.key)")
+        self.totalWidth = tempLayout["width"] as! Float
+        self.totalHeight = tempLayout["height"] as! Float
         
         if let id = self.getConfigID() {
             print("Config id: \(id)")
@@ -580,6 +578,11 @@ class Node {
         self.borderSize[left] = computedStyle["border-left-width"] as! Float
         self.borderSize[right] = computedStyle["border-right-width"] as! Float
         self.borderSize[bottom] = computedStyle["border-bottom-width"] as! Float
+        
+        self.cell = CGRect( x: CGFloat(0.0),
+                            y: CGFloat(0.0),
+                            width: CGFloat(self.totalWidth),
+                            height: CGFloat(self.totalHeight))
 
         self.border[top] = CGRect(x: CGFloat(0.0),
                                   y: CGFloat(0.0),
