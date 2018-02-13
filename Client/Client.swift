@@ -26,13 +26,14 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://f9a57d39.ngrok.io"
+    let server: String = "http://d0c7f588.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
 //    let defaultSearchURL: String = "http://google.co.nz"
 //    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
-    let defaultSearchURL: String = "https://87a3c048.ngrok.io"
+//    let defaultSearchURL: String = "https://6c96ccc4.ngrok.io"
+    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
 //    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://atlasreality.xyz"
 //    let defaultSearchURL: String = "http://afore.vc"
@@ -63,20 +64,13 @@ class Client {
         }
 
         socket.on("node") {[weak self] data, ack in
-            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
+            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .utility )//.userInitiated)
             nodeWorker.async {
-//                self?.renderGroup.enter()
                 if let nodeData = data[0] as? Dictionary<String, Any> {
                     if let key = nodeData["key"] as? String {
-//                        self?.currentDomain.renderNodeList.insert( key )
-//                        self?.currentDomain.renderMonitor.open(key)
                         self?.currentDomain.addNodeAsync( nodeData )
                     }
                 }
-//                self?.renderGroup.leave()
-//            self?.renderGroup.notify(queue: .main) {
-//                print()
-//            }
             }
         }
         

@@ -261,16 +261,36 @@ class Node {
     func setup() -> Bool {
         
         self.determineType()
-            if !self.canRender { return false }
+        if !self.canRender {
+            if self.nodeName == "IMG" {
+                print("Cannot render IMG due to: type")
+            }
+            return false
+        }
     
         self.determineProperties()
-            if !self.canRender { return false }
+        if !self.canRender {
+            if self.nodeName == "IMG" {
+                print("Cannot render IMG due to: property")
+            }
+            return false
+        }
     
         self.hasStyle()
-            if !self.canRender { return false }
+        if !self.canRender {
+            if self.nodeName == "IMG" {
+                print("Cannot render IMG due to: style")
+            }
+            return false
+        }
         
         self.determineLayout()
-            if !self.canRender { return false }
+        if !self.canRender {
+            if self.nodeName == "IMG" {
+                print("Cannot render IMG due to: layout")
+            }
+            return false
+        }
         
         self.determineFont()
 
@@ -460,7 +480,7 @@ class Node {
     }
     
     private func hasStyle() {
-        if self.computedStyle["background-image"] as! String == "none"
+        if !(self.nodeName == "IMG") && self.computedStyle["background-image"] as! String == "none"
             && (self.backgroundColor.isEqual( wa ) || self.backgroundColor.isEqual( wb ) || self.backgroundColor.isEqual( wc ))
             && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ) || self.computedStyle["border-top-style"] as! String == "none")
             && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ) || self.computedStyle["border-left-style"] as! String == "none")
@@ -474,7 +494,10 @@ class Node {
     
     func determineProperties() {
         
-        guard let currentStyle = self.style else {return}
+        guard let currentStyle = self.style else {
+            self.canRender = false
+            return
+        }
         
         if currentStyle.count > 1 {
             
@@ -495,17 +518,25 @@ class Node {
                 self.borderColor[right] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[bottom] = self.computedStyle["border-top-color"] as! UIColor
                 if self.nodeName == "IMG" {
+                    self.canDrawOverlay = false
                     if let src = getAttribute("src") {
                         if src.hasPrefix("http") || src.hasPrefix("www") {
                             self.imageURL = src
+                        } else if (src.hasPrefix("//")) {
+                            
+                            self.imageURL = "http:" + src
+                            
                         } else {
                             self.imageURL = self.requestURL + src
+                            print("No prefix: \(self.imageURL)")
                         }
                         self.loadImage()
                     }
                 }
+                
                 let bgImage = self.computedStyle["background-image"] as! String
                 if bgImage != "none" {
+                    self.canDrawOverlay = false
                     if bgImage.hasPrefix("url") {
                         self.imageURL = parseHREFFromURL(bgImage)
                         if !self.imageURL.hasPrefix("data") {
@@ -531,7 +562,7 @@ class Node {
             return
         }
         
-        if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 10000 || self.totalHeight > 10000) {
+        if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 1000 || self.totalHeight > 1000) {
             self.canRender = false
             return
         }
@@ -581,20 +612,15 @@ class Node {
                                      y: CGFloat(self.totalHeight - self.borderSize[bottom]),
                                      width: CGFloat(self.totalWidth),
                                      height: CGFloat(self.borderSize[bottom]))
-
-        self.cell = CGRect(x: CGFloat(0.0),
-                           y: CGFloat(0.0),
-                           width: CGFloat(self.totalWidth),
-                           height: CGFloat(self.totalHeight))
     }
     
     func loadImage() {
         if self.imageURL != "" {
-
+        
             self.geometry = SCNPlane(width: CGFloat(self.totalWidth*self.scale), height: CGFloat(self.totalHeight*self.scale))
-            self.geometry?.firstMaterial?.diffuse.contents = UIColor.blue // temporary placeholder
+            self.geometry?.firstMaterial?.diffuse.contents = UIColor.white.withAlphaComponent(CGFloat(0.2)) // temporary placeholder
 
-//            print("Requesting image with URL: \(self.imageURL)")
+            DataRequest.addAcceptableImageContentTypes(["image/jpg"])
             Alamofire.request(self.imageURL).responseImage { response in
                 if let image = response.result.value {
                     self.image = image

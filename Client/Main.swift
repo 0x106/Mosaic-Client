@@ -10,7 +10,8 @@ import UIKit
 import SceneKit
 import ARKit
 import SwiftyJSON
-
+import Alamofire
+import AlamofireImage
 var searchButtonVisible: Bool = false
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
@@ -20,7 +21,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     let client = Client()
     var trackingStatus = false
     let button = UIButton()
+    let animationButton = UIButton()
     var clientCanMove: Bool = true
+    
+    var _mx: Float = 0.0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +47,26 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         }
         
         initConfig()
+        
+//        testImageLoad()
+    }
+    
+    func testImageLoad() {
+        
+        let request = "http://cdn.shopify.com/s/files/1/0491/9773/products/orSlow-105-AW15-00_240x.jpg"
+        
+        print("Requesting: \(request)")
+        
+        Alamofire.request(request).responseImage { response in
+            print(response)
+            if let image = response.result.value {
+                let plane = SCNPlane(width: CGFloat(0.1), height: CGFloat(0.1))
+                plane.firstMaterial?.diffuse.contents = image
+                let node = SCNNode(geometry: plane)
+                node.position = SCNVector3Make(-0.5, 0, -1)
+                self.sceneView.scene.rootNode.addChildNode(node)
+            }
+        }
     }
 
     func setup() {
@@ -55,12 +79,39 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
 
     @objc public func buttonPress() {
-//        performance.results()
         if self.client.searchBar.rootNode.isHidden {
             self.client.currentDomain?.rootNode.isHidden = true
            self.client.searchBar.rootNode.isHidden = false
         } else {
             self.searchRequest()
+        }
+    }
+    
+    @objc public func animationButtonPress() {
+        var mx: Float = 0.0
+        for node in (self.client.currentDomain?.nodes)! {
+            mx += node.rootNode.position.x
+        }
+        
+        mx /= Float((self.client.currentDomain?.nodes.count)!)
+        
+        _mx = mx
+        
+        for node in (self.client.currentDomain?.nodes)! {
+            
+            if node.rootNode.position.x <= mx {
+                
+                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+                let translation = SCNAction.move(by: SCNVector3Make(-0.4, 0.0, 0.0), duration: 2.0)
+                let motion = SCNAction.group([translation, rotation])
+                node.rootNode.runAction(motion)
+            } else {
+                
+                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+                let translation = SCNAction.move(by: SCNVector3Make(0.4, 0.0, 0.0), duration: 2.0)
+                let motion = SCNAction.group([translation, rotation])
+                node.rootNode.runAction(motion)
+            }
         }
     }
 
@@ -81,6 +132,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         
         // if tracking has been established
         else {
+            
+//            print("Client: \(self.client.rootNode.worldPosition)")
+//            print("Domain: \(self.client.currentDomain?.rootNode.worldPosition)")
+//            print("=================================")
             
 //            let center = self.sceneView.center
 //
@@ -116,7 +171,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = .horizontal
 
-        // self.sceneView.debugOptions = [.showConstraints, .showLightExtents, ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
+         self.sceneView.debugOptions = [.showConstraints, .showLightExtents, ARSCNDebugOptions.showFeaturePoints, ARSCNDebugOptions.showWorldOrigin]
         self.sceneView.automaticallyUpdatesLighting = true
         // sceneView.showsStatistics = true
 
@@ -144,6 +199,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             button.clipsToBounds = true
             self.sceneView.addSubview(button)
         }
+        
+        let bx2 = CGFloat((self.sceneView.bounds.midX/2) - 24)
+        let by2 = CGFloat(self.sceneView.bounds.maxY - 80)
+        animationButton.frame = CGRect(x: bx2, y: by2, width: CGFloat(48), height: CGFloat(48))
+        animationButton.backgroundColor = .clear
+        
+        if let buttonIcon = UIImage(named: "robot") {
+            animationButton.setImage(buttonIcon, for: .normal)
+            animationButton.backgroundColor = UIColor(displayP3Red: 255, green: 255, blue: 255, alpha: 0.0)
+            animationButton.addTarget(self, action: #selector(animationButtonPress), for: .touchUpInside)
+            animationButton.layer.cornerRadius = 0.5 * button.bounds.size.width
+            animationButton.clipsToBounds = true
+            self.sceneView.addSubview(animationButton)
+        }
+        
+        
+        
+//        https://www.flaticon.com/authors/zlatko-najdenovski - robot button author
+        
     }
 
     func searchRequest() {

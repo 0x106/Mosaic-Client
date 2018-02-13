@@ -34,7 +34,7 @@ extension ViewController {
     }
     
     @objc func moveSceneToPlane(withGestureRecognizer recognizer: UIGestureRecognizer) {
-        if self.clientCanMove {
+        if false || self.clientCanMove {
             let tapLocation = recognizer.location(in: sceneView)
             let hitTestResults = sceneView.hitTest(tapLocation, types: .existingPlaneUsingExtent)
             guard let hitTestResult = hitTestResults.first else { return }
@@ -51,7 +51,7 @@ extension ViewController {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         if let touchLocation = touches.first?.location(in: self.sceneView) {
-            if self.clientCanMove {
+            if false && self.clientCanMove {
                 
                 // Did we touch a plane?
                 if let hit = sceneView.hitTest(touchLocation, types: .existingPlaneUsingExtent).first{
@@ -105,10 +105,80 @@ extension ViewController {
                             self.sceneView.addSubview(nodeField)
                         }
                     }
+                    
+                    if tappedNode.nodeName == "IMG" {
+                        
+                        if tappedNode.rootNode.position.x < _mx {
+                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+                            let translation = SCNAction.move(to: SCNVector3Make(_mx,
+                                                                                tappedNode.rootNode.position.y,
+                                                                                tappedNode.rootNode.position.z),
+                                                                                duration: 2.0)
+                            let motion = SCNAction.group([translation, rotation])
+                            tappedNode.rootNode.runAction(motion)
+                        } else {
+                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+                            let translation = SCNAction.move(to: SCNVector3Make(_mx,
+                                                                                tappedNode.rootNode.position.y,
+                                                                                tappedNode.rootNode.position.z),
+                                                             duration: 2.0)
+                            let motion = SCNAction.group([translation, rotation])
+                            tappedNode.rootNode.runAction(motion)
+                        }
+                    }
+                    
                 }
             }
         }
     }
+    
+//    @objc func onTranslate(_ sender: UIPanGestureRecognizer) {
+//
+//        if let hit = self.sceneView.hitTest(sender, options: nil).first {
+//
+//            guard let nodeName = hit.node.name else {
+//                return
+//            }
+//
+//        }
+//
+//        let position = sender.location(in: self.sceneView)
+//        let state = sender.state
+//
+//        if (state == .failed || state == .cancelled) {
+//            return
+//        }
+//
+//        if (state == .began) {
+//
+//
+//
+//            guard let currentDomain = client.currentDomain else {return}
+//            guard let tappedNode = currentDomain.getNode(withKey: nodeName) else {return}
+//
+//            // Check it's on a virtual object
+//            if let objectNode = virtualObject(at: position) {
+//                // virtualObject(at searches for root node if it's a subnode
+//                targetNode = objectNode
+//                latestTranslatePos = position
+//            }
+//
+//        }
+//        else if let _ = targetNode {
+//
+//            // Translate virtual object
+//            let deltaX = Float(position.x - latestTranslatePos!.x)/700
+//            let deltaY = Float(position.y - latestTranslatePos!.y)/700
+//
+//            targetNode!.localTranslate(by: SCNVector3Make(deltaX, 0.0, deltaY))
+//
+//            latestTranslatePos = position
+//
+//            if (state == .ended) {
+//                targetNode = nil
+//            }
+//        }
+//    }
     
     @objc func handleGestures(_ gesture: UIPanGestureRecognizer) {
         let touch = gesture.location(in: self.sceneView)

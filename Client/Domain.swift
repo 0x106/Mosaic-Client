@@ -64,10 +64,10 @@ class Domain {
         
         if let type = data["nodeName"] as? String {
             if AFrameTypes.contains(type) {
-                guard let node: AFrame = AFrame(data, "", 0) else {return}
+                guard let node: AFrame = AFrame(data, self.requestURL, 0) else {return}
                 renderNode(node, key)
             } else {
-                guard let node: Node = Node(data, "", 0) else {return}
+                guard let node: Node = Node(data, self.requestURL, 0) else {return}
                 renderNode(node, key)
             }
         }
