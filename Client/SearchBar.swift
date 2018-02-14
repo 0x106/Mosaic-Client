@@ -77,3 +77,54 @@ class SearchBar {
     
 }
 
+
+class FocusRing {
+    var rootNode: SCNNode = SCNNode()
+    var ring: SCNTorus = SCNTorus(ringRadius: CGFloat(0.06), pipeRadius: CGFloat(0.004))
+    let depth: Float = 0.05
+    
+    init() {
+        ring.firstMaterial?.diffuse.contents = palatinatePurple.withAlphaComponent(CGFloat(0.8))
+        rootNode.geometry = ring
+    }
+    
+    func set(_ position: SCNVector3, _ eulerAngles: SCNVector3) {
+        rootNode.position = position
+        rootNode.eulerAngles = SCNVector3Make(.pi / 2.0, eulerAngles.y, 0.0)
+    }
+    
+    func enlarge(_ text: String) -> SCNNode {
+        let outputText = setText(text)
+        let outputNode = SCNNode(geometry: outputText)
+        return outputNode
+    }
+    
+    private func setText(_ label: String) -> SCNText {
+        let text = SCNText(string: label, extrusionDepth: CGFloat(self.depth))
+        let font = UIFont(name: "Futura", size: 0.05)
+        text.font = font
+        text.alignmentMode = kCAAlignmentCenter
+        text.firstMaterial?.diffuse.contents = burntOrange
+        text.firstMaterial?.specular.contents = UIColor.white
+        text.firstMaterial?.isDoubleSided = true
+        text.chamferRadius = CGFloat(self.depth)
+        return text
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// end

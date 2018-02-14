@@ -23,9 +23,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     let button = UIButton()
     let animationButton = UIButton()
     var clientCanMove: Bool = true
-    
+    var focus: FocusRing = FocusRing()
     var _mx: Float = 0.0
 
+    var scaledNodes: [SCNNode] = [SCNNode]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -38,6 +40,9 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
         let recogniser = UIPanGestureRecognizer(target: self, action: #selector(self.handleGestures))
         self.sceneView.addGestureRecognizer(recogniser)
+        
+        self.sceneView.scene.rootNode.addChildNode(focus.rootNode)
+        focus.rootNode.isHidden = true
 
         initConfig()
     }
@@ -61,29 +66,43 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     @objc public func animationButtonPress() {
+        
+        guard let domain = self.client.currentDomain else {return}
+        
+        if domain.nodes.count == 0 {
+            return
+        }
+        
         var mx: Float = 0.0
-        for node in (self.client.currentDomain?.nodes)! {
+        var sx: Float = 0.0
+        for node in domain.nodes {
             mx += node.rootNode.position.x
         }
         
-        mx /= Float((self.client.currentDomain?.nodes.count)!)
+        mx /= Float(domain.nodes.count)
+        
+        for node in domain.nodes {
+            sx += ((node.rootNode.position.x - mx) * (node.rootNode.position.x - mx))
+        }
+        
+        sx /= Float(domain.nodes.count)
         
         _mx = mx
         
-        for node in (self.client.currentDomain?.nodes)! {
+        for node in domain.nodes {
             
-            if node.rootNode.position.x <= mx {
-                
-                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(.pi/6.0), z: CGFloat(0.0), duration: 2.0)
-                let translation = SCNAction.move(by: SCNVector3Make(-0.4, 0.0, 0.0), duration: 2.0)
+            if node.rootNode.position.x < (mx - (0.9 * sx)) {
+                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat( (mx - node.rootNode.position.x) * (.pi/6.0) ), z: CGFloat(0.0), duration: 2.0)
+                let translation = SCNAction.move(by: SCNVector3Make(-0.4, 0.0, 0.2), duration: 2.0)
+                let motion = SCNAction.group([translation, rotation])
+                node.rootNode.runAction(motion)
+            } else if node.rootNode.position.x > (mx + (0.9 * sx)) {
+                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat((node.rootNode.position.x - mx) * (-.pi/6.0)), z: CGFloat(0.0), duration: 2.0)
+                let translation = SCNAction.move(by: SCNVector3Make(0.4, 0.0, 0.2), duration: 2.0)
                 let motion = SCNAction.group([translation, rotation])
                 node.rootNode.runAction(motion)
             } else {
                 
-                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-.pi/6.0), z: CGFloat(0.0), duration: 2.0)
-                let translation = SCNAction.move(by: SCNVector3Make(0.4, 0.0, 0.0), duration: 2.0)
-                let motion = SCNAction.group([translation, rotation])
-                node.rootNode.runAction(motion)
             }
         }
     }
@@ -110,19 +129,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //            print("Domain: \(self.client.currentDomain?.rootNode.worldPosition)")
 //            print("=================================")
             
-//            let center = self.sceneView.center
-//
-//            if let domain = self.client.currentDomain {
-//
-////                domain.process()
-//
-//                if let hit = self.sceneView.hitTest(center, options: nil).first {
-//                    if let nodeName = hit.node.name {
-//                        if let node = domain.getNode(withKey: nodeName) {
-//
-//
-//                            // if a node gets moved then all its children have to as well.
-//
+            let center = self.sceneView.center
+
+            if let domain = self.client.currentDomain {
+
+//                domain.process()
+
+                if let hit = self.sceneView.hitTest(center, options: nil).first {
+                    if let nodeName = hit.node.name {
+                        if let node = domain.getNode(withKey: nodeName) {
+                            
+                            focus.rootNode.isHidden = false
+
+                            if node.nodeName == "#text" {
+                                let position = node.rootNode.worldPosition
+                                let eulerAngles = SCNVector3(frame.camera.eulerAngles)
+                                focus.set(position, eulerAngles)
+                                
+                                for n in scaledNodes {
+                                    n.scale = SCNVector3Make(1.0, 1.0, 1.0)
+                                }
+                                
+                                node.rootNode.scale = SCNVector3Make(2.0, 2.0, 2.0)
+                                scaledNodes.append(node.rootNode)
+                                
+                            }
+                            // if a node gets moved then all its children have to as well.
+
 //                            for domainNode in (self.client.currentDomain?.nodes)! {
 //                                if distance(domainNode.rootNode.position, node.rootNode.position) < 0.5 {
 //                                    domainNode.setActive()
@@ -130,11 +163,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //                            }
 //
 //                            node.setActive()
-//
-//                        }
-//                    }
-//                }
-//            }
+
+                        }
+                    }
+                }
+            }
         }
     }
 

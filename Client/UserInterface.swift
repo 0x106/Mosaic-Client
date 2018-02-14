@@ -111,9 +111,11 @@ extension ViewController {
                     }
                     
                     if tappedNode.nodeName == "IMG" {
-                        
+//                        let currentRotation = tappedNode.rootNode.eulerAngles
+                        let eulerAngles = SCNVector3((self.sceneView.session.currentFrame?.camera.eulerAngles)!)
                         if tappedNode.rootNode.position.x < _mx {
-                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+//                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-eulerAngles.y), z: CGFloat(0.0), duration: 2.0)
                             let translation = SCNAction.move(to: SCNVector3Make(_mx,
                                                                                 tappedNode.rootNode.position.y,
                                                                                 tappedNode.rootNode.position.z),
@@ -121,7 +123,8 @@ extension ViewController {
                             let motion = SCNAction.group([translation, rotation])
                             tappedNode.rootNode.runAction(motion)
                         } else {
-                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+//                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(.pi/6.0), z: CGFloat(0.0), duration: 2.0)
+                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-eulerAngles.y), z: CGFloat(0.0), duration: 2.0)
                             let translation = SCNAction.move(to: SCNVector3Make(_mx,
                                                                                 tappedNode.rootNode.position.y,
                                                                                 tappedNode.rootNode.position.z),

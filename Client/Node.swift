@@ -486,15 +486,23 @@ class Node {
             
             if let style = computeStylesFromDict() {
                 self.computedStyle = style
-                self.font_size = self.computedStyle["font-size"] as! Float - 0.0
+                self.font_size = self.computedStyle["font-size"] as! Float - 3.0
 
                 self.color = self.computedStyle["color"] as! UIColor
+                self.backgroundColor = self.computedStyle["background-color"] as! UIColor
                 
                 if let cf = self.config {
+                    
+                    print(cf)
+                    
                     if let bgColor = cf["background-color"] as? [Int] {
                         self.backgroundColor = UIColor(red: bgColor[0], green: bgColor[1], blue: bgColor[2])
-                    } else {self.backgroundColor = self.computedStyle["background-color"] as! UIColor}
-                } else {self.backgroundColor = self.computedStyle["background-color"] as! UIColor}
+                    }
+                    
+                    if let _color = cf["color"] as? [Int] {
+                        self.color = UIColor(red: _color[0], green: _color[1], blue: _color[2])
+                    }
+                }
                 
                 self.borderColor[top] = self.computedStyle["border-top-color"] as! UIColor
                 self.borderColor[left] = self.computedStyle["border-top-color"] as! UIColor
@@ -545,7 +553,7 @@ class Node {
             return
         }
         
-        if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 10000 || self.totalHeight > 10000) {
+        if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 5000 || self.totalHeight > 5000) {
             self.canRender = false
             return
         }
@@ -808,13 +816,8 @@ class AFrame: Node {
         super.init()
         
         self.isAFrameNode = true
-        
         self.commonInit(_data, _requestURL, _depth)
-        
         self.initialise()
-        
-        print(_data)
-        
     }
     
     private func initialise() {
