@@ -311,13 +311,52 @@ func createNode(withGeometry type: String) -> SCNNode {
 
 let performance = PerformanceMeasure()
 
+func extractValuesFromCSV(_ _input: String) -> [Float] {
+    var input = _input
+    
+    if input.count == 1 {
+        let output = input.replacingOccurrences(of: "[a-z]", with: "",  options: NSString.CompareOptions.regularExpression, range: nil)
+        if output != "" {
+            return [Float(output)!]
+        } else {
+            return []
+        }
+    }
+    
+    if !input.hasPrefix("(") {
+        input = "(" + input
+    }
+    
+    let startIndex = input.index(after:  input.index(of:"(") ?? input.startIndex)
+    let endIndex   = input.index(before: input.index(of:")") ?? input.endIndex)
+    
+    let values = (input[startIndex ... endIndex])
+                    .replacingOccurrences(of: ",", with: "")
+                    .replacingOccurrences(of: " .[0-9]", with: "")
+                    .replacingOccurrences(of: "[a-z]", with: "",  options: NSString.CompareOptions.regularExpression, range: nil)
+                    .split(separator: " ")
+                    .map {Float($0)!}
+    return values
+}
+
+func matches(for regex: String, in text: String) -> [String] {
+
+    do {
+        let regex = try NSRegularExpression(pattern: regex)
+        let results = regex.matches(in: text,
+                                    range: NSRange(text.startIndex..., in: text))
+        return results.map {
+            String(text[Range($0.range, in: text)!])
+        }
+    } catch let error {
+        print("invalid regex: \(error.localizedDescription)")
+        return []
+    }
+}
+
+
+
+
+
+
 // end
-
-
-
-
-
-
-
-
-

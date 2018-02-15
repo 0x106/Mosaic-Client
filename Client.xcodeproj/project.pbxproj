@@ -21,9 +21,16 @@
 		DA86E6D32019A29C00DDE8C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */; };
 		DA87E778201A879300BDADAE /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E777201A879300BDADAE /* Domain.swift */; };
 		DA87E77A201A8FAC00BDADAE /* Dodecahedron.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */; };
+		DA88DB3C20352B2B005EEAB6 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB3B20352B2B005EEAB6 /* ConfigManager.swift */; };
+		DA88DB3F203565D3005EEAB6 /* NodeProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB3E203565D3005EEAB6 /* NodeProperties.swift */; };
+		DA88DB4120356683005EEAB6 /* NodeGlobals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB4020356683005EEAB6 /* NodeGlobals.swift */; };
+		DA88DB43203566D4005EEAB6 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB42203566D4005EEAB6 /* Label.swift */; };
+		DA88DB4520356712005EEAB6 /* NodeUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB4420356712005EEAB6 /* NodeUtils.swift */; };
+		DA88DB4720356748005EEAB6 /* NodeUserInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB4620356748005EEAB6 /* NodeUserInterface.swift */; };
+		DA88DB4920356774005EEAB6 /* NodeAFrame.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB4820356774005EEAB6 /* NodeAFrame.swift */; };
+		DA88DB4B20356811005EEAB6 /* NodeRender.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB4A20356811005EEAB6 /* NodeRender.swift */; };
 		DAFC07DF202BC55000638CAC /* Performance.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFC07DE202BC55000638CAC /* Performance.swift */; };
 		DAFC07E1202BDA0F00638CAC /* UserInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFC07E0202BDA0F00638CAC /* UserInterface.swift */; };
-		DAFC46132031268F00BA5EA3 /* config.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFC46122031268F00BA5EA3 /* config.swift */; };
 		DAFD57CD20265477003C0372 /* Animate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DAFD57CC20265477003C0372 /* Animate.swift */; };
 /* End PBXBuildFile section */
 
@@ -44,10 +51,17 @@
 		DA86E6D42019A29C00DDE8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		DA87E777201A879300BDADAE /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dodecahedron.swift; sourceTree = "<group>"; };
+		DA88DB3B20352B2B005EEAB6 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
+		DA88DB3E203565D3005EEAB6 /* NodeProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeProperties.swift; sourceTree = "<group>"; };
+		DA88DB4020356683005EEAB6 /* NodeGlobals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGlobals.swift; sourceTree = "<group>"; };
+		DA88DB42203566D4005EEAB6 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
+		DA88DB4420356712005EEAB6 /* NodeUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeUtils.swift; sourceTree = "<group>"; };
+		DA88DB4620356748005EEAB6 /* NodeUserInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeUserInterface.swift; sourceTree = "<group>"; };
+		DA88DB4820356774005EEAB6 /* NodeAFrame.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAFrame.swift; sourceTree = "<group>"; };
+		DA88DB4A20356811005EEAB6 /* NodeRender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeRender.swift; sourceTree = "<group>"; };
 		DA9F97E5202797700078B477 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		DAFC07DE202BC55000638CAC /* Performance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Performance.swift; sourceTree = "<group>"; };
 		DAFC07E0202BDA0F00638CAC /* UserInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInterface.swift; sourceTree = "<group>"; };
-		DAFC46122031268F00BA5EA3 /* config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = config.swift; sourceTree = "<group>"; };
 		DAFD57CC20265477003C0372 /* Animate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animate.swift; sourceTree = "<group>"; };
 		FB987B3FDFB5580A558A7BED /* Pods-Client.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Client.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Client/Pods-Client.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -94,6 +108,8 @@
 		DA86E6C52019A29C00DDE8C9 /* Client */ = {
 			isa = PBXGroup;
 			children = (
+				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
+				DA88DB3D203565C2005EEAB6 /* Node */,
 				DA88DB3720352995005EEAB6 /* Core */,
 				DA88DB39203529D6005EEAB6 /* Interface */,
 				DA88DB3A203529EC005EEAB6 /* Util */,
@@ -108,6 +124,7 @@
 				DA86E6CA2019A29C00DDE8C9 /* Main.swift */,
 				DA3E64672019A8F700F15119 /* Client.swift */,
 				DA87E777201A879300BDADAE /* Domain.swift */,
+				DA88DB3B20352B2B005EEAB6 /* ConfigManager.swift */,
 				DA537630202CFF8500561098 /* Node.swift */,
 			);
 			path = Core;
@@ -118,7 +135,6 @@
 			children = (
 				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
 				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
-				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
 				DA9F97E5202797700078B477 /* Assets.xcassets */,
 				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
 			);
@@ -130,6 +146,7 @@
 			children = (
 				DAFC07E0202BDA0F00638CAC /* UserInterface.swift */,
 				DA3E64692019A90C00F15119 /* SearchBar.swift */,
+				DA88DB42203566D4005EEAB6 /* Label.swift */,
 				DAFD57CC20265477003C0372 /* Animate.swift */,
 				DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */,
 			);
@@ -141,11 +158,23 @@
 			children = (
 				DAFC07DE202BC55000638CAC /* Performance.swift */,
 				DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */,
-				DAFC46122031268F00BA5EA3 /* config.swift */,
 				DA3E646B2019A96D00F15119 /* Util.swift */,
 				DA1415BC202022D9002C773F /* Fonts.swift */,
 			);
 			path = Util;
+			sourceTree = "<group>";
+		};
+		DA88DB3D203565C2005EEAB6 /* Node */ = {
+			isa = PBXGroup;
+			children = (
+				DA88DB3E203565D3005EEAB6 /* NodeProperties.swift */,
+				DA88DB4020356683005EEAB6 /* NodeGlobals.swift */,
+				DA88DB4420356712005EEAB6 /* NodeUtils.swift */,
+				DA88DB4620356748005EEAB6 /* NodeUserInterface.swift */,
+				DA88DB4820356774005EEAB6 /* NodeAFrame.swift */,
+				DA88DB4A20356811005EEAB6 /* NodeRender.swift */,
+			);
+			path = Node;
 			sourceTree = "<group>";
 		};
 		E261A89E9A5E716512731264 /* Frameworks */ = {
@@ -300,13 +329,20 @@
 				DA86E6CB2019A29C00DDE8C9 /* Main.swift in Sources */,
 				DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */,
 				DA3E646C2019A96D00F15119 /* Util.swift in Sources */,
+				DA88DB4720356748005EEAB6 /* NodeUserInterface.swift in Sources */,
 				DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */,
+				DA88DB4120356683005EEAB6 /* NodeGlobals.swift in Sources */,
+				DA88DB43203566D4005EEAB6 /* Label.swift in Sources */,
+				DA88DB3C20352B2B005EEAB6 /* ConfigManager.swift in Sources */,
+				DA88DB4B20356811005EEAB6 /* NodeRender.swift in Sources */,
+				DA88DB3F203565D3005EEAB6 /* NodeProperties.swift in Sources */,
 				DA3E64682019A8F700F15119 /* Client.swift in Sources */,
-				DAFC46132031268F00BA5EA3 /* config.swift in Sources */,
 				DAFC07DF202BC55000638CAC /* Performance.swift in Sources */,
+				DA88DB4520356712005EEAB6 /* NodeUtils.swift in Sources */,
 				DAFD57CD20265477003C0372 /* Animate.swift in Sources */,
 				DA1415BD202022D9002C773F /* Fonts.swift in Sources */,
 				DA537631202CFF8500561098 /* Node.swift in Sources */,
+				DA88DB4920356774005EEAB6 /* NodeAFrame.swift in Sources */,
 				DAFC07E1202BDA0F00638CAC /* UserInterface.swift in Sources */,
 				DA87E778201A879300BDADAE /* Domain.swift in Sources */,
 			);

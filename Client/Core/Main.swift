@@ -44,7 +44,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         self.sceneView.scene.rootNode.addChildNode(focus.rootNode)
         focus.rootNode.isHidden = true
 
-        initConfig()
+//        initConfig()
     }
     
     func setup() {
@@ -59,7 +59,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     @objc public func buttonPress() {
         if self.client.searchBar.rootNode.isHidden {
             self.client.currentDomain?.rootNode.isHidden = true
-           self.client.searchBar.rootNode.isHidden = false
+            self.client.searchBar.rootNode.isHidden = false
         } else {
             self.searchRequest()
         }

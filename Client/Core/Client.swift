@@ -8,8 +8,6 @@
 
 import Foundation
 import ARKit
-import Alamofire
-import Alamofire_SwiftyJSON
 import SwiftyJSON
 import SocketIO
 
@@ -32,12 +30,12 @@ class Client {
     var requestID: String = ""
 //    let defaultSearchURL: String = "http://google.co.nz"
 //    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
-//    let defaultSearchURL: String = "https://bf7cf4b5.ngrok.io"
+    let defaultSearchURL: String = "https://b1bd9976.ngrok.io"
 //    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
 //    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://arvrgarage.nz"
 //    let defaultSearchURL: String = "http://atlasreality.xyz"
-    let defaultSearchURL: String = "http://afore.vc"
+//    let defaultSearchURL: String = "http://afore.vc"
 
     var writeData: Bool = true
     
@@ -56,6 +54,13 @@ class Client {
             print("socket connected")
             self?.connected = true
             self?.rootNode.addChildNode((self?.searchBar.rootNode)!)
+        }
+        
+        socket.on("config") {[weak self] response, ack in
+            print("received config")
+            if let data = response[0] as? Dictionary<String, Any> {
+                self?.currentDomain.configManager.setup( (self?.requestURL)!, data )
+            }
         }
 
         socket.on("renderTreeStart") {[weak self] data, ack in
@@ -113,9 +118,10 @@ class Client {
         socket.emit("msg", message)
     }
     
-    func send_url(_ url: String) {
-        print("Sending URL: \(url)")
+    func clientRequest() {
+        print("Sending URL: \(self.requestURL)")
         initDomain()
+        
         socket.emit("url", self.requestURL)
     }
 
@@ -141,7 +147,7 @@ class Client {
 
         // check to see if a local cache of this url exists
         if refresh {
-            self.send_url(self.requestURL)
+            self.clientRequest()
         } else {
 
             let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
@@ -156,7 +162,7 @@ class Client {
                     self.writeData = false
                     self.addNewDomain(response)
                 } catch {
-                    self.send_url(self.requestURL)
+                    self.clientRequest()
                 }
             }
         }
@@ -213,11 +219,12 @@ class Client {
         var output = url
         self.requestID = urlToID(url)
 
+        // http://www.atlasreality.xyz -> http://www.atlasreality.xyz
         if url.hasPrefix("http://www.") || url.hasPrefix("https://www.") {
             return output
         }
 
-        // e.g: www.atlasreality.xyz
+        // e.g: www.atlasreality.xyz -> http://www.atlasreality.xyz
         if url.hasPrefix("www.") {
             output = "http://" + url
             return output
@@ -234,7 +241,7 @@ class Client {
             return output
         }
 
-        // e.g: atlasreality.xyz
+        // e.g: atlasreality.xyz -> http://www.atlasreality.xyz
         if !url.hasPrefix("http://www.") && !url.hasPrefix("https://www.") {
             output = "http://www." + url
             return output

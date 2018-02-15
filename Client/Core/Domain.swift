@@ -41,6 +41,8 @@ class Domain {
     var requestID: String = ""
     var requestURL: String = ""
     
+    let configManager: ConfigManager = ConfigManager()
+    
     let scale: Float = 0.001
     let velocityScale: Float = 0.0001
     
@@ -67,7 +69,7 @@ class Domain {
                 guard let node: AFrame = AFrame(data, self.requestURL, 0) else {return}
                 renderNode(node, key)
             } else {
-                guard let node: Node = Node(data, self.requestURL, 0) else {return}
+                guard let node: Node = Node(data, self.requestURL, 0, self.configManager.config_data) else {return}
                 renderNode(node, key)
             }
         }
