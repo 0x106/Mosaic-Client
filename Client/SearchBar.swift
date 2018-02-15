@@ -22,8 +22,8 @@ class SearchBar {
 
     init() {
 
-        self.label.text = ""
-        self.text = ""
+        self.label.text = "oipolloi.com/collections/new-stuff"
+        self.text = "afore.vc"
         label.cell = CGRect(x: 0.0, y: 0.0, width: CGFloat(750), height: CGFloat(100))
         label.nucleus = CGRect(x: 20.0, y: 35, width: CGFloat(750), height: CGFloat(50))
         label.totalWidth = Float(label.cell.width)

@@ -164,6 +164,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 //
 //                            node.setActive()
 
+                        } else {
+                            self.focus.rootNode.isHidden = true
                         }
                     }
                 }

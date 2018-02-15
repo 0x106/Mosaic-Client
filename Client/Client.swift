@@ -26,18 +26,18 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://4bb68cb3.ngrok.io"
+    let server: String = "http://1dfb40a1.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
 //    let defaultSearchURL: String = "http://google.co.nz"
 //    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
 //    let defaultSearchURL: String = "https://bf7cf4b5.ngrok.io"
-    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
+//    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
 //    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://arvrgarage.nz"
 //    let defaultSearchURL: String = "http://atlasreality.xyz"
-//    let defaultSearchURL: String = "http://afore.vc"
+    let defaultSearchURL: String = "http://afore.vc"
 
     var writeData: Bool = true
     
