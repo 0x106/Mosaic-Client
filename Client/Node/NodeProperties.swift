@@ -198,7 +198,11 @@ extension Node {
             self.checkConfigLayout(cf)
         }
         
-        // if the border size is _bigger_ then ensure that the inside edge remains in the same position
+        // if the border size is _bigger_
+        //      - grow the height/width by the difference
+        //      - keep the origin in the same place
+        //      - effect: keeps inner edge fixed
+        //      - should be same for _smaller_
         
         self.cell = CGRect( x: CGFloat(0.0),
                             y: CGFloat(0.0),
