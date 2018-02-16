@@ -50,10 +50,10 @@ class Client {
         manager = SocketManager(socketURL: URL(string: self.server)!, config: [.log(false), .compress])
         socket = manager.defaultSocket
         
-        socket.on(clientEvent: .connect) {[weak self] data, ack in
+        socket.on(clientEvent: .connect) {data, ack in
             print("socket connected")
-            self?.connected = true
-            self?.rootNode.addChildNode((self?.searchBar.rootNode)!)
+            self.connected = true
+            self.rootNode.addChildNode(self.searchBar.rootNode)
         }
     
         socket.on("config") {response, ack in
@@ -63,31 +63,31 @@ class Client {
             
             print("received config")
             if let data = response[0] as? Dictionary<String, Any> {
-                self?.currentDomain.configManager.setup( (self?.requestURL)!, data )
+                self.currentDomain.configManager.setup( self.requestURL, data )
             }
         }
         
-        socket.on("renderTreeStart") {[weak self] data, ack in
-            if !(self?.orb.rootNode.isHidden)! {
-                self?.orb.rootNode.isHidden = true
+        socket.on("renderTreeStart") {data, ack in
+            if !(self.orb.rootNode.isHidden) {
+                self.orb.rootNode.isHidden = true
             }
         }
 
-        socket.on("node") {[weak self] data, ack in
+        socket.on("node") {data, ack in
 //            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
             let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .utility)
             nodeWorker.async {
                 if let nodeData = data[0] as? Dictionary<String, Any> {
                     if let key = nodeData["key"] as? String {
-                        self?.currentDomain.addNodeAsync( nodeData )
+                        self.currentDomain.addNodeAsync( nodeData )
                     }
                 }
             }
         }
         
-        socket.on("renderTreeComplete") {[weak self] data, ack in
+        socket.on("renderTreeComplete") {data, ack in
             print("All render tree nodes sent")
-            self?.currentDomain.allDataSent = true
+            self.currentDomain.allDataSent = true
 //            self?.currentDomain.process()
         }
     
