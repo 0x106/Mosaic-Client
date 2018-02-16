@@ -20,6 +20,7 @@ class ConfigManager {
                 config_data[key] = value
             }
         }
+        print(config_data)
     }
 }
 

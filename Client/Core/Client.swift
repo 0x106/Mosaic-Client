@@ -24,13 +24,13 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://1dfb40a1.ngrok.io"
+    let server: String = "http://a2ea58e1.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
 //    let defaultSearchURL: String = "http://google.co.nz"
 //    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
-    let defaultSearchURL: String = "https://b1bd9976.ngrok.io"
+    let defaultSearchURL: String = "https://af03ee4a.ngrok.io"
 //    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
 //    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://arvrgarage.nz"
@@ -55,14 +55,18 @@ class Client {
             self?.connected = true
             self?.rootNode.addChildNode((self?.searchBar.rootNode)!)
         }
-        
-        socket.on("config") {[weak self] response, ack in
+    
+        socket.on("config") {response, ack in
+            
+            guard let data = response[0] as? Dictionary<String, Any> else { return }
+            ack.with("config recvd", "")
+            
             print("received config")
             if let data = response[0] as? Dictionary<String, Any> {
                 self?.currentDomain.configManager.setup( (self?.requestURL)!, data )
             }
         }
-
+        
         socket.on("renderTreeStart") {[weak self] data, ack in
             if !(self?.orb.rootNode.isHidden)! {
                 self?.orb.rootNode.isHidden = true

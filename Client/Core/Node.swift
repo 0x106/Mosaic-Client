@@ -23,10 +23,13 @@ class Node {
     var href: String = ""
     var imageURL: String = ""
     var requestURL: String = ""
+    var modelFilename: String = ""
     var children: [String]?
     var parents: [String]?
     var attr: [ Dictionary<String, String> ]?
     var style: [ Dictionary<String, Any> ]?
+    
+    var model: Model = Model()
     
     // AR properties
     var rootNode: SCNNode = SCNNode()
@@ -83,6 +86,8 @@ class Node {
             self.attr = _attr
         }
         
+//        print(_data)
+        
         if let id = self.getConfigID() {
             print("Config id: \(id)")
             self.configID = id
@@ -92,6 +97,8 @@ class Node {
                 if let isVisible = self.config!["isVisible"] as? Bool {
                     if !isVisible { self.canRender = false }
                 }
+            } else {
+                print("no config for this node")
             }
         }
         

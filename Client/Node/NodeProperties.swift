@@ -30,8 +30,26 @@ extension Node {
                 self.borderColor[right] = self.computedStyle["border-right-color"] as! UIColor
                 self.borderColor[bottom] = self.computedStyle["border-bottom-color"] as! UIColor
                 
+                print("Node: \(self.nodeName), \(self.nodeValue)")
+                
                 if let cf = self.config {
+                    
+                    print("CONFIG EXISTS FOR THIS NODE")
+                    
                     self.checkConfigStyleProperties(cf)
+                    
+                    print("Filename: \(cf["filename"])")
+                    
+                    // does this node have a model associated with it?
+                    if let filenameString = cf["filename"] as? String {
+                        
+                        print("Filename property detected. Loading model...")
+                        
+                        // load the default model
+                        self.model.loadModel(filenameString)
+                        self.rootNode.addChildNode(self.model.rootNode)
+                    }
+                    
                 }
                 
                 if self.nodeName == "IMG" {
