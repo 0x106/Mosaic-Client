@@ -9,20 +9,14 @@
 /* Begin PBXBuildFile section */
 		18514E5554372B2BABC68120 /* Pods_Client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2406CCAAF2A0E1CC81242BFA /* Pods_Client.framework */; };
 		DA1415BD202022D9002C773F /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415BC202022D9002C773F /* Fonts.swift */; };
-		DA2AB32720367D21008BDFBE /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA2AB32620367D21008BDFBE /* Model.swift */; };
-		DA3E64682019A8F700F15119 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64672019A8F700F15119 /* Client.swift */; };
 		DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64692019A90C00F15119 /* SearchBar.swift */; };
 		DA3E646C2019A96D00F15119 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E646B2019A96D00F15119 /* Util.swift */; };
-		DA537631202CFF8500561098 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA537630202CFF8500561098 /* Node.swift */; };
 		DA537632202D4B4600561098 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DA9F97E5202797700078B477 /* Assets.xcassets */; };
 		DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */; };
 		DA86E6C92019A29C00DDE8C9 /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6C82019A29C00DDE8C9 /* art.scnassets */; };
-		DA86E6CB2019A29C00DDE8C9 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA86E6CA2019A29C00DDE8C9 /* Main.swift */; };
 		DA86E6CE2019A29C00DDE8C9 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */; };
 		DA86E6D32019A29C00DDE8C9 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */; };
-		DA87E778201A879300BDADAE /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E777201A879300BDADAE /* Domain.swift */; };
 		DA87E77A201A8FAC00BDADAE /* Dodecahedron.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */; };
-		DA88DB3C20352B2B005EEAB6 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB3B20352B2B005EEAB6 /* ConfigManager.swift */; };
 		DA88DB3F203565D3005EEAB6 /* NodeProperties.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB3E203565D3005EEAB6 /* NodeProperties.swift */; };
 		DA88DB4120356683005EEAB6 /* NodeGlobals.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB4020356683005EEAB6 /* NodeGlobals.swift */; };
 		DA88DB43203566D4005EEAB6 /* Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA88DB42203566D4005EEAB6 /* Label.swift */; };
@@ -38,22 +32,22 @@
 /* Begin PBXFileReference section */
 		21858D6BD823FCD542A1826D /* Pods-Client.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Client.release.xcconfig"; path = "Pods/Target Support Files/Pods-Client/Pods-Client.release.xcconfig"; sourceTree = "<group>"; };
 		2406CCAAF2A0E1CC81242BFA /* Pods_Client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		DA09B13E2038DA5400EF7040 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		DA09B13F2038DA5400EF7040 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
+		DA09B1402038DA5400EF7040 /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
+		DA09B1412038DA5400EF7040 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		DA09B1422038DA5400EF7040 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		DA09B1432038DA5400EF7040 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		DA1415BC202022D9002C773F /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
-		DA2AB32620367D21008BDFBE /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		DA3E64672019A8F700F15119 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		DA3E64692019A90C00F15119 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		DA3E646B2019A96D00F15119 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
-		DA537630202CFF8500561098 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
 		DA86E6C32019A29C00DDE8C9 /* Client.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Client.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DA86E6C62019A29C00DDE8C9 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		DA86E6C82019A29C00DDE8C9 /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
-		DA86E6CA2019A29C00DDE8C9 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		DA86E6CD2019A29C00DDE8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		DA86E6D22019A29C00DDE8C9 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		DA86E6D42019A29C00DDE8C9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		DA87E777201A879300BDADAE /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		DA87E779201A8FAC00BDADAE /* Dodecahedron.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dodecahedron.swift; sourceTree = "<group>"; };
-		DA88DB3B20352B2B005EEAB6 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
 		DA88DB3E203565D3005EEAB6 /* NodeProperties.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeProperties.swift; sourceTree = "<group>"; };
 		DA88DB4020356683005EEAB6 /* NodeGlobals.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeGlobals.swift; sourceTree = "<group>"; };
 		DA88DB42203566D4005EEAB6 /* Label.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Label.swift; sourceTree = "<group>"; };
@@ -89,6 +83,19 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		DA09B13D2038DA5400EF7040 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				DA09B13E2038DA5400EF7040 /* Client.swift */,
+				DA09B13F2038DA5400EF7040 /* ConfigManager.swift */,
+				DA09B1402038DA5400EF7040 /* Domain.swift */,
+				DA09B1412038DA5400EF7040 /* Main.swift */,
+				DA09B1422038DA5400EF7040 /* Model.swift */,
+				DA09B1432038DA5400EF7040 /* Node.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
 		DA86E6BA2019A29C00DDE8C9 = {
 			isa = PBXGroup;
 			children = (
@@ -112,36 +119,23 @@
 			children = (
 				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
 				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
+				DA09B13D2038DA5400EF7040 /* Core */,
 				DA88DB3D203565C2005EEAB6 /* Node */,
-				DA88DB3720352995005EEAB6 /* Core */,
 				DA88DB39203529D6005EEAB6 /* Interface */,
 				DA88DB3A203529EC005EEAB6 /* Util */,
-				DA88DB382035299F005EEAB6 /* Assets */,
+				DA88DB382035299F005EEAB6 /* Support */,
 			);
 			path = Client;
 			sourceTree = "<group>";
 		};
-		DA88DB3720352995005EEAB6 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				DA86E6CA2019A29C00DDE8C9 /* Main.swift */,
-				DA3E64672019A8F700F15119 /* Client.swift */,
-				DA87E777201A879300BDADAE /* Domain.swift */,
-				DA88DB3B20352B2B005EEAB6 /* ConfigManager.swift */,
-				DA537630202CFF8500561098 /* Node.swift */,
-				DA2AB32620367D21008BDFBE /* Model.swift */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
-		DA88DB382035299F005EEAB6 /* Assets */ = {
+		DA88DB382035299F005EEAB6 /* Support */ = {
 			isa = PBXGroup;
 			children = (
 				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
 				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
 				DA9F97E5202797700078B477 /* Assets.xcassets */,
 			);
-			path = Assets;
+			path = Support;
 			sourceTree = "<group>";
 		};
 		DA88DB39203529D6005EEAB6 /* Interface */ = {
@@ -328,27 +322,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				DA2AB32720367D21008BDFBE /* Model.swift in Sources */,
 				DA87E77A201A8FAC00BDADAE /* Dodecahedron.swift in Sources */,
-				DA86E6CB2019A29C00DDE8C9 /* Main.swift in Sources */,
 				DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */,
 				DA3E646C2019A96D00F15119 /* Util.swift in Sources */,
 				DA88DB4720356748005EEAB6 /* NodeUserInterface.swift in Sources */,
 				DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */,
 				DA88DB4120356683005EEAB6 /* NodeGlobals.swift in Sources */,
 				DA88DB43203566D4005EEAB6 /* Label.swift in Sources */,
-				DA88DB3C20352B2B005EEAB6 /* ConfigManager.swift in Sources */,
 				DA88DB4B20356811005EEAB6 /* NodeRender.swift in Sources */,
 				DA88DB3F203565D3005EEAB6 /* NodeProperties.swift in Sources */,
-				DA3E64682019A8F700F15119 /* Client.swift in Sources */,
 				DAFC07DF202BC55000638CAC /* Performance.swift in Sources */,
 				DA88DB4520356712005EEAB6 /* NodeUtils.swift in Sources */,
 				DAFD57CD20265477003C0372 /* Animate.swift in Sources */,
 				DA1415BD202022D9002C773F /* Fonts.swift in Sources */,
-				DA537631202CFF8500561098 /* Node.swift in Sources */,
 				DA88DB4920356774005EEAB6 /* NodeAFrame.swift in Sources */,
 				DAFC07E1202BDA0F00638CAC /* UserInterface.swift in Sources */,
-				DA87E778201A879300BDADAE /* Domain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
