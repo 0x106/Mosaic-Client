@@ -30,24 +30,22 @@ extension Node {
                 self.borderColor[right] = self.computedStyle["border-right-color"] as! UIColor
                 self.borderColor[bottom] = self.computedStyle["border-bottom-color"] as! UIColor
                 
-                print("Node: \(self.nodeName), \(self.nodeValue)")
-                
                 if let cf = self.config {
                     
-                    print("CONFIG EXISTS FOR THIS NODE")
-                    
                     self.checkConfigStyleProperties(cf)
-                    
-                    print("Filename: \(cf["filename"])")
                     
                     // does this node have a model associated with it?
                     if let filenameString = cf["filename"] as? String {
                         
-                        print("Filename property detected. Loading model...")
-                        
                         // load the default model
-                        self.model.loadModel(filenameString)
-                        self.rootNode.addChildNode(self.model.rootNode)
+                        if self.model.loadModel(filenameString) {
+                            self.rootNode.addChildNode(self.model.rootNode)
+                            
+                            print("\(self.key): \(self.model.rootNode.worldPosition)")
+
+                            print("number of child nodes (2): \(self.rootNode.childNodes.count), \(self.key)")
+                            self.forceRender = true
+                        }
                     }
                     
                 }
@@ -203,10 +201,13 @@ extension Node {
             return
         }
         
+        // if the node is a div + model then don't shift
+        // if self.nodeName == "DIV" && self.model.hasModel {
+        // } else {
         self.rootNode.position = SCNVector3Make(   (self.x + (self.totalWidth/2.0)) * self.scale,
                                                    -(self.y + (self.totalHeight/2.0)) * self.scale,
                                                    -Float(6 - self.treeDepth)*self.scale)
-        
+        // }
         self.borderSize[top] = computedStyle["border-top-width"] as! Float
         self.borderSize[left] = computedStyle["border-left-width"] as! Float
         self.borderSize[right] = computedStyle["border-right-width"] as! Float

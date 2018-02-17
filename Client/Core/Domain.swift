@@ -69,14 +69,16 @@ class Domain {
                 guard let node: AFrame = AFrame(data, self.requestURL, 0) else {return}
                 renderNode(node, key)
             } else {
-                guard let node: Node = Node(data, self.requestURL, 0, self.configManager.config_data) else {return}
+                guard let node: Node = Node(data, self.requestURL, 0, self.configManager.config_data) else {
+                    return
+                }
                 renderNode(node, key)
             }
         }
     }
     
     func renderNode(_ node: Node, _ key: String) {
-        if node.canRender {
+        if node.canRender || node.forceRender {
             let _ = node.render()
             self.rootNode.addChildNode(node.rootNode)
             self.nodes.append(node)

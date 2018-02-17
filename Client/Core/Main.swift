@@ -44,6 +44,13 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         self.sceneView.scene.rootNode.addChildNode(focus.rootNode)
         focus.rootNode.isHidden = true
 
+        
+//        let model = Model()
+//        model.loadModel("")
+//        model.rootNode.position = SCNVector3Make(0, 0, -1.2)
+//        self.sceneView.scene.rootNode.addChildNode(model.rootNode)
+        
+        
 //        initConfig()
     }
     

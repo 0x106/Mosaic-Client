@@ -75,6 +75,8 @@ class Node {
     
     var isAFrameNode: Bool = false
     
+    var forceRender: Bool = false
+    
     init() {}
     
     init?(_ _data: Dictionary<String, Any>,
@@ -86,8 +88,6 @@ class Node {
             self.attr = _attr
         }
         
-//        print(_data)
-        
         if let id = self.getConfigID() {
             print("Config id: \(id)")
             self.configID = id
@@ -95,14 +95,18 @@ class Node {
                 print("Config: \(retrievedConfig)")
                 self.config = retrievedConfig
                 if let isVisible = self.config!["isVisible"] as? Bool {
-                    if !isVisible { self.canRender = false }
+                    if isVisible {
+                        self.forceRender = true
+                    } else {
+                        self.canRender = false
+                    }
                 }
             } else {
                 print("no config for this node")
             }
         }
         
-        if !self.canRender {return nil}
+        if !self.canRender && !self.forceRender {return nil}
         
         self.commonInit(_data, _requestURL, _depth)
         
@@ -141,22 +145,22 @@ class Node {
     func setup() -> Bool {
         
         self.determineType()
-        if !self.canRender {
+        if !self.canRender && !self.forceRender {
             return false
         }
     
         self.determineProperties()
-        if !self.canRender {
+        if !self.canRender && !self.forceRender {
             return false
         }
     
         self.hasStyle()
-        if !self.canRender {
+        if !self.canRender && !self.forceRender {
             return false
         }
         
         self.determineLayout()
-        if !self.canRender {
+        if !self.canRender && !self.forceRender {
             return false
         }
         

@@ -111,6 +111,7 @@
 			isa = PBXGroup;
 			children = (
 				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
+				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
 				DA88DB3D203565C2005EEAB6 /* Node */,
 				DA88DB3720352995005EEAB6 /* Core */,
 				DA88DB39203529D6005EEAB6 /* Interface */,
@@ -139,7 +140,6 @@
 				DA86E6D12019A29C00DDE8C9 /* LaunchScreen.storyboard */,
 				DA86E6CC2019A29C00DDE8C9 /* Main.storyboard */,
 				DA9F97E5202797700078B477 /* Assets.xcassets */,
-				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
 			);
 			path = Assets;
 			sourceTree = "<group>";

@@ -24,13 +24,13 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = "http://a2ea58e1.ngrok.io"
+    let server: String = "http://c084f865.ngrok.io"
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
 //    let defaultSearchURL: String = "http://google.co.nz"
 //    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
-    let defaultSearchURL: String = "https://af03ee4a.ngrok.io"
+    let defaultSearchURL: String = "https://c9404ecc.ngrok.io"
 //    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
 //    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://arvrgarage.nz"
@@ -76,13 +76,13 @@ class Client {
         socket.on("node") {data, ack in
 //            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
             let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .utility)
-            nodeWorker.async {
+//            nodeWorker.async {
                 if let nodeData = data[0] as? Dictionary<String, Any> {
                     if let key = nodeData["key"] as? String {
                         self.currentDomain.addNodeAsync( nodeData )
                     }
                 }
-            }
+//            }
         }
         
         socket.on("renderTreeComplete") {data, ack in

@@ -14,6 +14,8 @@ extension Node {
     
     func render() -> Bool {
         
+        print("\(self.key) [ \(self.nodeValue) ] (\(self.x), \(self.y)), (\(self.totalWidth), \(self.totalHeight)) \(self.rootNode.worldPosition)")
+        
         // if the image is / will be drawn then we don't need to render anything
         if !self.canDrawOverlay || self.isAFrameNode {return true}
         
