@@ -8,6 +8,12 @@
 
 /* Begin PBXBuildFile section */
 		18514E5554372B2BABC68120 /* Pods_Client.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2406CCAAF2A0E1CC81242BFA /* Pods_Client.framework */; };
+		DA09B14A2038E8CA00EF7040 /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1442038E8C900EF7040 /* Model.swift */; };
+		DA09B14B2038E8CA00EF7040 /* ConfigManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1452038E8C900EF7040 /* ConfigManager.swift */; };
+		DA09B14C2038E8CA00EF7040 /* Node.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1462038E8C900EF7040 /* Node.swift */; };
+		DA09B14D2038E8CA00EF7040 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1472038E8C900EF7040 /* Client.swift */; };
+		DA09B14E2038E8CA00EF7040 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1482038E8C900EF7040 /* Main.swift */; };
+		DA09B14F2038E8CA00EF7040 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1492038E8C900EF7040 /* Domain.swift */; };
 		DA1415BD202022D9002C773F /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415BC202022D9002C773F /* Fonts.swift */; };
 		DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64692019A90C00F15119 /* SearchBar.swift */; };
 		DA3E646C2019A96D00F15119 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E646B2019A96D00F15119 /* Util.swift */; };
@@ -32,12 +38,12 @@
 /* Begin PBXFileReference section */
 		21858D6BD823FCD542A1826D /* Pods-Client.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Client.release.xcconfig"; path = "Pods/Target Support Files/Pods-Client/Pods-Client.release.xcconfig"; sourceTree = "<group>"; };
 		2406CCAAF2A0E1CC81242BFA /* Pods_Client.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Client.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		DA09B13E2038DA5400EF7040 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
-		DA09B13F2038DA5400EF7040 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
-		DA09B1402038DA5400EF7040 /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
-		DA09B1412038DA5400EF7040 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
-		DA09B1422038DA5400EF7040 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
-		DA09B1432038DA5400EF7040 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		DA09B1442038E8C900EF7040 /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		DA09B1452038E8C900EF7040 /* ConfigManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConfigManager.swift; sourceTree = "<group>"; };
+		DA09B1462038E8C900EF7040 /* Node.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Node.swift; sourceTree = "<group>"; };
+		DA09B1472038E8C900EF7040 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
+		DA09B1482038E8C900EF7040 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
+		DA09B1492038E8C900EF7040 /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
 		DA1415BC202022D9002C773F /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		DA3E64692019A90C00F15119 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		DA3E646B2019A96D00F15119 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -83,19 +89,6 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
-		DA09B13D2038DA5400EF7040 /* Core */ = {
-			isa = PBXGroup;
-			children = (
-				DA09B13E2038DA5400EF7040 /* Client.swift */,
-				DA09B13F2038DA5400EF7040 /* ConfigManager.swift */,
-				DA09B1402038DA5400EF7040 /* Domain.swift */,
-				DA09B1412038DA5400EF7040 /* Main.swift */,
-				DA09B1422038DA5400EF7040 /* Model.swift */,
-				DA09B1432038DA5400EF7040 /* Node.swift */,
-			);
-			path = Core;
-			sourceTree = "<group>";
-		};
 		DA86E6BA2019A29C00DDE8C9 = {
 			isa = PBXGroup;
 			children = (
@@ -118,8 +111,13 @@
 			isa = PBXGroup;
 			children = (
 				DA86E6D42019A29C00DDE8C9 /* Info.plist */,
+				DA09B1472038E8C900EF7040 /* Client.swift */,
+				DA09B1452038E8C900EF7040 /* ConfigManager.swift */,
+				DA09B1492038E8C900EF7040 /* Domain.swift */,
+				DA09B1482038E8C900EF7040 /* Main.swift */,
+				DA09B1442038E8C900EF7040 /* Model.swift */,
+				DA09B1462038E8C900EF7040 /* Node.swift */,
 				DA86E6C82019A29C00DDE8C9 /* art.scnassets */,
-				DA09B13D2038DA5400EF7040 /* Core */,
 				DA88DB3D203565C2005EEAB6 /* Node */,
 				DA88DB39203529D6005EEAB6 /* Interface */,
 				DA88DB3A203529EC005EEAB6 /* Util */,
@@ -325,18 +323,24 @@
 				DA87E77A201A8FAC00BDADAE /* Dodecahedron.swift in Sources */,
 				DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */,
 				DA3E646C2019A96D00F15119 /* Util.swift in Sources */,
+				DA09B14C2038E8CA00EF7040 /* Node.swift in Sources */,
 				DA88DB4720356748005EEAB6 /* NodeUserInterface.swift in Sources */,
 				DA86E6C72019A29C00DDE8C9 /* AppDelegate.swift in Sources */,
 				DA88DB4120356683005EEAB6 /* NodeGlobals.swift in Sources */,
 				DA88DB43203566D4005EEAB6 /* Label.swift in Sources */,
+				DA09B14A2038E8CA00EF7040 /* Model.swift in Sources */,
 				DA88DB4B20356811005EEAB6 /* NodeRender.swift in Sources */,
+				DA09B14E2038E8CA00EF7040 /* Main.swift in Sources */,
 				DA88DB3F203565D3005EEAB6 /* NodeProperties.swift in Sources */,
 				DAFC07DF202BC55000638CAC /* Performance.swift in Sources */,
 				DA88DB4520356712005EEAB6 /* NodeUtils.swift in Sources */,
+				DA09B14B2038E8CA00EF7040 /* ConfigManager.swift in Sources */,
 				DAFD57CD20265477003C0372 /* Animate.swift in Sources */,
 				DA1415BD202022D9002C773F /* Fonts.swift in Sources */,
+				DA09B14D2038E8CA00EF7040 /* Client.swift in Sources */,
 				DA88DB4920356774005EEAB6 /* NodeAFrame.swift in Sources */,
 				DAFC07E1202BDA0F00638CAC /* UserInterface.swift in Sources */,
+				DA09B14F2038E8CA00EF7040 /* Domain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
