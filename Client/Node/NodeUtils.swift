@@ -141,4 +141,8 @@ extension Node {
             self.rootNode.geometry = self.geometry
         }
     }
+    
+    func parseAnimation() {
+        
+    }
 }

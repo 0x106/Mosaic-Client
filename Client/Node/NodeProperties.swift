@@ -15,14 +15,14 @@ extension Node {
             
             if let style = computeStylesFromDict() {
                 self.computedStyle = style
-                self.font_size = self.computedStyle["font-size"] as! Float - 3.0
+                self.font_size = self.computedStyle!["font-size"] as! Float - 3.0
                 
-                self.color = self.computedStyle["color"] as! UIColor
-                self.backgroundColor = self.computedStyle["background-color"] as! UIColor
-                self.borderColor[top] = self.computedStyle["border-top-color"] as! UIColor
-                self.borderColor[left] = self.computedStyle["border-left-color"] as! UIColor
-                self.borderColor[right] = self.computedStyle["border-right-color"] as! UIColor
-                self.borderColor[bottom] = self.computedStyle["border-bottom-color"] as! UIColor
+                self.color = self.computedStyle!["color"] as! UIColor
+                self.backgroundColor = self.computedStyle!["background-color"] as! UIColor
+                self.borderColor[top] = self.computedStyle!["border-top-color"] as! UIColor
+                self.borderColor[left] = self.computedStyle!["border-left-color"] as! UIColor
+                self.borderColor[right] = self.computedStyle!["border-right-color"] as! UIColor
+                self.borderColor[bottom] = self.computedStyle!["border-bottom-color"] as! UIColor
                 
                 if let cf = self.config {
                     
@@ -56,13 +56,14 @@ extension Node {
                     }
                 }
                 
-                let bgImage = self.computedStyle["background-image"] as! String
-                if bgImage != "none" {
-                    self.canDrawOverlay = false
-                    if bgImage.hasPrefix("url") {
-                        self.imageURL = parseHREFFromURL(bgImage)
-                        if !self.imageURL.hasPrefix("data") {
-                            self.loadImage()
+                if let bgImage = self.computedStyle!["background-image"] as? String {
+                    if bgImage != "none" {
+                        self.canDrawOverlay = false
+                        if bgImage.hasPrefix("url") {
+                            self.imageURL = parseHREFFromURL(bgImage)
+                            if !self.imageURL.hasPrefix("data") {
+                                self.loadImage()
+                            }
                         }
                     }
                 }
@@ -173,18 +174,21 @@ extension Node {
     }
     
     func hasStyle() {
-        if !(self.nodeName == "IMG") && self.computedStyle["background-image"] as! String == "none"
+        
+        guard let style = computedStyle else {return}
+        
+        if !(self.nodeName == "IMG") && style["background-image"] as! String == "none"
             && (self.backgroundColor.isEqual( wa ) || self.backgroundColor.isEqual( wb ) || self.backgroundColor.isEqual( wc ))
-            && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ) || self.computedStyle["border-top-style"] as! String == "none")
-            && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ) || self.computedStyle["border-left-style"] as! String == "none")
-            && (self.borderColor[right].isEqual( wa ) || self.borderColor[right].isEqual( wb ) || self.borderColor[right].isEqual( wc ) || self.computedStyle["border-right-style"] as! String == "none")
-            && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ) || self.computedStyle["border-bottom-style"] as! String == "none")
+            && (self.borderColor[top].isEqual( wa ) || self.borderColor[top].isEqual( wb ) || self.borderColor[top].isEqual( wc ) || style["border-top-style"] as! String == "none")
+            && (self.borderColor[left].isEqual( wa ) || self.borderColor[left].isEqual( wb ) || self.borderColor[left].isEqual( wc ) || style["border-left-style"] as! String == "none")
+            && (self.borderColor[right].isEqual( wa ) || self.borderColor[right].isEqual( wb ) || self.borderColor[right].isEqual( wc ) || style["border-right-style"] as! String == "none")
+            && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ) || style["border-bottom-style"] as! String == "none")
             && self.text == "" {
             self.canRender = false
 //            return
         }
         
-        if let visibility = self.computedStyle["visibility"] as? String {
+        if let visibility = style["visibility"] as? String {
             if visibility == "hidden" {
                 self.canRender = false
 //                return
@@ -214,20 +218,16 @@ extension Node {
                                                    -Float(6 - self.treeDepth)*self.scale)
         // }
         
-        self.borderSize[top] = computedStyle["border-top-width"] as! Float
-        self.borderSize[left] = computedStyle["border-left-width"] as! Float
-        self.borderSize[right] = computedStyle["border-right-width"] as! Float
-        self.borderSize[bottom] = computedStyle["border-bottom-width"] as! Float
+        guard let style = self.computedStyle else {return}
+        
+        self.borderSize[top] = style["border-top-width"] as! Float
+        self.borderSize[left] = style["border-left-width"] as! Float
+        self.borderSize[right] = style["border-right-width"] as! Float
+        self.borderSize[bottom] = style["border-bottom-width"] as! Float
         
         if let cf = self.config {
             self.checkConfigLayout(cf)
         }
-        
-        // if the border size is _bigger_
-        //      - grow the height/width by the difference
-        //      - keep the origin in the same place
-        //      - effect: keeps inner edge fixed
-        //      - should be same for _smaller_
         
         self.cell = CGRect( x: CGFloat(0.0),
                             y: CGFloat(0.0),
@@ -313,7 +313,9 @@ extension Node {
     
     func determineFont() {
         
-        let font_list = (self.computedStyle["font-family"] as! String).replacingOccurrences(of: ",", with: "").split(separator: " ")
+        guard let style = self.computedStyle else {return}
+        
+        let font_list = (style["font-family"] as! String).replacingOccurrences(of: ",", with: "").split(separator: " ")
         let googleFonts = self.getFontAttribute("googleFonts")
         
         for ft in font_list {
@@ -344,5 +346,11 @@ extension Node {
             }
         }
         if !fontIsSet { self.font = self.defaultFont }
+    }
+    
+    func checkConfig(_ _config: Dictionary<String, Any>) {
+        if let tapCommand = _config["onTap"] as? String {
+            print(tapCommand)
+        }
     }
 }

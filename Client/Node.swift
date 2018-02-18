@@ -45,7 +45,7 @@ class Node {
     // display properties
     var cell: CGRect = CGRect()
     var image: UIImage?
-    var computedStyle: Dictionary<String, Any> = Dictionary<String, Any>()
+    var computedStyle: Dictionary<String, Any>?
     let scale: Float = 0.001
 
     var fonts: [AtlasFont] = [AtlasFont]()
@@ -145,26 +145,18 @@ class Node {
     func setup() -> Bool {
         
         self.determineType()
-//        if !self.canRender && !self.forceRender {
-//            return false
-//        }
-    
+
         self.determineProperties()
-//        if !self.canRender && !self.forceRender {
-//            return false
-//        }
-    
+        
         self.hasStyle()
-//        if !self.canRender && !self.forceRender {
-//            return false
-//        }
         
         self.determineLayout()
-//        if !self.canRender && !self.forceRender {
-//            return false
-//        }
         
         self.determineFont()
+        
+        if let _config = self.config {
+            self.checkConfig(_config)
+        }
 
         return true
     }
