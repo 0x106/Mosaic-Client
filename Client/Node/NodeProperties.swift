@@ -183,6 +183,15 @@ extension Node {
             self.canRender = false
             return
         }
+        
+        if let visibility = self.computedStyle["visibility"] as? String {
+            if visibility == "hidden" {
+                self.canRender = false
+                return
+            }
+        }
+        
+        
     }
     
     func determineLayout() {
