@@ -98,7 +98,19 @@ extension ViewController {
                         client.request(withURL: tappedNode.href, true)
                     }
                     
-                    
+                    if tappedNode.canReceiveUserInput {
+                        
+                        print("Selected an input node")
+                        
+                        if let currentActiveField = tappedNode.inputField {
+                            print("Current active field exists for key: \(tappedNode.key)")
+                            tappedNode.removeTextField(tappedNode.key)
+                        } else {
+                            print("Creating text field for key: \(tappedNode.key)")
+                            guard let nodeField = tappedNode.addNewTextField(tappedNode.key) else {return}
+                            self.sceneView.addSubview(nodeField)
+                        }
+                    }
                     
                     if let camera = self.sceneView.session.currentFrame?.camera {
                         tappedNode.handleTap(camera, _mx)
