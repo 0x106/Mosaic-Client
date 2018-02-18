@@ -56,4 +56,28 @@ extension Node {
         field.resignFirstResponder()
         self.inputField = nil
     }
+    
+    func handleTap(_ _camera: ARCamera, _ _mx: Float) {
+        
+        if self.nodeName == "IMG" {
+            let eulerAngles = SCNVector3(_camera.eulerAngles)
+            if self.rootNode.position.x < _mx {
+                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-eulerAngles.y), z: CGFloat(0.0), duration: 2.0)
+                let translation = SCNAction.move(to: SCNVector3Make(_mx,
+                                                                    self.rootNode.position.y,
+                                                                    self.rootNode.position.z),
+                                                 duration: 2.0)
+                let motion = SCNAction.group([translation, rotation])
+                self.rootNode.runAction(motion)
+            } else {
+                let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-eulerAngles.y), z: CGFloat(0.0), duration: 2.0)
+                let translation = SCNAction.move(to: SCNVector3Make(_mx,
+                                                                    self.rootNode.position.y,
+                                                                    self.rootNode.position.z),
+                                                 duration: 2.0)
+                let motion = SCNAction.group([translation, rotation])
+                self.rootNode.runAction(motion)
+            }
+        }
+    }
 }

@@ -91,47 +91,17 @@ extension ViewController {
                 } else if nodeName == "searchBarButtonNode" {
                     self.searchRequest()
                 } else {
+                    
                     guard let currentDomain = client.currentDomain else {return}
                     guard let tappedNode = currentDomain.getNode(withKey: nodeName) else {return}
                     if tappedNode.isButton {
                         client.request(withURL: tappedNode.href, true)
                     }
-                    if tappedNode.canReceiveUserInput {
-                        
-                        print("Selected an input node")
-                        
-                        if let currentActiveField = tappedNode.inputField {
-                            print("Current active field exists for key: \(tappedNode.key)")
-                            tappedNode.removeTextField(tappedNode.key)
-                        } else {
-                            print("Creating text field for key: \(tappedNode.key)")
-                            guard let nodeField = tappedNode.addNewTextField(tappedNode.key) else {return}
-                            self.sceneView.addSubview(nodeField)
-                        }
-                    }
                     
-                    if tappedNode.nodeName == "IMG" {
-//                        let currentRotation = tappedNode.rootNode.eulerAngles
-                        let eulerAngles = SCNVector3((self.sceneView.session.currentFrame?.camera.eulerAngles)!)
-                        if tappedNode.rootNode.position.x < _mx {
-//                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-.pi/6.0), z: CGFloat(0.0), duration: 2.0)
-                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-eulerAngles.y), z: CGFloat(0.0), duration: 2.0)
-                            let translation = SCNAction.move(to: SCNVector3Make(_mx,
-                                                                                tappedNode.rootNode.position.y,
-                                                                                tappedNode.rootNode.position.z),
-                                                                                duration: 2.0)
-                            let motion = SCNAction.group([translation, rotation])
-                            tappedNode.rootNode.runAction(motion)
-                        } else {
-//                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(.pi/6.0), z: CGFloat(0.0), duration: 2.0)
-                            let rotation = SCNAction.rotateBy(x: CGFloat(0.0), y: CGFloat(-eulerAngles.y), z: CGFloat(0.0), duration: 2.0)
-                            let translation = SCNAction.move(to: SCNVector3Make(_mx,
-                                                                                tappedNode.rootNode.position.y,
-                                                                                tappedNode.rootNode.position.z),
-                                                             duration: 2.0)
-                            let motion = SCNAction.group([translation, rotation])
-                            tappedNode.rootNode.runAction(motion)
-                        }
+                    
+                    
+                    if let camera = self.sceneView.session.currentFrame?.camera {
+                        tappedNode.handleTap(camera, _mx)
                     }
                     
                 }

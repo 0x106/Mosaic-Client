@@ -14,6 +14,7 @@
 		DA09B14D2038E8CA00EF7040 /* Client.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1472038E8C900EF7040 /* Client.swift */; };
 		DA09B14E2038E8CA00EF7040 /* Main.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1482038E8C900EF7040 /* Main.swift */; };
 		DA09B14F2038E8CA00EF7040 /* Domain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1492038E8C900EF7040 /* Domain.swift */; };
+		DA09B1842039610700EF7040 /* NodeAnimate.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA09B1832039610700EF7040 /* NodeAnimate.swift */; };
 		DA1415BD202022D9002C773F /* Fonts.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA1415BC202022D9002C773F /* Fonts.swift */; };
 		DA3E646A2019A90C00F15119 /* SearchBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E64692019A90C00F15119 /* SearchBar.swift */; };
 		DA3E646C2019A96D00F15119 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA3E646B2019A96D00F15119 /* Util.swift */; };
@@ -44,6 +45,7 @@
 		DA09B1472038E8C900EF7040 /* Client.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Client.swift; sourceTree = "<group>"; };
 		DA09B1482038E8C900EF7040 /* Main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Main.swift; sourceTree = "<group>"; };
 		DA09B1492038E8C900EF7040 /* Domain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Domain.swift; sourceTree = "<group>"; };
+		DA09B1832039610700EF7040 /* NodeAnimate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NodeAnimate.swift; sourceTree = "<group>"; };
 		DA1415BC202022D9002C773F /* Fonts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fonts.swift; sourceTree = "<group>"; };
 		DA3E64692019A90C00F15119 /* SearchBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchBar.swift; sourceTree = "<group>"; };
 		DA3E646B2019A96D00F15119 /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
@@ -176,6 +178,7 @@
 				DA88DB4620356748005EEAB6 /* NodeUserInterface.swift */,
 				DA88DB4820356774005EEAB6 /* NodeAFrame.swift */,
 				DA88DB4A20356811005EEAB6 /* NodeRender.swift */,
+				DA09B1832039610700EF7040 /* NodeAnimate.swift */,
 			);
 			path = Node;
 			sourceTree = "<group>";
@@ -345,6 +348,7 @@
 				DA09B14B2038E8CA00EF7040 /* ConfigManager.swift in Sources */,
 				DAFD57CD20265477003C0372 /* Animate.swift in Sources */,
 				DA1415BD202022D9002C773F /* Fonts.swift in Sources */,
+				DA09B1842039610700EF7040 /* NodeAnimate.swift in Sources */,
 				DA09B14D2038E8CA00EF7040 /* Client.swift in Sources */,
 				DA88DB4920356774005EEAB6 /* NodeAFrame.swift in Sources */,
 				DAFC07E1202BDA0F00638CAC /* UserInterface.swift in Sources */,

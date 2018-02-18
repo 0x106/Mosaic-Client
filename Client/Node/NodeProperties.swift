@@ -28,11 +28,14 @@ extension Node {
                     
                     self.checkConfigStyleProperties(cf)
                     
+                    print("checking for model")
+                    
                     // does this node have a model associated with it?
                     if let filenameString = cf["filename"] as? String {
-                        
+                            print(filenameString)
                         // load the default model
                         if self.model.loadModel(filenameString) {
+                            print("model loaded")
                             self.rootNode.addChildNode(self.model.rootNode)
                             self.forceRender = true
                         }

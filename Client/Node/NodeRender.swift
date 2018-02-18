@@ -13,8 +13,6 @@ import ARKit
 extension Node {
     
     func render() -> Bool {
-        
-        
         if !nodeIsVisible() {
             return false
         }
@@ -23,11 +21,6 @@ extension Node {
         if !self.canDrawOverlay || self.isAFrameNode {
             return true
         }
-        
-        print("\(self.key) [ \(self.nodeValue) ] (\(self.x), \(self.y)), (\(self.totalWidth), \(self.totalHeight)) \(self.rootNode.worldPosition)")
-        print(self.border[top])
-        print("======================")
-        print()
         
         if self.nodeName == "#text" {
             let _ = self.renderText()
