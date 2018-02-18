@@ -78,12 +78,12 @@ class Domain {
     }
     
     func renderNode(_ node: Node, _ key: String) {
-        if node.canRender || node.forceRender {
+//        if node.canRender || node.forceRender {
             let _ = node.render()
             self.rootNode.addChildNode(node.rootNode)
             self.nodes.append(node)
             self.nodeDict[key] = node
-        }
+//        }
     }
     
     func getNode(withKey ref: String) -> Node? {

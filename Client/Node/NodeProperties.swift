@@ -148,7 +148,7 @@ extension Node {
             || self.nodeName == "BODY"
             || (self.nodeName == "#text" && self.text == ""){
             self.canRender = false
-            return
+//            return
         }
         
         if self.nodeName == "A" {
@@ -181,13 +181,13 @@ extension Node {
             && (self.borderColor[bottom].isEqual( wa ) || self.borderColor[bottom].isEqual( wb ) || self.borderColor[bottom].isEqual( wc ) || self.computedStyle["border-bottom-style"] as! String == "none")
             && self.text == "" {
             self.canRender = false
-            return
+//            return
         }
         
         if let visibility = self.computedStyle["visibility"] as? String {
             if visibility == "hidden" {
                 self.canRender = false
-                return
+//                return
             }
         }
         
@@ -198,12 +198,12 @@ extension Node {
         
         if self.x < 0 || self.y < 0 {
             self.canRender = false
-            return
+//            return
         }
         
         if (self.totalWidth == 0 || self.totalHeight == 0 || self.totalWidth > 5000 || self.totalHeight > 5000) {
             self.canRender = false
-            return
+//            return
         }
         
         // if the node is a div + model then don't shift

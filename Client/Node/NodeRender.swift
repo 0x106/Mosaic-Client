@@ -14,13 +14,20 @@ extension Node {
     
     func render() -> Bool {
         
+        
+        if !nodeIsVisible() {
+            return false
+        }
+        
+        // if the image is / will be drawn then we don't need to render anything
+        if !self.canDrawOverlay || self.isAFrameNode {
+            return true
+        }
+        
         print("\(self.key) [ \(self.nodeValue) ] (\(self.x), \(self.y)), (\(self.totalWidth), \(self.totalHeight)) \(self.rootNode.worldPosition)")
         print(self.border[top])
         print("======================")
         print()
-        
-        // if the image is / will be drawn then we don't need to render anything
-        if !self.canDrawOverlay || self.isAFrameNode {return true}
         
         if self.nodeName == "#text" {
             let _ = self.renderText()
@@ -110,6 +117,20 @@ extension Node {
             context.fill(self.border[bottom])
         }
         return true
+    }
+    
+    
+    func nodeIsVisible() -> Bool {
+        
+        if self.forceRender {
+            return true
+        }
+        
+        if self.canRender {
+            return true
+        }
+        
+        return false
     }
     
 }

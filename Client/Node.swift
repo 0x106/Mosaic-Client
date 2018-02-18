@@ -89,23 +89,23 @@ class Node {
         }
         
         if let id = self.getConfigID() {
-            print("Config id: \(id)")
             self.configID = id
             if let retrievedConfig = _config[self.configID!] {
-                print("Config: \(retrievedConfig)")
                 self.config = retrievedConfig
                 if let isVisible = self.config!["isVisible"] as? Bool {
                     if isVisible {
+                        // if the user set the visibility to true then we override some default checks (like for body etc)
                         self.forceRender = true
                     } else {
                         self.canRender = false
                     }
                 }
             } else {
-                print("no config for this node")
             }
         }
         
+        // we will only exit here if the user has specified that this node is
+        // not visible
         if !self.canRender && !self.forceRender {return nil}
         
         self.commonInit(_data, _requestURL, _depth)
@@ -145,24 +145,24 @@ class Node {
     func setup() -> Bool {
         
         self.determineType()
-        if !self.canRender && !self.forceRender {
-            return false
-        }
+//        if !self.canRender && !self.forceRender {
+//            return false
+//        }
     
         self.determineProperties()
-        if !self.canRender && !self.forceRender {
-            return false
-        }
+//        if !self.canRender && !self.forceRender {
+//            return false
+//        }
     
         self.hasStyle()
-        if !self.canRender && !self.forceRender {
-            return false
-        }
+//        if !self.canRender && !self.forceRender {
+//            return false
+//        }
         
         self.determineLayout()
-        if !self.canRender && !self.forceRender {
-            return false
-        }
+//        if !self.canRender && !self.forceRender {
+//            return false
+//        }
         
         self.determineFont()
 

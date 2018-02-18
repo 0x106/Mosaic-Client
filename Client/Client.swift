@@ -70,13 +70,13 @@ class Client {
         socket.on("node") {data, ack in
 //            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
             let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .utility)
-//            nodeWorker.async {
+            nodeWorker.async {
                 if let nodeData = data[0] as? Dictionary<String, Any> {
                     if let key = nodeData["key"] as? String {
                         self.currentDomain.addNodeAsync( nodeData )
                     }
                 }
-//            }
+            }
         }
         
         socket.on("renderTreeComplete") {data, ack in
