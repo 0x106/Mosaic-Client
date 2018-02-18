@@ -352,8 +352,8 @@ extension Node {
     }
     
     func checkConfig(_ _config: Dictionary<String, Any>) {
-        if let tapCommand = _config["onTap"] as? String {
-            print(tapCommand)
+        if let action = _config["onTap"] as? Dictionary<String, Any> {
+            self.addAnimation(action)
         }
     }
 }
