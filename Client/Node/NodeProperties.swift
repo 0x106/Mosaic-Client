@@ -11,12 +11,6 @@ import ARKit
 
 extension Node {
     func determineProperties() {
-        
-        //        guard let currentStyle = self.style else {
-        //            self.canRender = false
-        //            return
-        //        }
-        
         if self.style!.count > 1 {
             
             if let style = computeStylesFromDict() {
@@ -136,6 +130,12 @@ extension Node {
             } else if colorValues.count == 4 {
                 self.borderColor[bottom] = UIColor(red: Int(colorValues[0]), green: Int(colorValues[1]), blue: Int(colorValues[2])).withAlphaComponent(CGFloat(colorValues[3]))
             } else {}
+        }
+        
+        if let isHiddenString = cf["isHidden"] as? String {
+            if isHiddenString == "true" {
+                self.rootNode.isHidden = true
+            }
         }
     }
     
