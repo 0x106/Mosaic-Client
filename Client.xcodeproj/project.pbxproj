@@ -89,12 +89,20 @@
 			name = Pods;
 			sourceTree = "<group>";
 		};
+		DA09B1822039419400EF7040 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Tests;
+			sourceTree = "<group>";
+		};
 		DA86E6BA2019A29C00DDE8C9 = {
 			isa = PBXGroup;
 			children = (
 				DA86E6C52019A29C00DDE8C9 /* Client */,
 				DA86E6C42019A29C00DDE8C9 /* Products */,
 				3306EBC271917E1ADE336890 /* Pods */,
+				DA09B1822039419400EF7040 /* Tests */,
 				E261A89E9A5E716512731264 /* Frameworks */,
 			);
 			sourceTree = "<group>";

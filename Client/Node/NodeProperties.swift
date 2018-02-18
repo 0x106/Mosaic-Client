@@ -40,10 +40,6 @@ extension Node {
                         // load the default model
                         if self.model.loadModel(filenameString) {
                             self.rootNode.addChildNode(self.model.rootNode)
-                            
-                            print("\(self.key): \(self.model.rootNode.worldPosition)")
-
-                            print("number of child nodes (2): \(self.rootNode.childNodes.count), \(self.key)")
                             self.forceRender = true
                         }
                     }
