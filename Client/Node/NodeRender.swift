@@ -15,6 +15,9 @@ extension Node {
     func render() -> Bool {
         
         print("\(self.key) [ \(self.nodeValue) ] (\(self.x), \(self.y)), (\(self.totalWidth), \(self.totalHeight)) \(self.rootNode.worldPosition)")
+        print(self.border[top])
+        print("======================")
+        print()
         
         // if the image is / will be drawn then we don't need to render anything
         if !self.canDrawOverlay || self.isAFrameNode {return true}
@@ -87,7 +90,7 @@ extension Node {
     func renderComponent() -> Bool {
         // TODO: Rounded corners
         // https://stackoverflow.com/questions/30368739/how-to-draw-a-simple-rounded-rect-in-swift-rounded-corners
-        
+    
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
         self.image = renderer.image { context in
             

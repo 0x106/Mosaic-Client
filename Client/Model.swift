@@ -14,7 +14,7 @@ class Model {
     var filename: String = ""
     var rootNode: SCNNode = SCNNode()
     var hasModel: Bool = false
-    let requestURL: String = "http://c9404ecc.ngrok.io/ship/"
+    let requestURL: String = globalDEV_SERVER + "/ship/"
     
     func loadModel(_ fname: String) -> Bool {
         

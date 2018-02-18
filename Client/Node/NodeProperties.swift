@@ -208,6 +208,7 @@ extension Node {
                                                    -(self.y + (self.totalHeight/2.0)) * self.scale,
                                                    -Float(6 - self.treeDepth)*self.scale)
         // }
+        
         self.borderSize[top] = computedStyle["border-top-width"] as! Float
         self.borderSize[left] = computedStyle["border-left-width"] as! Float
         self.borderSize[right] = computedStyle["border-right-width"] as! Float

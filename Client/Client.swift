@@ -12,8 +12,8 @@ import SwiftyJSON
 import SocketIO
 
 var globalRequestID: String = ""
-var globalSERVER: String = ""
-var globalDEV_SERVER: String = ""
+var globalSERVER: String = "http://3fc54e06.ngrok.io"
+var globalDEV_SERVER: String = "http://7ba6d41d.ngrok.io"
 
 class Client {
 
@@ -26,13 +26,13 @@ class Client {
 
     let orb: Dodecahedron = Dodecahedron()
 
-    let server: String = globalSERVER//"http://c084f865.ngrok.io"
+    let server: String = globalSERVER
     var serverEndpoint: String = ""
     var requestURL: String = ""
     var requestID: String = ""
 //    let defaultSearchURL: String = "http://google.co.nz"
 //    let defaultSearchURL: String = "https://medium.com/swlh/the-road-to-consumer-augmented-reality-4ff502a7a1b6"
-    let defaultSearchURL: String = "https://c9404ecc.ngrok.io"
+    let defaultSearchURL: String = globalDEV_SERVER
 //    let defaultSearchURL: String = "https://www.oipolloi.com/collections/new-stuff"
 //    let defaultSearchURL: String = "http://stuff.co.nz"
 //    let defaultSearchURL: String = "http://arvrgarage.nz"

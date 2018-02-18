@@ -331,7 +331,7 @@ func extractValuesFromCSV(_ _input: String) -> [Float] {
     let endIndex   = input.index(before: input.index(of:")") ?? input.endIndex)
     
     let values = (input[startIndex ... endIndex])
-                    .replacingOccurrences(of: ",", with: "")
+                    .replacingOccurrences(of: ",", with: " ")
                     .replacingOccurrences(of: " .[0-9]", with: "")
                     .replacingOccurrences(of: "[a-z]", with: "",  options: NSString.CompareOptions.regularExpression, range: nil)
                     .split(separator: " ")
