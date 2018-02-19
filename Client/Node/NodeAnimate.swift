@@ -90,6 +90,7 @@ class Animation {
         }
     
         if property == "scale" {
+            
             if self.singleScale {
                 if type == "setTo" {
                     self.action = SCNAction.scale(to: CGFloat(self.scaleValue), duration: self.duration)
@@ -97,7 +98,15 @@ class Animation {
                     self.action = SCNAction.scale(by: CGFloat(self.scaleValue), duration: self.duration)
                 } else {
                 }
+            } else {
+                if type == "setTo" {
+                    self.action = SCNAction.scale(to: CGFloat(self.value[0]), duration: self.duration)
+                } else if type == "changeBy" {
+                    self.action = SCNAction.scale(by: CGFloat(self.value[0]), duration: self.duration)
+                } else {
+                }
             }
+            
         }
         
         if property == "transparency" || property.hasSuffix("color") {
@@ -113,6 +122,35 @@ class Animation {
 
 extension Node {
     
+    func getTargetColor(_ _alpha: Float, _ _type: String, _ target: [Float], _ _current: [CGFloat]) -> [Float] {
+        
+        var _target = target
+        
+        if _type == "changeBy" {
+            for i in 0...3 {
+                _target[i] += Float(_current[i])
+            }
+            if _target.count == 4 && _current.count == 4 {
+                _target[3] += Float(_current[3])
+            }
+        }
+        
+        let r1 = ((_target[0]/255) * _alpha), r2 = Float(_current[0]) * (1 - _alpha)
+        let g1 = ((_target[1]/255) * _alpha), g2 = Float(_current[1]) * (1 - _alpha)
+        let b1 = ((_target[2]/255) * _alpha), b2 = Float(_current[2]) * (1 - _alpha)
+        
+        var a1:Float = 1.0, a2:Float = 0.0
+        if _target.count == 4 {
+            a1 = _target[3] * _alpha
+        }
+        
+        if _current.count == 4 {
+            a2 = Float(_current[3]) * (1 - _alpha)
+        }
+        
+        return [r1, r2, g1, g2, b1, b2, a1, a2]
+    }
+    
     func performAnimations() {
         for _animation in self.animations {
             
@@ -121,96 +159,69 @@ extension Node {
                 if _animation.property.hasSuffix("color") {
                     let count = _animation.duration / frequency
                     var iteration = 0
-                    
-                    if _animation.type == "changeBy" {
-                        var _ = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { timer in
-                            if iteration == Int(count) {timer.invalidate()}
-                            
-                            let percent = (Float(iteration) * Float(1.0 / count))
 
-                            let alpha = percent
-                            
-                            let r1 = ((_animation.value[0]/255) * alpha), r2 = Float(self.backgroundColor.cgColor.components![0]) * (1 - alpha)
-                            let g1 = ((_animation.value[1]/255) * alpha), g2 = Float(self.backgroundColor.cgColor.components![1]) * (1 - alpha)
-                            let b1 = ((_animation.value[2]/255) * alpha), b2 = Float(self.backgroundColor.cgColor.components![2]) * (1 - alpha)
-                            
-                            var a1:Float = 1.0, a2:Float = 0.0
-                            if _animation.value.count == 4 {
-                                a1 = _animation.value[3] * alpha
-                            }
-                            
-                            if self.backgroundColor.cgColor.components!.count == 4 {
-                                a2 = Float(self.backgroundColor.cgColor.components![3]) * (1 - alpha)
-                            }
-                            
-                            if _animation.property == "background-color" {
-                                self.backgroundColor = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
-                            }
-                            
-                            if _animation.property == "color" {
-                                self.color = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
-                            }
-                            
-                            if _animation.property == "border-top-color" {
-                                self.borderColor[top] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
-                            }
-                            
-                            if _animation.property == "border-left-color" {
-                                self.borderColor[left] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
-                            }
-                            
-                            if _animation.property == "border-right-color" {
-                                self.borderColor[right] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
-                            }
-                            
-                            if _animation.property == "border-bottom-color" {
-                                self.borderColor[bottom] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
-                            }
-                            
-                            let _ = self.render()
-                            iteration += 1
+                    var _ = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { timer in
+                        if iteration == Int(count) {timer.invalidate()}
+                        
+                        let percent = (Float(iteration) * Float(1.0 / count))
+
+                        let alpha = percent
+                        
+                        if _animation.property == "background-color" {
+                            let target = self.getTargetColor(alpha, _animation.type, _animation.value, self.backgroundColor.cgColor.components!)
+                            self.backgroundColor = UIColor(red:   CGFloat(target[0] + target[1]),
+                                                           green: CGFloat(target[2] + target[3]),
+                                                           blue:  CGFloat(target[4] + target[5]),
+                                                           alpha: CGFloat(target[6] + target[7]))
                         }
-                    } else if _animation.type == "setTo" {
-                        var _ = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { timer in
-                            if iteration == Int(count) {timer.invalidate()}
-                            
-                            let percent = (Float(iteration) * Float(1.0 / count))
-                            
-                            let alpha = percent / 255
-                            
-                            var a1:Float = 1.0
-                            if _animation.value.count == 4 {
-                                a1 = _animation.value[3] * alpha
-                            }
-                            
-                            if _animation.property == "background-color" {
-                                self.backgroundColor = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
-                            }
-                            
-                            if _animation.property == "color" {
-                                self.color = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
-                            }
-                            
-                            if _animation.property == "border-top-color" {
-                                self.borderColor[top] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
-                            }
-                            
-                            if _animation.property == "border-left-color" {
-                                self.borderColor[left] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
-                            }
-                            
-                            if _animation.property == "border-right-color" {
-                                self.borderColor[right] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
-                            }
-                            
-                            if _animation.property == "border-bottom-color" {
-                                self.borderColor[bottom] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
-                            }
-                            
-                            let _ = self.render()
-                            iteration += 1
+                        
+                        if _animation.property == "color" {
+                            let target = self.getTargetColor(alpha, _animation.type, _animation.value, self.color.cgColor.components!)
+                            self.color = UIColor(red:   CGFloat(target[0] + target[1]),
+                                                           green: CGFloat(target[2] + target[3]),
+                                                           blue:  CGFloat(target[4] + target[5]),
+                                                           alpha: CGFloat(target[6] + target[7]))
                         }
-                    } else {}
+                        
+                        if _animation.property == "border-top-color" {
+                            let target = self.getTargetColor(alpha, _animation.type, _animation.value, self.borderColor[top].cgColor.components!)
+                            self.borderColor[top] = UIColor(red:   CGFloat(target[0] + target[1]),
+                                                             green: CGFloat(target[2] + target[3]),
+                                                             blue:  CGFloat(target[4] + target[5]),
+                                                             alpha: CGFloat(target[6] + target[7]))
+                        }
+                        
+                        if _animation.property == "border-left-color" {
+                            let target = self.getTargetColor(alpha, _animation.type, _animation.value, self.borderColor[left].cgColor.components!)
+                            self.borderColor[left] = UIColor(red:   CGFloat(target[0] + target[1]),
+                                                            green: CGFloat(target[2] + target[3]),
+                                                            blue:  CGFloat(target[4] + target[5]),
+                                                            alpha: CGFloat(target[6] + target[7]))
+
+                        }
+                        
+                        if _animation.property == "border-right-color" {
+                            let target = self.getTargetColor(alpha, _animation.type, _animation.value, self.borderColor[right].cgColor.components!)
+                            self.borderColor[right] = UIColor(red:   CGFloat(target[0] + target[1]),
+                                                            green: CGFloat(target[2] + target[3]),
+                                                            blue:  CGFloat(target[4] + target[5]),
+                                                            alpha: CGFloat(target[6] + target[7]))
+
+                        }
+                        
+                        if _animation.property == "border-bottom-color" {
+                            let target = self.getTargetColor(alpha, _animation.type, _animation.value, self.borderColor[bottom].cgColor.components!)
+                            self.borderColor[bottom] = UIColor(red:   CGFloat(target[0] + target[1]),
+                                                            green: CGFloat(target[2] + target[3]),
+                                                            blue:  CGFloat(target[4] + target[5]),
+                                                            alpha: CGFloat(target[6] + target[7]))
+
+                        }
+                        
+                        let _ = self.render()
+                        iteration += 1
+                    }
+                    
             }
                 
             } else {
@@ -229,3 +240,54 @@ extension Node {
     }
     
 }
+
+
+
+
+
+
+
+
+
+
+
+//var _ = Timer.scheduledTimer(withTimeInterval: frequency, repeats: true) { timer in
+//    if iteration == Int(count) {timer.invalidate()}
+//
+//    let percent = (Float(iteration) * Float(1.0 / count))
+//
+//    let alpha = percent / 255
+//
+//    var a1:Float = 1.0
+//    if _animation.value.count == 4 {
+//        a1 = _animation.value[3] * alpha
+//    }
+//
+//    if _animation.property == "background-color" {
+//        self.backgroundColor = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
+//    }
+//
+//    if _animation.property == "color" {
+//        self.color = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
+//    }
+//
+//    if _animation.property == "border-top-color" {
+//        self.borderColor[top] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
+//    }
+//
+//    if _animation.property == "border-left-color" {
+//        self.borderColor[left] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
+//    }
+//
+//    if _animation.property == "border-right-color" {
+//        self.borderColor[right] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
+//    }
+//
+//    if _animation.property == "border-bottom-color" {
+//        self.borderColor[bottom] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
+//    }
+//
+//    let _ = self.render()
+//    iteration += 1
+//}
+
