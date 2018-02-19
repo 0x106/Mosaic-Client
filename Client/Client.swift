@@ -12,8 +12,8 @@ import SwiftyJSON
 import SocketIO
 
 var globalRequestID: String = ""
-var globalSERVER: String = "http://3fc54e06.ngrok.io"
-var globalDEV_SERVER: String = "http://7ba6d41d.ngrok.io"
+var globalSERVER: String = "http://b7bef3e3.ngrok.io"
+var globalDEV_SERVER: String = "http://4deca3e5.ngrok.io"
 
 class Client {
 

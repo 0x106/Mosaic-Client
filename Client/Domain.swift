@@ -96,6 +96,17 @@ class Domain {
         
         return nil
     }
+    
+    func getParentofSCNNode(_ _child: SCNNode) -> Node? {
+        for node in self.nodes {
+            if let childName = _child.name {
+                if _child.isEqual(node.rootNode.childNode(withName: childName, recursively: true)) {
+                    return node
+                }
+            }
+        }
+        return nil
+    }
 
     func scroll(_ velocity: CGPoint) {
         self.rootNode.position.y -= Float(velocity.y) * self.velocityScale

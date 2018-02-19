@@ -57,6 +57,10 @@ extension Node {
         self.inputField = nil
     }
     
+    func checkParentForAnimation(_ _parent: SCNNode) {
+        
+    }
+    
     func handleTap(_ _camera: ARCamera, _ _mx: Float) {
         
         if self.nodeName == "IMG" {
@@ -80,7 +84,13 @@ extension Node {
             }
         }
         
+        // we want to check to see if this node or any of its parent's have animations attached
+        if let parent = self.rootNode.parent {
+            
+        }
         
+        print("Handling tap for node: \(self.key)")
+        self.performAnimations()
         
     }
 }

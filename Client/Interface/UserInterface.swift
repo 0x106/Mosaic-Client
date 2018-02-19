@@ -72,51 +72,62 @@ extension ViewController {
                     self.clientCanMove = false
                 }
             }
-            
-            
+        
             // did we hit one of the nodes that belong to the current domain?
             if let hit = self.sceneView.hitTest(touchLocation, options: nil).first {
                 
-                guard let nodeName = hit.node.name else {
-                    return
-                }
-                if nodeName == "searchBarNode" {
-                    
-                    if client.field.isFirstResponder {
-                        client.field.resignFirstResponder()
-                    } else {
-                        client.field.becomeFirstResponder()
-                    }
-                    
-                } else if nodeName == "searchBarButtonNode" {
-                    self.searchRequest()
-                } else {
-                    
-                    guard let currentDomain = client.currentDomain else {return}
-                    guard let tappedNode = currentDomain.getNode(withKey: nodeName) else {return}
-                    if tappedNode.isButton {
-                        client.request(withURL: tappedNode.href, true)
-                    }
-                    
-                    if tappedNode.canReceiveUserInput {
-                        
-                        print("Selected an input node")
-                        
-                        if let currentActiveField = tappedNode.inputField {
-                            print("Current active field exists for key: \(tappedNode.key)")
-                            tappedNode.removeTextField(tappedNode.key)
+                if let nodeName = hit.node.name {
+                    if nodeName == "searchBarNode" {
+
+                        if client.field.isFirstResponder {
+                            client.field.resignFirstResponder()
                         } else {
-                            print("Creating text field for key: \(tappedNode.key)")
-                            guard let nodeField = tappedNode.addNewTextField(tappedNode.key) else {return}
-                            self.sceneView.addSubview(nodeField)
+                            client.field.becomeFirstResponder()
+                        }
+
+                    } else if nodeName == "searchBarButtonNode" {
+                        self.searchRequest()
+                    } else {
+
+                        guard let currentDomain = client.currentDomain else {return}
+                    
+                        // Was one of the domain's Nodes tapped?
+                        if let tappedNode = currentDomain.getNode(withKey: nodeName) {
+                    
+                            if tappedNode.isButton {
+                                client.request(withURL: tappedNode.href, true)
+                            }
+
+                            if tappedNode.canReceiveUserInput {
+
+                                print("Selected an input node")
+
+                                if let currentActiveField = tappedNode.inputField {
+                                    print("Current active field exists for key: \(tappedNode.key)")
+                                    tappedNode.removeTextField(tappedNode.key)
+                                } else {
+                                    print("Creating text field for key: \(tappedNode.key)")
+                                    guard let nodeField = tappedNode.addNewTextField(tappedNode.key) else {return}
+                                    self.sceneView.addSubview(nodeField)
+                                }
+                            }
+                            
+                            
+
+                            if let camera = self.sceneView.session.currentFrame?.camera {
+                                tappedNode.handleTap(camera, _mx)
+                            }
+                        }
+                        
+                        // check if the SCNNode that was tapped is a child of any of the domain's Nodes.
+                        guard let parentNode = currentDomain.getParentofSCNNode(hit.node) else {return}
+                        if let camera = self.sceneView.session.currentFrame?.camera {
+                            parentNode.handleTap(camera, _mx)
                         }
                     }
-                    
-                    if let camera = self.sceneView.session.currentFrame?.camera {
-                        tappedNode.handleTap(camera, _mx)
-                    }
-                    
                 }
+                
+                
             }
         }
     }

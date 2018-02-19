@@ -29,6 +29,7 @@ class Node {
     var attr: [ Dictionary<String, String> ]?
     var style: [ Dictionary<String, Any> ]?
     
+    var animations: [Animation] = [Animation]()
     var model: Model = Model()
     
     // AR properties
