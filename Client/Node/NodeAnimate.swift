@@ -15,7 +15,7 @@ private let frequency = 1.0 / 60.0
 class Animation {
     
     var duration: Double = 0.0
-    var value: SCNVector3 = SCNVector3Make(0,0,0)
+    var value: [Float] = [Float]()
     var scaleValue: Float = 1.0
     var singleScale: Bool = false
     var type: String = "setTo"
@@ -49,7 +49,8 @@ class Animation {
                 self.scaleValue = _value[0]
                 self.singleScale = true
             } else if _value.count == 3 {
-                self.value = SCNVector3Make(_value[0], _value[1], _value[2])
+                self.value = _value
+//                self.value = SCNVector3Make(_value[0], _value[1], _value[2])
             } else { }
         }
         
@@ -62,23 +63,27 @@ class Animation {
         
         if property == "position" {
             if type == "setTo" {
-                self.action = SCNAction.move(to: self.value, duration: self.duration)
+                let translation = SCNVector3Make(self.value[0], self.value[1], self.value[2])
+                self.action = SCNAction.move(to: translation, duration: self.duration)
             } else if type == "changeBy" {
-                self.action = SCNAction.move(by: self.value, duration: self.duration)
+                let translation = SCNVector3Make(self.value[0], self.value[1], self.value[2])
+                self.action = SCNAction.move(by: translation, duration: self.duration)
             } else {
             }
         }
         
         if property == "rotation" {
             if type == "setTo" {
-                self.action = SCNAction.rotateTo(x: CGFloat(value.x),
-                                               y: CGFloat(value.y),
-                                               z: CGFloat(value.z),
+                let rotation = SCNVector3Make(self.value[0], self.value[1], self.value[2])
+                self.action = SCNAction.rotateTo(x: CGFloat(rotation.x),
+                                               y: CGFloat(rotation.y),
+                                               z: CGFloat(rotation.z),
                                                duration: duration)
             } else if type == "changeBy" {
-                self.action = SCNAction.rotateBy(x: CGFloat(value.x),
-                                               y: CGFloat(value.y),
-                                               z: CGFloat(value.z),
+                let rotation = SCNVector3Make(self.value[0], self.value[1], self.value[2])
+                self.action = SCNAction.rotateBy(x: CGFloat(rotation.x),
+                                               y: CGFloat(rotation.y),
+                                               z: CGFloat(rotation.z),
                                                duration: duration)
             } else {
             }
@@ -108,19 +113,11 @@ class Animation {
 
 extension Node {
     
-//    func animateColorProperty(_ _animation: Animation) {
-    
-//    }
-
     func performAnimations() {
         for _animation in self.animations {
             
-            print("Handling animation")
-            
             if _animation.custom {
                 
-                print("custom animation")
-            
                 if _animation.property.hasSuffix("color") {
                     let count = _animation.duration / frequency
                     var iteration = 0
@@ -133,32 +130,41 @@ extension Node {
 
                             let alpha = percent
                             
-                            let r1 = ((_animation.value.x/255) * alpha), r2 = Float(self.backgroundColor.cgColor.components![0]) * (1 - alpha)
-                            let g1 = ((_animation.value.y/255) * alpha), g2 = Float(self.backgroundColor.cgColor.components![1]) * (1 - alpha)
-                            let b1 = ((_animation.value.z/255) * alpha), b2 = Float(self.backgroundColor.cgColor.components![2]) * (1 - alpha)
+                            let r1 = ((_animation.value[0]/255) * alpha), r2 = Float(self.backgroundColor.cgColor.components![0]) * (1 - alpha)
+                            let g1 = ((_animation.value[1]/255) * alpha), g2 = Float(self.backgroundColor.cgColor.components![1]) * (1 - alpha)
+                            let b1 = ((_animation.value[2]/255) * alpha), b2 = Float(self.backgroundColor.cgColor.components![2]) * (1 - alpha)
+                            
+                            var a1:Float = 1.0, a2:Float = 0.0
+                            if _animation.value.count == 4 {
+                                a1 = _animation.value[3] * alpha
+                            }
+                            
+                            if self.backgroundColor.cgColor.components!.count == 4 {
+                                a2 = Float(self.backgroundColor.cgColor.components![3]) * (1 - alpha)
+                            }
                             
                             if _animation.property == "background-color" {
-                                self.backgroundColor = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(1.0))
+                                self.backgroundColor = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
                             }
                             
                             if _animation.property == "color" {
-                                self.color = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(1.0))
+                                self.color = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
                             }
                             
                             if _animation.property == "border-top-color" {
-                                self.borderColor[top] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(1.0))
+                                self.borderColor[top] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
                             }
                             
                             if _animation.property == "border-left-color" {
-                                self.borderColor[left] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(1.0))
+                                self.borderColor[left] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
                             }
                             
                             if _animation.property == "border-right-color" {
-                                self.borderColor[right] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(1.0))
+                                self.borderColor[right] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
                             }
                             
                             if _animation.property == "border-bottom-color" {
-                                self.borderColor[bottom] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(1.0))
+                                self.borderColor[bottom] = UIColor(red:   CGFloat(r1 + r2), green: CGFloat(g1 + g2), blue:  CGFloat(b1 + b2), alpha: CGFloat(a1 + a2))
                             }
                             
                             let _ = self.render()
@@ -172,34 +178,39 @@ extension Node {
                             
                             let alpha = percent / 255
                             
+                            var a1:Float = 1.0
+                            if _animation.value.count == 4 {
+                                a1 = _animation.value[3] * alpha
+                            }
+                            
                             if _animation.property == "background-color" {
-                                self.backgroundColor = UIColor(red: CGFloat(_animation.value.x * alpha), green: CGFloat(_animation.value.y * alpha), blue: CGFloat(_animation.value.z * alpha), alpha: CGFloat(1.0))
+                                self.backgroundColor = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
                             }
                             
                             if _animation.property == "color" {
-                                self.color = UIColor(red: CGFloat(_animation.value.x * alpha), green: CGFloat(_animation.value.y * alpha), blue: CGFloat(_animation.value.z * alpha), alpha: CGFloat(1.0))
+                                self.color = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
                             }
                             
                             if _animation.property == "border-top-color" {
-                                self.borderColor[top] = UIColor(red: CGFloat(_animation.value.x * alpha), green: CGFloat(_animation.value.y * alpha), blue: CGFloat(_animation.value.z * alpha), alpha: CGFloat(1.0))
+                                self.borderColor[top] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
                             }
                             
                             if _animation.property == "border-left-color" {
-                                self.borderColor[left] = UIColor(red: CGFloat(_animation.value.x * alpha), green: CGFloat(_animation.value.y * alpha), blue: CGFloat(_animation.value.z * alpha), alpha: CGFloat(1.0))
+                                self.borderColor[left] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
                             }
                             
                             if _animation.property == "border-right-color" {
-                                self.borderColor[right] = UIColor(red: CGFloat(_animation.value.x * alpha), green: CGFloat(_animation.value.y * alpha), blue: CGFloat(_animation.value.z * alpha), alpha: CGFloat(1.0))
+                                self.borderColor[right] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
                             }
                             
                             if _animation.property == "border-bottom-color" {
-                                self.borderColor[bottom] = UIColor(red: CGFloat(_animation.value.x * alpha), green: CGFloat(_animation.value.y * alpha), blue: CGFloat(_animation.value.z * alpha), alpha: CGFloat(1.0))
+                                self.borderColor[bottom] = UIColor(red: CGFloat(_animation.value[0] * alpha), green: CGFloat(_animation.value[1] * alpha), blue: CGFloat(_animation.value[2] * alpha), alpha: CGFloat(a1))
                             }
                             
                             let _ = self.render()
                             iteration += 1
                         }
-                    } else {print("incorrect suffix \(_animation.property)")}
+                    } else {}
             }
                 
             } else {
