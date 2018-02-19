@@ -12,8 +12,8 @@ import SwiftyJSON
 import SocketIO
 
 var globalRequestID: String = ""
-var globalSERVER: String = "http://b7bef3e3.ngrok.io"
-var globalDEV_SERVER: String = "http://4deca3e5.ngrok.io"
+var globalSERVER: String = "http://8e56a344.ngrok.io"
+var globalDEV_SERVER: String = "http://b2dab89f.ngrok.io"
 
 class Client {
 
@@ -79,10 +79,14 @@ class Client {
             }
         }
         
-        socket.on("renderTreeComplete") {data, ack in
+        socket.on("renderTreeComplete") {response, ack in
             print("All render tree nodes sent")
+            
+            if let data = response[0] as? Dictionary<String, Any> {
+                self.currentDomain.renderTree = data
+            }
+            
             self.currentDomain.allDataSent = true
-//            self?.currentDomain.process()
         }
     
         socket.connect()

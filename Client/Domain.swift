@@ -37,7 +37,7 @@ class Domain {
     
     var rootNode: SCNNode = SCNNode()
     var nodes: [Node] = [Node]()
-    var nodeDict: Dictionary<String, Node?> = Dictionary<String, Node?>()
+    var nodeDict: Dictionary<String, Node> = Dictionary<String, Node>()
     var requestID: String = ""
     var requestURL: String = ""
     
@@ -48,6 +48,8 @@ class Domain {
     
     var renderNodeList: Set = Set<String>()
     var renderMonitor: RenderMonitor = RenderMonitor()
+    var renderTree: Dictionary<String, Any> = [:]
+    var renderTreeRootNode: SCNNode = SCNNode()
     
     var allDataSent: Bool = false
     var centered: Bool = false
@@ -69,27 +71,29 @@ class Domain {
                 guard let node: AFrame = AFrame(data, self.requestURL, 0) else {return}
                 renderNode(node, key)
             } else {
+                
+                // will always return a Node object
                 guard let node: Node = Node(data, self.requestURL, 0, self.configManager.config_data) else {
                     return
                 }
                 renderNode(node, key)
+                
             }
         }
     }
     
     func renderNode(_ node: Node, _ key: String) {
-//        if node.canRender || node.forceRender {
-            let _ = node.render()
-            self.rootNode.addChildNode(node.rootNode)
+        if node.render() {
+//            self.rootNode.addChildNode(node.rootNode)
             self.nodes.append(node)
             self.nodeDict[key] = node
-//        }
+        }
     }
     
     func getNode(withKey ref: String) -> Node? {
         
         if let node = self.nodeDict[ref] {
-            if (node?.canRender)! {
+            if node.canRender {
                 return node
             }
         }
@@ -125,23 +129,7 @@ class Domain {
             exit()
         }
     }
-    
-    func process() {
-        
-        if self.allDataSent && !self.centered {
-            self.shiftDomainToCenter()
-            self.centered = true
-        }
-        
-//        let renderPoll = DispatchQueue(label: "renderPoll", qos: .userInitiated)
-//        renderPoll.async {
-//            while(self.renderNodeList.count > 0) {}
-//            self.shiftDomainToCenter()
-//            print("Domain positioned at: \(self.rootNode.worldPosition )")
-//        }
 
-        
-    }
     
     @objc func shiftDomainToCenter() {
         var mx: Float = 0.0
@@ -156,25 +144,192 @@ class Domain {
             
             mx /= Float(self.nodes.count)
             my /= Float(self.nodes.count)
-
-//            self.rootNode.position = SCNVector3Make(self.rootNode.position.x - mx,
-//                                                    self.rootNode.position.y - my,
-//                                                    self.rootNode.position.z)
-            
+   
             self.rootNode.position = SCNVector3Make( -mx,
                                                      self.rootNode.position.y,
                                                      self.rootNode.position.z)
         }
-//        print(self.rootNode.position)
         
-//        for node in self.nodes {
-//            node.rootNode.position = SCNVector3Make(node.rootNode.position.x - mx,
-//                                                    node.rootNode.position.y - my,
-//                                                    node.rootNode.position.z)
-//        }
+        if self.allDataSent {
+            self.centerTimer.invalidate()
+//            self.processRenderTree()
+        }
+        
+    }
+    
+    func processRenderTree() {
+        for node in self.nodes {
+            if node.childrenKeys.count > 0 {
+                for child_key in node.childrenKeys {
+                    if let child_node = self.nodeDict[child_key] {
+                        node.rootNode.addChildNode(child_node.rootNode)
+                    }
+                }
+            }
+        }
+        
+        if let root_key = self.renderTree["root"] as? String {
+            if let root = self.nodeDict[ root_key ] {
+                self.rootNode.addChildNode(root.rootNode)
+            }
+        }
         
     }
 }
+//        if let root_key = self.renderTree["root"] as? String {
+//
+//            var tree: [String] = [root_key]
+//            var ptr = 0
+//
+//            while ptr < tree.count {
+//
+//                if let parent = self.nodeDict[ tree[ptr] ] {
+//
+//                    for child in parent.childrenKeys {
+//
+//                        tree.append(child)
+//
+//                    }
+//
+//                }
+//                ptr += 1
+//            }
+//
+//            print(tree)
+//
+//
+//        }
+        
+//        print("===============================")
+//        print(self.renderTree)
+//
+//        var tree: [String] = [String]()
+//
+//        if let rt_root_key = self.renderTree["root"] as? String {
+//            print("Render tree root: \(rt_root_key)")
+//
+//            tree.append(rt_root_key)
+//            var ptr = 0
+//
+//            if let rt_root_data = self.renderTree["shadowTree"] as? Dictionary<String, Any> {
+//
+//                while(ptr < tree.count) {
+//
+//                    var parentKey = tree[ptr]
+//
+//                    if let next_data = rt_root_data[parentKey] as? Dictionary<String, Any> {
+//                        for (child_key, child_value) in next_data {
+//                            print(child_key)
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//
+//
+//        print("===============================")
+
+
+
+//["shadowTree": {
+//    "#document-bCBDceZ$" =     {
+//        "HTML-PDTlgu@9" =         {
+//        };
+//    };
+//    "#text-$Yg$R0Sr" =     {
+//    };
+//    "#text-(bdOM9MU" =     {
+//    };
+//    "#text-BviU7E$2" =     {
+//    };
+//    "#text-FISGlKcK" =     {
+//    };
+//    "#text-Z^VwNc9&" =     {
+//    };
+//    "#text-^3m@LPaM" =     {
+//    };
+//    "#text-cHnC#bsN" =     {
+//    };
+//    "#text-p)pWt2(N" =     {
+//    };
+//    "#text-x0xmQ$Ml" =     {
+//    };
+//    "A-52UATlYs" =     {
+//        "#text-(bdOM9MU" =         {
+//        };
+//    };
+//    "ATLAS-v5rHU*x)" =     {
+//    };
+//    "BODY-Oy3xhyZI" =     {
+//        "#text-Z^VwNc9&" =         {
+//        };
+//        "#text-cHnC#bsN" =         {
+//        };
+//        "A-52UATlYs" =         {
+//        };
+//        "ATLAS-v5rHU*x)" =         {
+//        };
+//        "DIV-K1O4bjx$" =         {
+//        };
+//        "DIV-tgSt^6ks" =         {
+//        };
+//        "P-%M83EfCD" =         {
+//        };
+//        "P-BULRvR&y" =         {
+//        };
+//        "P-PWzZe&$b" =         {
+//        };
+//        "P-RfuX0TGK" =         {
+//        };
+//        "P-n!!V@P)y" =         {
+//        };
+//    };
+//    "DIV-K1O4bjx$" =     {
+//        "H1-rw2oZH9G" =         {
+//        };
+//    };
+//    "DIV-tgSt^6ks" =     {
+//    };
+//    "H1-rw2oZH9G" =     {
+//        "#text-$Yg$R0Sr" =         {
+//        };
+//    };
+//    "HTML-PDTlgu@9" =     {
+//        "BODY-Oy3xhyZI" =         {
+//        };
+//    };
+//    "P-%M83EfCD" =     {
+//        "#text-x0xmQ$Ml" =         {
+//        };
+//    };
+//    "P-BULRvR&y" =     {
+//        "#text-^3m@LPaM" =         {
+//        };
+//    };
+//    "P-PWzZe&$b" =     {
+//        "#text-p)pWt2(N" =         {
+//        };
+//    };
+//    "P-RfuX0TGK" =     {
+//        "#text-FISGlKcK" =         {
+//        };
+//    };
+//    "P-n!!V@P)y" =     {
+//        "#text-BviU7E$2" =         {
+//        };
+//    };
+//    }, "root": #document-bCBDceZ$]
+//Render tree root: #document-bCBDceZ$
+
+
+
+
+
+
+
+
+
+
 
 
 

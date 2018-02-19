@@ -24,8 +24,8 @@ class Node {
     var imageURL: String = ""
     var requestURL: String = ""
     var modelFilename: String = ""
-    var children: [String]?
-    var parents: [String]?
+    var childrenKeys: [String] = []
+    var parentKeys: [String] = []
     var attr: [ Dictionary<String, String> ]?
     var style: [ Dictionary<String, Any> ]?
     
@@ -107,7 +107,7 @@ class Node {
         
         // we will only exit here if the user has specified that this node is
         // not visible
-        if !self.canRender && !self.forceRender {return nil}
+//        if !self.canRender && !self.forceRender {return nil}
         
         self.commonInit(_data, _requestURL, _depth)
         
@@ -127,8 +127,11 @@ class Node {
         self.rootNode.name = self.key
         self.treeDepth = _depth
         self.requestURL = _requestURL
-//        self.children = _data["nodeChildren"] as! [String]
-//        self.parents = _data["pkey"] as! [String]
+        self.childrenKeys = _data["nodeChildren"] as! [String]
+        self.parentKeys = _data["pkey"] as! [String]
+        
+        print("Children: \(self.childrenKeys)")
+        print("Parents: \(self.parentKeys)")
         
         if let _style = _data["nodeStyle"] as? [Dictionary<String, Any>] {
             self.style = _style
