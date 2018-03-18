@@ -129,10 +129,7 @@ class Node {
         self.requestURL = _requestURL
         self.childrenKeys = _data["nodeChildren"] as! [String]
         self.parentKeys = _data["pkey"] as! [String]
-        
-        print("Children: \(self.childrenKeys)")
-        print("Parents: \(self.parentKeys)")
-        
+    
         if let _style = _data["nodeStyle"] as? [Dictionary<String, Any>] {
             self.style = _style
         }

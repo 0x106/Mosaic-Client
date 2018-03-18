@@ -12,8 +12,8 @@ import SwiftyJSON
 import SocketIO
 
 var globalRequestID: String = ""
-var globalSERVER: String = "http://8e56a344.ngrok.io"
-var globalDEV_SERVER: String = "http://b2dab89f.ngrok.io"
+var globalSERVER: String = "http://7e2e6160.ngrok.io"
+var globalDEV_SERVER: String = "http://c7edd802.ngrok.io"
 
 class Client {
 
@@ -44,13 +44,13 @@ class Client {
         manager = SocketManager(socketURL: URL(string: self.server)!, config: [.log(false), .compress])
         socket = manager.defaultSocket
         
-        socket.on(clientEvent: .connect) {data, ack in
+        socket.on(clientEvent: .connect) {[unowned self] data, ack in
             print("socket connected")
             self.connected = true
             self.rootNode.addChildNode(self.searchBar.rootNode)
         }
     
-        socket.on("config") {response, ack in
+        socket.on("config") {[unowned self] response, ack in
             
             guard let data = response[0] as? Dictionary<String, Any> else { return }
             ack.with("config recvd", "")
@@ -61,14 +61,13 @@ class Client {
             }
         }
         
-        socket.on("renderTreeStart") {data, ack in
+        socket.on("renderTreeStart") {[unowned self] data, ack in
             if !(self.orb.rootNode.isHidden) {
                 self.orb.rootNode.isHidden = true
             }
         }
 
-        socket.on("node") {data, ack in
-//            let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .userInitiated)
+        socket.on("node") {[unowned self] data, ack in
             let nodeWorker = DispatchQueue(label: "nodeWorker", qos: .utility)
             nodeWorker.async {
                 if let nodeData = data[0] as? Dictionary<String, Any> {
@@ -79,7 +78,7 @@ class Client {
             }
         }
         
-        socket.on("renderTreeComplete") {response, ack in
+        socket.on("renderTreeComplete") {[unowned self] response, ack in
             print("All render tree nodes sent")
             
             if let data = response[0] as? Dictionary<String, Any> {

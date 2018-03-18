@@ -84,7 +84,7 @@ class Domain {
     
     func renderNode(_ node: Node, _ key: String) {
         if node.render() {
-//            self.rootNode.addChildNode(node.rootNode)
+            self.rootNode.addChildNode(node.rootNode)
             self.nodes.append(node)
             self.nodeDict[key] = node
         }

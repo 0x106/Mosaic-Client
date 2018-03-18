@@ -48,7 +48,7 @@ extension Node {
              NSAttributedStringKey.foregroundColor: self.color]
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
-        self.image = renderer.image { context in
+        self.image = renderer.image { [unowned self] context in
             self.text.draw(with: self.cell, options: .usesLineFragmentOrigin, attributes: fontAttrs, context: nil)
         }
         
@@ -65,7 +65,7 @@ extension Node {
              NSAttributedStringKey.foregroundColor: self.color]
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
-        self.image = renderer.image { context in
+        self.image = renderer.image { [unowned self] context in
             
             self.backgroundColor.setFill()
             context.fill(self.cell)
@@ -92,7 +92,7 @@ extension Node {
         // https://stackoverflow.com/questions/30368739/how-to-draw-a-simple-rounded-rect-in-swift-rounded-corners
     
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
-        self.image = renderer.image { context in
+        self.image = renderer.image { [unowned self] context in
             
             self.backgroundColor.setFill()
             context.fill(self.cell)

@@ -57,9 +57,6 @@ class Model {
         
         let manager = Alamofire.SessionManager.default
         manager.session.configuration.timeoutIntervalForRequest = 500
-        
-        print(localFile)
-        print(remoteFileRequestURL)
                 
         manager.download(
             remoteFileRequestURL,
@@ -68,12 +65,8 @@ class Model {
             encoding: JSONEncoding.default,
             headers: nil,
             to: destination).downloadProgress(closure: { (progress) in
-        }).response(completionHandler: { (DefaultDownloadResponse) in
-            
-            print(self.filename)
-            print(localFile)
-            print(remoteFileRequestURL)
-                
+        }).response(completionHandler: { [unowned self] (DefaultDownloadResponse) in
+    
             //here you able to access the DefaultDownloadResponse
             if let source = SCNSceneSource(url: localFile, options: nil) {
                 do {

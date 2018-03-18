@@ -69,7 +69,7 @@ class Label {
              NSAttributedStringKey.foregroundColor: self.color]
         
         let renderer = UIGraphicsImageRenderer(size: CGSize(width: CGFloat(self.totalWidth), height: CGFloat(self.totalHeight)))
-        self.image = renderer.image { context in
+        self.image = renderer.image { [unowned self] context in
             
             self.backgroundColor.setFill()
             context.fill(self.cell)

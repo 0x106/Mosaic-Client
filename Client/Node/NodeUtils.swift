@@ -128,7 +128,7 @@ extension Node {
             self.geometry?.firstMaterial?.diffuse.contents = UIColor.white.withAlphaComponent(CGFloat(0.2)) // temporary placeholder
             
             DataRequest.addAcceptableImageContentTypes(["image/jpg"])
-            Alamofire.request(self.imageURL).responseImage { response in
+            Alamofire.request(self.imageURL).responseImage { [unowned self] response in
                 if let image = response.result.value {
                     self.image = image
                     self.geometry?.firstMaterial?.diffuse.contents = self.image
